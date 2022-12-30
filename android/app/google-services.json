@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "301587046614",
+    "project_id": "consultant-d76cd",
+    "storage_bucket": "consultant-d76cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301587046614:android:15c52a9fb9565d4c296977",
+        "android_client_info": {
+          "package_name": "com.example.consultant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "301587046614-sc85bb4cde1fqf834s4ns4d3rp1983rg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH5OjLLrPyS04s_QFrAuASsKxK8CyjEmo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "301587046614-sc85bb4cde1fqf834s4ns4d3rp1983rg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

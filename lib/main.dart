@@ -1,13 +1,9 @@
 import 'package:consultant/firebase_options.dart';
-import 'package:consultant/models/consultant.dart';
-import 'package:consultant/repositories/consultant_repository.dart';
-import 'package:consultant/repositories/student_repository.dart';
+import 'package:consultant/views/consultant_detail_screen.dart';
+import 'package:consultant/views/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'models/student.dart';
-import 'views/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +37,10 @@ final _router = GoRouter(
       path: '/',
       builder: (context, state) => const HomeScreen(),
     ),
+    GoRoute(
+      path: '/Detail',
+      builder: (context, state) => const ConsultantDetailScreen(),
+    ),
   ],
 );
 
@@ -50,6 +50,9 @@ class ConsultantApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+      ),
       routerConfig: _router,
       debugShowCheckedModeBanner: false,
       title: 'Material App',

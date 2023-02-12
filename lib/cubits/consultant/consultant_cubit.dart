@@ -3,4 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ConsultantCubit extends Cubit<ConsultantState> {
   ConsultantCubit() : super(ConsultantInitial());
+
+  
+
 }

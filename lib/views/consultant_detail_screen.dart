@@ -96,6 +96,179 @@ class ConsultantDetailScreen extends StatelessWidget {
                 ),
                 height: MediaQuery.of(context).size.height * 0.65,
                 width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Text(
+                        'About consultant',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      subtitle: const Text('lorem and asura kapa endi'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Reviews',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          const SizedBox(
+                            width: 8.0,
+                          ),
+                          const Icon(
+                            Icons.star,
+                            color: Colors.yellow,
+                          ),
+                          const Text('4.9 (124)'),
+                          const Spacer(),
+                          Text(
+                            'See all',
+                            style: TextStyle(color: Colors.lightBlue.shade500),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 120,
+                            width: 280,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  leading: const CircleAvatar(
+                                    child: FlutterLogo(),
+                                  ),
+                                  title: const Text('Mr. Hanh'),
+                                  subtitle: const Text('1 day ago'),
+                                  trailing: SizedBox(
+                                    width: 60.0,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: const [
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.yellow,
+                                        ),
+                                        Text('4.9'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: Text('lorem and asura kapa endi'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Container(
+                            height: 120,
+                            width: 280,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  leading: const CircleAvatar(
+                                    child: FlutterLogo(),
+                                  ),
+                                  title: const Text('Mr. Hanh'),
+                                  subtitle: const Text('1 day ago'),
+                                  trailing: SizedBox(
+                                    width: 60.0,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: const [
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.yellow,
+                                        ),
+                                        Text('4.9'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: Text('lorem and asura kapa endi'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        'Location',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.indigo.shade50,
+                          child: const Icon(
+                            Icons.location_on,
+                          ),
+                        ),
+                        title: const Text('Can Tho'),
+                        subtitle: const Text('concrete address'),
+                      ),
+                    ),
+                    const Spacer(),
+                    const Divider(
+                      color: Colors.grey,
+                      thickness: 2.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        children: const [
+                          Text('Consumption prices'),
+                          Spacer(),
+                          Text('100\$'),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 44.0,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: const Text('Book Appointment'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

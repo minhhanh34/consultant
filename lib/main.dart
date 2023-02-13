@@ -52,6 +52,7 @@ class ConsultantApp extends StatelessWidget {
     return MaterialApp.router(
       theme: ThemeData(
         primarySwatch: Colors.indigo,
+        fontFamily: 'Ubuntu',
       ),
       routerConfig: _router,
       debugShowCheckedModeBanner: false,

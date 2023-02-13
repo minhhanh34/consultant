@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
               child: Row(
                 children: [
                   Text(
@@ -34,98 +34,102 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 160,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 8.0,
-                              blurStyle: BlurStyle.outer,
-                            ),
-                          ],
-                          color: Colors.indigo.shade300,
-                          borderRadius: BorderRadius.circular(8.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // const SizedBox(width: 8.0),
+                  Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 2 - 24.0,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 8.0,
+                                blurStyle: BlurStyle.outer,
+                              ),
+                            ],
+                            color: Colors.indigo.shade300,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
                       ),
-                    ),
-                    const Positioned(
-                      top: 16.0,
-                      left: 16.0,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.add),
-                      ),
-                    ),
-                    const Positioned(
-                      top: 60,
-                      left: 0,
-                      child: SizedBox(
-                        width: 130.0,
-                        child: ListTile(
-                          textColor: Colors.white,
-                          title: Text('Minh Hanh'),
-                          subtitle: Text('subtitle'),
+                      const Positioned(
+                        top: 16.0,
+                        left: 16.0,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Icon(Icons.add),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 8.0),
-                Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 160,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          boxShadow: const [
-                            BoxShadow(
-                              blurRadius: 8.0,
-                              color: Colors.grey,
-                              blurStyle: BlurStyle.outer,
-                            ),
-                          ],
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8.0),
+                      const Positioned(
+                        top: 60,
+                        left: 0,
+                        child: SizedBox(
+                          width: 130.0,
+                          child: ListTile(
+                            textColor: Colors.white,
+                            title: Text('Minh Hanh'),
+                            subtitle: Text('subtitle'),
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: 16.0,
-                      left: 16.0,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.indigo.shade100,
-                        child: Icon(
-                          Icons.home,
-                          color: Colors.indigo.shade300,
+                    ],
+                  ),
+                  // const SizedBox(width: 8.0),
+                  Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 2 - 24.0,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 8.0,
+                                color: Colors.grey,
+                                blurStyle: BlurStyle.outer,
+                              ),
+                            ],
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
                       ),
-                    ),
-                    const Positioned(
-                      top: 60,
-                      left: 0,
-                      child: SizedBox(
-                        width: 130.0,
-                        child: ListTile(
-                          textColor: Colors.black,
-                          title: Text('Minh Hanh'),
-                          subtitle: Text('subtitle'),
+                      Positioned(
+                        top: 16.0,
+                        left: 16.0,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.indigo.shade100,
+                          child: Icon(
+                            Icons.home,
+                            color: Colors.indigo.shade300,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              ],
+                      const Positioned(
+                        top: 60,
+                        left: 0,
+                        child: SizedBox(
+                          width: 130.0,
+                          child: ListTile(
+                            textColor: Colors.black,
+                            title: Text('Minh Hanh'),
+                            subtitle: Text('subtitle'),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
             const SizedBox(height: 8.0),
             Padding(
@@ -135,19 +139,17 @@ class HomeScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),
-            const SizedBox(
-              height: 8.0,
-            ),
             SizedBox(
               height: 60,
               child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 scrollDirection: Axis.horizontal,
                 children: [
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
                     width: 100,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade400,
+                      color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Center(
@@ -161,7 +163,7 @@ class HomeScreen extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
                     width: 100,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade400,
+                      color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Center(
@@ -175,7 +177,7 @@ class HomeScreen extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
                     width: 100,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade400,
+                      color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Center(
@@ -189,7 +191,7 @@ class HomeScreen extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
                     width: 100,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade400,
+                      color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Center(
@@ -202,19 +204,18 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 16.0),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
                 'Popular consultant',
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),
-            const SizedBox(height: 8.0),
             Expanded(
               child: GridView(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16.0,

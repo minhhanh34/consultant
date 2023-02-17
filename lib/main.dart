@@ -1,6 +1,7 @@
 import 'package:consultant/firebase_options.dart';
-import 'package:consultant/views/consultant_detail_screen.dart';
-import 'package:consultant/views/home_screen.dart';
+import 'package:consultant/views/screens/consultant_detail_screen.dart';
+import 'package:consultant/views/screens/home_screen.dart';
+import 'package:consultant/views/components/messages_container.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -41,6 +42,10 @@ final _router = GoRouter(
       path: '/Detail',
       builder: (context, state) => const ConsultantDetailScreen(),
     ),
+    GoRoute(
+      path: '/Messages',
+      builder: (context, state) => const MessagesContainer(),
+    ),
   ],
 );
 
@@ -52,7 +57,7 @@ class ConsultantApp extends StatelessWidget {
     return MaterialApp.router(
       theme: ThemeData(
         primarySwatch: Colors.indigo,
-        fontFamily: 'Ubuntu',
+        // fontFamily: 'Poppins',
       ),
       routerConfig: _router,
       debugShowCheckedModeBanner: false,

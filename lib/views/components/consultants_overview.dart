@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/consultant.dart';
+import '../../models/consultant.dart';
 
 class ConsultantOverview extends StatelessWidget {
   const ConsultantOverview(this.consultants, {super.key});

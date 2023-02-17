@@ -244,7 +244,7 @@ class ConsultantDetailScreen extends StatelessWidget {
                     const Spacer(),
                     const Divider(
                       color: Colors.grey,
-                      thickness: 2.0,
+                      thickness: 3.0,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),

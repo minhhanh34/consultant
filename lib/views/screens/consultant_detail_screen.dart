@@ -1,9 +1,12 @@
+import 'package:consultant/models/consultant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ConsultantDetailScreen extends StatelessWidget {
-  const ConsultantDetailScreen({super.key});
+  const ConsultantDetailScreen({super.key, required this.consultant});
+
+  final Consultant consultant;
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +50,12 @@ class ConsultantDetailScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Consultant name',
+                        consultant.name,
                         style: Theme.of(context).primaryTextTheme.headline6,
                       ),
                     ),
                     Text(
-                      'Math',
+                      consultant.subjects.toString(),
                       style: Theme.of(context).primaryTextTheme.subtitle1,
                     ),
                     const SizedBox(
@@ -237,7 +240,7 @@ class ConsultantDetailScreen extends StatelessWidget {
                             Icons.location_on,
                           ),
                         ),
-                        title: const Text('Can Tho'),
+                        title: Text(consultant.address),
                         subtitle: const Text('concrete address'),
                       ),
                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsContainer extends StatelessWidget {
   const SettingsContainer({super.key});
@@ -73,6 +74,14 @@ class SettingsContainer extends StatelessWidget {
               title: Text('About us'),
               trailing: Icon(Icons.arrow_forward_ios_rounded),
             ),
+            ListTile(
+              onTap: () => context.go('/Welcome'),
+              minVerticalPadding: 24.0,
+              leading: const CircleAvatar(
+                child: Icon(Icons.logout_outlined),
+              ),
+              title: const Text('Log out'),
+            )
           ],
         ),
       ),

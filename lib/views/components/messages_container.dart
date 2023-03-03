@@ -14,10 +14,10 @@ class MessagesContainer extends StatelessWidget {
             pinned: true,
             backgroundColor: Colors.white,
             title: Text(
-              'Messages',
+              'Tin nhắn',
               style: Theme.of(context)
                   .textTheme
-                  .titleLarge
+                  .headline5
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
@@ -31,7 +31,7 @@ class MessagesContainer extends StatelessWidget {
                     decoration: InputDecoration(
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
-                      hintText: 'Search',
+                      hintText: 'Tìm kiếm',
                       suffixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -42,7 +42,7 @@ class MessagesContainer extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    'Active now',
+                    'Đang trực tuyến',
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge
@@ -56,15 +56,32 @@ class MessagesContainer extends StatelessWidget {
                       for (int i = 0; i < 10; i++)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: CircleAvatar(
-                            backgroundColor: Theme.of(context).highlightColor,
-                            radius: 24.0,
-                            child: Badge(
-                              position: BadgePosition.topEnd(),
-                              badgeStyle: BadgeStyle(
-                                badgeColor: Colors.green.shade400,
+                          child: Badge(
+                            position: BadgePosition.custom(
+                              top: 2,
+                              end: 4,
+                            ),
+                            badgeStyle: BadgeStyle(
+                              badgeColor: Colors.green.shade400,
+                              borderSide: const BorderSide(
+                                width: 1,
+                                color: Colors.white,
                               ),
-                              child: const FlutterLogo(),
+                            ),
+                            child: CircleAvatar(
+                              radius: 26.0,
+                              child: Container(
+                                width: 48.0,
+                                height: 48.0,
+                                clipBehavior: Clip.hardEdge,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.asset(
+                                  'assets/dog.jpeg',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -78,7 +95,7 @@ class MessagesContainer extends StatelessWidget {
                     bottom: 8.0,
                   ),
                   child: Text(
-                    'Recent chat',
+                    'Gần đây',
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge
@@ -92,13 +109,20 @@ class MessagesContainer extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               for (int i = 0; i < 10; i++)
                 ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).highlightColor,
-                    radius: 24,
-                    child: const FlutterLogo(),
+                  leading: Container(
+                    width: 48.0,
+                    height: 48.0,
+                    clipBehavior: Clip.hardEdge,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    child: Image.asset(
+                      'assets/dog.jpeg',
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  title: const Text('consultant name'),
-                  subtitle: const Text('Lorem adasu...'),
+                  title: const Text('Tên gia sư'),
+                  subtitle: const Text('nội dung tin nhắn'),
                   trailing: const Text('6:00'),
                 ),
             ]),

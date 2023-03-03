@@ -13,7 +13,7 @@ class ConsultantOverview extends StatelessWidget {
         return ListTile(
           leading: const CircleAvatar(child: FlutterLogo()),
           title: Text(consultants[index].name),
-          subtitle: Text(consultants[index].address),
+          // subtitle: Text(consultants[index].address),
         );
       },
     );

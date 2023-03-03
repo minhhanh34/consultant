@@ -40,18 +40,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hintText: 'Full name',
                       ),
                     ),
-                    const SizedBox(
-                      height: 16.0,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        prefixIcon: const Icon(Icons.email_outlined),
-                        hintText: 'Email address',
-                      ),
-                    ),
+                    // const SizedBox(
+                    //   height: 16.0,
+                    // ),
+                    // TextFormField(
+                    //   decoration: InputDecoration(
+                    //     border: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(16.0),
+                    //     ),
+                    //     prefixIcon: const Icon(Icons.email_outlined),
+                    //     hintText: 'Email address',
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 16.0,
                     ),
@@ -96,6 +96,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: ButtonStyle(
                         fixedSize: MaterialStateProperty.all(
                           Size(MediaQuery.of(context).size.width, 48.0),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
                         ),
                       ),
                       child: const Text('Sign up'),

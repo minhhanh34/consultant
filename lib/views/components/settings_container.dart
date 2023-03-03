@@ -15,7 +15,7 @@ class SettingsContainer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Text(
-                'Settings',
+                'Cài đặt',
                 style: Theme.of(context)
                     .textTheme
                     .headline5
@@ -28,10 +28,10 @@ class SettingsContainer extends StatelessWidget {
                 child: FlutterLogo(),
               ),
               title: Text(
-                'Consultant name',
+                'Tên gia sư',
                 style: Theme.of(context).textTheme.headline6,
               ),
-              subtitle: const Text('Profile'),
+              subtitle: const Text('Mô tả'),
             ),
             const SizedBox(height: 20.0),
             const ListTile(
@@ -39,7 +39,7 @@ class SettingsContainer extends StatelessWidget {
               leading: CircleAvatar(
                 child: Icon(Icons.person_outline),
               ),
-              title: Text('Profile'),
+              title: Text('Thông tin'),
               trailing: Icon(Icons.arrow_forward_ios_rounded),
             ),
             const ListTile(
@@ -47,7 +47,7 @@ class SettingsContainer extends StatelessWidget {
               leading: CircleAvatar(
                 child: Icon(Icons.notifications_outlined),
               ),
-              title: Text('Notification'),
+              title: Text('Thông báo'),
               trailing: Icon(Icons.arrow_forward_ios_rounded),
             ),
             const ListTile(
@@ -55,7 +55,7 @@ class SettingsContainer extends StatelessWidget {
               leading: CircleAvatar(
                 child: Icon(Icons.privacy_tip_outlined),
               ),
-              title: Text('Privacy'),
+              title: Text('Riêng tư'),
               trailing: Icon(Icons.arrow_forward_ios_rounded),
             ),
             const ListTile(
@@ -63,7 +63,7 @@ class SettingsContainer extends StatelessWidget {
               leading: CircleAvatar(
                 child: Icon(Icons.settings_suggest_outlined),
               ),
-              title: Text('General'),
+              title: Text('Phổ biến'),
               trailing: Icon(Icons.arrow_forward_ios_rounded),
             ),
             const ListTile(
@@ -71,7 +71,7 @@ class SettingsContainer extends StatelessWidget {
               leading: CircleAvatar(
                 child: Icon(Icons.info_outline),
               ),
-              title: Text('About us'),
+              title: Text('Về chúng tôi'),
               trailing: Icon(Icons.arrow_forward_ios_rounded),
             ),
             ListTile(
@@ -80,7 +80,7 @@ class SettingsContainer extends StatelessWidget {
               leading: const CircleAvatar(
                 child: Icon(Icons.logout_outlined),
               ),
-              title: const Text('Log out'),
+              title: const Text('Đăng xuất'),
             )
           ],
         ),

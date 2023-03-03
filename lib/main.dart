@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/app/app_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
+import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/firebase_options.dart';
+import 'package:consultant/models/address.dart';
 import 'package:consultant/models/consultant.dart';
+import 'package:consultant/models/subject.dart';
 import 'package:consultant/repositories/consultant_repository.dart';
 import 'package:consultant/services/consultant.dart';
 import 'package:consultant/views/screens/consultant_detail_screen.dart';
+import 'package:consultant/views/screens/consultants_screen.dart';
 import 'package:consultant/views/screens/home_screen.dart';
 import 'package:consultant/views/screens/login_screen.dart';
 import 'package:consultant/views/screens/signup_screen.dart';
@@ -19,13 +24,37 @@ void main() async {
   final flutterBinding = WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FlutterNativeSplash.preserve(widgetsBinding: flutterBinding);
-  // final consultant = Consultant(
-  //   name: 'Bùi Thanh Thúy',
-  //   birthDay: DateTime(1995, 12, 1),
-  //   address: 'Cần Thơ',
-  //   subjects: const ['Vật Lý', 'Hóa Học'],
-  // );
-  // final consultantRepo = ConsultantRepository();
+  final consultant = Consultant(
+    avtPath:
+        'https://firebasestorage.googleapis.com/v0/b/consultant-d76cd.appspot.com/o/avatars%2Favt5.jpg?alt=media&token=34fa4287-ce17-48f8-bb25-4c4e2bf1a48d',
+    name: 'Lê Thị Thúy Liễu',
+    birthDay: DateTime(1888, 1, 15),
+    address: const Address(
+      city: 'Bình Dương',
+      district: 'Thủ Dầu Một',
+      geoPoint: GeoPoint(1, 1),
+    ),
+    phone: '0999123888',
+    subjects: const [
+      Subject(
+        name: 'Lịch Sử',
+        grade: 12,
+        dates: ['Thứ ba', 'Thứ tư', 'Thứ sáu'],
+        duration: 90,
+        price: 50000,
+        time: '14h',
+      ),
+      // Subject(
+      //   name: 'Tiếng Anh',
+      //   grade: 12,
+      //   dates: ['Thứ hai', 'Thứ tư', 'Thứ sáu'],
+      //   duration: 120,
+      //   price: 100000,
+      //   time: '20h',
+      // ),
+    ],
+  );
+  final consultantRepo = ConsultantRepository();
   // consultantRepo.create(consultant);
   // final student = Student(
   //   name: 'Minh Hanh',
@@ -71,6 +100,10 @@ final _router = GoRouter(
       path: '/Signup',
       builder: (context, state) => const SignUpScreen(),
     ),
+    GoRoute(
+      path: '/Consultants',
+      builder: (context, state) => const ConsultantsScreen(),
+    ),
   ],
 );
 
@@ -80,15 +113,19 @@ class ConsultantApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FlutterNativeSplash.remove();
+    final consultantService = ConsultantService(
+      ConsultantRepository(),
+    );
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AppCubit()),
         BlocProvider(
           create: (_) => HomeCubit(
-            consultantService: ConsultantService(
-              ConsultantRepository(),
-            ),
+            consultantService: consultantService,
           ),
+        ),
+        BlocProvider(
+          create: (_) => SearchingCubit(service: consultantService),
         ),
       ],
       child: MaterialApp.router(

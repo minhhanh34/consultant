@@ -45,6 +45,9 @@ dependencies:
   flutter_native_splash: ^2.2.16
   badges: ^3.0.2
   firebase_auth: ^4.2.9
+  font_awesome_flutter: ^10.4.0
+  cached_network_image: ^3.2.3
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

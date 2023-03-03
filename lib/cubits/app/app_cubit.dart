@@ -10,12 +10,15 @@ class AppCubit extends Cubit<AppState> {
   void messages() => emit(Messages());
   void schedules() => emit(Schedules());
   void settings() => emit(Settings());
+  void searching() => emit(Searching());
 
   void handle(int value) {
     bottomAppBarIndex = value;
     if (value == 0) home();
-    if (value == 1) messages();
-    if (value == 2) schedules();
-    if (value == 3) settings();
+    if (value == 1) searching();
+    if (value == 2) messages();
+    if (value == 3) schedules();
+    if (value == 4) settings();
+
   }
 }

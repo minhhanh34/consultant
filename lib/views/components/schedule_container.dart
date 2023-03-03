@@ -38,7 +38,7 @@ class _ScheduleContainerState extends State<ScheduleContainer>
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Text(
-                'Schedule',
+                'Lịch hẹn',
                 style: Theme.of(context)
                     .textTheme
                     .headline5
@@ -60,9 +60,9 @@ class _ScheduleContainerState extends State<ScheduleContainer>
                   color: Theme.of(context).primaryColor,
                 ),
                 tabs: const [
-                  Text('Upcoming'),
-                  Text('Completed'),
-                  Text('Canceled'),
+                  Text('Sắp diễn ra'),
+                  Text('Hoàn thành'),
+                  Text('Đã hủy'),
                 ],
               ),
             ),
@@ -76,7 +76,7 @@ class _ScheduleContainerState extends State<ScheduleContainer>
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
-                          'About Consultant',
+                          'Thông tin',
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
@@ -89,12 +89,20 @@ class _ScheduleContainerState extends State<ScheduleContainer>
                         ),
                         child: Column(
                           children: [
-                            const ListTile(
-                              title: Text('Consultant name'),
-                              subtitle: Text('Subject'),
-                              trailing: CircleAvatar(
-                                radius: 24.0,
-                                child: FlutterLogo(),
+                            ListTile(
+                              title: const Text('Tên gia sư'),
+                              subtitle: const Text('Môn học'),
+                              trailing: Container(
+                                width: 48.0,
+                                height: 48.0,
+                                clipBehavior: Clip.hardEdge,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.asset(
+                                  'assets/dog.jpeg',
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                             const Divider(
@@ -160,7 +168,7 @@ class _ScheduleContainerState extends State<ScheduleContainer>
                                       ),
                                       child: Center(
                                         child: Text(
-                                          'Cancel',
+                                          'Hủy',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .button,
@@ -186,7 +194,7 @@ class _ScheduleContainerState extends State<ScheduleContainer>
                                       ),
                                       child: Center(
                                         child: Text(
-                                          'Reschedule',
+                                          'Đặt lại',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .button,

@@ -70,6 +70,23 @@ class HomeContainer extends StatelessWidget {
                     ),
                   ],
                 ),
+                SliverAppBar(
+                  elevation: 0,
+                  pinned: true,
+                  backgroundColor: Colors.grey.shade100,
+                  title: ListTile(
+                    onTap: (){},
+                    leading: Icon(Icons.add_circle_outline,
+                        color: Theme.of(context).primaryColor),
+                    title: Text(
+                      'Đăng bài tìm gia sư',
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                    ),
+                  ),
+                ),
                 SliverList(
                   delegate: SliverChildListDelegate(
                     [

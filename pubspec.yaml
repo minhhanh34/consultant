@@ -48,6 +48,8 @@ dependencies:
   font_awesome_flutter: ^10.4.0
   cached_network_image: ^3.2.3
   intl: ^0.17.0
+  firebase_messaging: ^14.2.5
+  firebase_in_app_messaging: ^0.7.0+14
 
 dev_dependencies:
   flutter_test:

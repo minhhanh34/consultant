@@ -193,6 +193,7 @@ class ConsultantDetailScreen extends StatelessWidget {
               ),
               title: Text(consultant.address.city),
               subtitle: Text(consultant.address.district),
+              trailing: const Icon(Icons.map_outlined),
             ),
             const Divider(
               color: Colors.grey,

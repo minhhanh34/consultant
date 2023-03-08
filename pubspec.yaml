@@ -50,6 +50,10 @@ dependencies:
   intl: ^0.17.0
   firebase_messaging: ^14.2.5
   firebase_in_app_messaging: ^0.7.0+14
+  google_maps_flutter: ^2.2.5
+  location: ^4.4.0
+  http: ^0.13.5
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_test:

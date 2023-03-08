@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/models/address.dart';
+import 'package:consultant/models/comment.dart';
 import 'package:consultant/models/subject.dart';
 import 'package:equatable/equatable.dart';
 
@@ -13,7 +14,15 @@ class Consultant extends Equatable {
   final double? rate;
   final int? raters;
   final String? avtPath;
-  const Consultant({
+  final List<Comment> comments = [];
+
+  void setComments(List<Comment> comments) {
+    this.comments
+      ..clear()
+      ..addAll(comments);
+  }
+
+  Consultant({
     this.id,
     this.rate,
     this.raters,
@@ -27,7 +36,7 @@ class Consultant extends Equatable {
 
   factory Consultant.fromJson(Map<String, dynamic> json) {
     return Consultant(
-      raters: json['raters'] ,
+      raters: json['raters'],
       rate: (json['rate'] as num?)?.toDouble(),
       phone: json['phone'],
       name: json['name'],
@@ -65,6 +74,7 @@ class Consultant extends Equatable {
     String? avtPath,
   }) {
     return Consultant(
+      id: id ?? this.id,
       avtPath: avtPath ?? this.avtPath,
       rate: rate ?? this.rate,
       raters: raters ?? this.raters,

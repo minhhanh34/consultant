@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/repositories/repository_interface.dart';
 
-import '../models/student.dart';
+import '../models/chat_room.dart';
+import 'repository_interface.dart';
 
-class StudentRepository implements Repository<Student> {
-  final _collection = FirebaseFirestore.instance.collection('students');
+class ChatRoomRepository extends Repository<ChatRoom> {
+  final _collection = FirebaseFirestore.instance.collection('chatrooms');
 
   @override
-  Future<Student> create(Student item) async {
+  Future<ChatRoom> create(ChatRoom item) async {
     try {
       final ref = await _collection.add(item.toJson());
       item = item.copyWith(id: ref.id);
@@ -31,22 +31,22 @@ class StudentRepository implements Repository<Student> {
   }
 
   @override
-  Future<Student> getOne(String id) async {
+  Future<ChatRoom> getOne(String id) async {
     final snap = await _collection.doc(id).get();
     snap.data()!['id'] = snap.id;
-    return Student.fromJson(snap.data()!);
+    return ChatRoom.fromJson(snap.data()!);
   }
 
   @override
-  Future<List<Student>> list() async {
+  Future<List<ChatRoom>> list() async {
     final querySnaps = await _collection.get();
     return querySnaps.docs.map((doc) {
-      return Student.fromJson(doc.data()).copyWith(id: doc.id);
+      return ChatRoom.fromJson(doc.data()).copyWith(id: doc.id);
     }).toList();
   }
 
   @override
-  Future<bool> update(String id, Student item) async {
+  Future<bool> update(String id, ChatRoom item) async {
     try {
       await _collection.doc(id).update(item.toJson());
       return true;

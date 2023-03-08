@@ -7,3 +7,8 @@ Map<String, dynamic> subjects = {
   'label': 'Toán Học',
   'icon': FontAwesomeIcons.infinity,
 };
+
+const apiKey = 'AIzaSyD5qpUhzS6opItJgZY0amNyA-HISo7Lk1s';
+
+const placeUrl =
+    'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=$apiKey';

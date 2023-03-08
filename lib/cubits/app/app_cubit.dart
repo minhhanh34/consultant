@@ -4,7 +4,9 @@ import 'package:consultant/cubits/app/app_state.dart';
 class AppCubit extends Cubit<AppState> {
   AppCubit() : super(Home());
 
-  int bottomAppBarIndex = 0;
+  int _bottomAppBarIndex = 0;
+
+  int get bottomAppBarIndex => _bottomAppBarIndex;
 
   void home() => emit(Home());
   void messages() => emit(Messages());
@@ -13,7 +15,7 @@ class AppCubit extends Cubit<AppState> {
   void searching() => emit(Searching());
 
   void handle(int value) {
-    bottomAppBarIndex = value;
+    _bottomAppBarIndex = value;
     if (value == 0) home();
     if (value == 1) searching();
     if (value == 2) messages();

@@ -2,11 +2,11 @@ import '../models/parent.dart';
 import '../repositories/parent_repository.dart';
 
 class ParentService {
-  final ParentRepository repository;
+  final ParentRepository _repository;
 
-  ParentService(this.repository);
+  ParentService(this._repository);
 
   Future<List<Parent>> getParents() async {
-    return await repository.list();
+    return await _repository.list();
   }
 }

@@ -1,64 +1,71 @@
- // final consultant = Consultant(
-  //   avtPath:
-  //       'https://firebasestorage.googleapis.com/v0/b/consultant-d76cd.appspot.com/o/avatars%2Favt5.jpg?alt=media&token=34fa4287-ce17-48f8-bb25-4c4e2bf1a48d',
-  //   name: 'Lê Thị Thúy Liễu',
-  //   birthDay: DateTime(1888, 1, 15),
-  //   address: const Address(
-  //     city: 'Bình Dương',
-  //     district: 'Thủ Dầu Một',
-  //     geoPoint: GeoPoint(1, 1),
-  //   ),
-  //   phone: '0999123888',
-  //   subjects: const [
-  //     Subject(
-  //       name: 'Lịch Sử',
-  //       grade: 12,
-  //       dates: ['Thứ ba', 'Thứ tư', 'Thứ sáu'],
-  //       duration: 90,
-  //       price: 50000,
-  //       time: '14h',
-  //     ),
-  // Subject(
-  //   name: 'Tiếng Anh',
-  //   grade: 12,
-  //   dates: ['Thứ hai', 'Thứ tư', 'Thứ sáu'],
-  //   duration: 120,
-  //   price: 100000,
-  //   time: '20h',
-  // ),
-  // ],
-  // );
-  // final consultantRepo = ConsultantRepository();
-  // consultantRepo.create(consultant);
-  // final student = Student(
-  //   name: 'Minh Hanh',
-  //   address: 'An Giang',
-  //   birthDay: DateTime(2001, 04, 30),
-  //   grade: 16,
-  // );
-  // final studentRepo = StudentRepository();
-  // await studentRepo.create(student);
-  // await consultantRepo.create(consultant);
-  // final list = await studentRepo.list();
-  // for(var item in list) {
-  //   print(item.toJson());
-  // }
-  // const parent = Parent(name: 'Minh Hanh', phone: '0394567429', email: 'hanhb1909911');
-  // final parentRepo = ParentRepository();
-  // parentRepo.create(parent);
+  final consultant = Consultant(
+     avtPath:
+         'https:firebasestorage.googleapis.com/v0/b/consultant-d76cd.appspot.com/o/avatars%2Favt5.jpg?alt=media&token=34fa4287-ce17-48f8-bb25-4c4e2bf1a48d',
+     name: 'Lê Thị Thúy Liễu',
+     birthDay: DateTime(1888, 1, 15),
+     address: const Address(
+       city: 'Bình Dương',
+       district: 'Thủ Dầu Một',
+       geoPoint: GeoPoint(1, 1),
+     ),
+     phone: '0999123888',
+     subjects: const [
+       Subject(
+         name: 'Lịch Sử',
+         grade: 12,
+         dates: ['Thứ ba', 'Thứ tư', 'Thứ sáu'],
+         duration: 90,
+         price: 50000,
+         time: '14h',
+       ),
+   Subject(
+     name: 'Tiếng Anh',
+     grade: 12,
+     dates: ['Thứ hai', 'Thứ tư', 'Thứ sáu'],
+     duration: 120,
+     price: 100000,
+     time: '20h',
+   ),
+   ],
+   );
+   final consultantRepo = ConsultantRepository();
+   consultantRepo.create(consultant);
+   final student = Student(
+     name: 'Minh Hanh',
+     address: 'An Giang',
+     birthDay: DateTime(2001, 04, 30),
+     grade: 16,
+   );
+   final studentRepo = StudentRepository();
+   await studentRepo.create(student);
+   await consultantRepo.create(consultant);
+   final list = await studentRepo.list();
+   for(var item in list) {
+     print(item.toJson());
+   }
+   const parent = Parent(name: 'Minh Hanh', phone: '0394567429', email: 'hanhb1909911');
+   final parentRepo = ParentRepository();
+   parentRepo.create(parent);
 
-  // await FirebaseMessaging.instance.requestPermission();
+   await FirebaseMessaging.instance.requestPermission();
 
-  // await FirebaseMessaging.instance.setAutoInitEnabled(true);
-  // final messageToken = await FirebaseMessaging.instance.getToken();
-  // print(messageToken);
+   await FirebaseMessaging.instance.setAutoInitEnabled(true);
+   final messageToken = await FirebaseMessaging.instance.getToken();
+   print(messageToken);
 
-  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //   print(message.data);
-  // });
+   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+     print(message.data);
+   });
 
-  // FirebaseMessaging.onMessageOpenedApp.listen((event) {});
-  // await FirebaseMessaging.instance.
-  // FirebaseMessaging.onBackgroundMessage((_) async {
-  //   await Firebase.initializeApp();
-  // });
+   FirebaseMessaging.onMessageOpenedApp.listen((event) {});
+   await FirebaseMessaging.instance.
+   FirebaseMessaging.onBackgroundMessage((_) async {
+     await Firebase.initializeApp();
+   });
+
+  final schedule = Schedule(
+    consultantName: 'Nguyễn Văn Tèo',
+    subjectName: 'Hóa học',
+    dateTime: DateTime(2023, 3, 10, 8),
+    state: ScheduleStates.upComing,
+  );

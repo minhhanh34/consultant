@@ -19,6 +19,7 @@ class ConsultantCardInfor extends StatelessWidget {
     return InkWell(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
+        // context.read<HomeCubit>().fetchComments(consultant);
         context.push(
           '/Detail',
           extra: consultant,

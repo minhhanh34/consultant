@@ -54,13 +54,7 @@ class HomeContainer extends StatelessWidget {
                     ),
                   ),
                   actions: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const FaIcon(
-                        FontAwesomeIcons.heart,
-                        color: Colors.indigo,
-                      ),
-                    ),
+
                     IconButton(
                       onPressed: () {},
                       icon: const Icon(

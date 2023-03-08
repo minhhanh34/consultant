@@ -1,29 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/app/app_cubit.dart';
+import 'package:consultant/cubits/chat_rooms/chat_room_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/firebase_options.dart';
-import 'package:consultant/models/address.dart';
+import 'package:consultant/models/comment.dart';
 import 'package:consultant/models/consultant.dart';
-import 'package:consultant/models/schedule.dart';
-import 'package:consultant/models/subject.dart';
+import 'package:consultant/repositories/chat_room_repository.dart';
+import 'package:consultant/repositories/comment_repository.dart';
 import 'package:consultant/repositories/consultant_repository.dart';
-import 'package:consultant/repositories/schedule_repository.dart';
+import 'package:consultant/services/chat_room_service.dart';
 import 'package:consultant/services/consultant.dart';
+import 'package:consultant/views/screens/all_comment_screen.dart';
+import 'package:consultant/views/screens/chat_screen.dart';
 import 'package:consultant/views/screens/consultant_detail_screen.dart';
 import 'package:consultant/views/screens/consultants_screen.dart';
 import 'package:consultant/views/screens/home_screen.dart';
 import 'package:consultant/views/screens/login_screen.dart';
+import 'package:consultant/views/screens/map_screen.dart';
 import 'package:consultant/views/screens/signup_screen.dart';
 import 'package:consultant/views/screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 
 void main() async {
   final flutterBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -35,18 +38,17 @@ void main() async {
     sound: true,
   );
 
-  final schedule = Schedule(
-    consultantName: 'Nguyễn Văn Tèo',
-    subjectName: 'Hóa học',
-    dateTime: DateTime(2023, 3, 10, 8),
-    state: ScheduleStates.upComing,
-  );
-  
-  final scheduleRepo = ScheduleRepository();
-  // final list = await scheduleRepo.list();
-  // print(list[0].state);
-  // scheduleRepo.create(schedule);
-  
+  // final comment = Comment(
+  //   commentatorName: 'Trần Văn An',
+  //   commentatorAvatar: '',
+  //   time: DateTime.now(),
+  //   rate: 5,
+  //   content: 'Gia sư nhiệt tình',
+  // );
+
+  // final commentRepo = CommentRepository();
+  // commentRepo.create('YSMcXWeWFzseVHfyDdV5', comment);
+
   runApp(const ConsultantApp());
 }
 
@@ -79,6 +81,21 @@ final _router = GoRouter(
       path: '/Consultants',
       builder: (context, state) => const ConsultantsScreen(),
     ),
+    GoRoute(
+      path: '/Map',
+      builder: (context, state) => MapScreen(geoPoint: state.extra as GeoPoint),
+    ),
+    GoRoute(
+      path: '/ChatRoom',
+      pageBuilder: (context, state) => CupertinoPage(
+        child: ChatScreen(partner: state.extra as Consultant),
+      ),
+    ),
+    GoRoute(
+      path: '/Comments',
+      builder: (context, state) =>
+          CommentsScreen(comments: state.extra as List<Comment>),
+    ),
   ],
 );
 
@@ -90,17 +107,19 @@ class ConsultantApp extends StatelessWidget {
     FlutterNativeSplash.remove();
     final consultantService = ConsultantService(
       ConsultantRepository(),
+      CommentRepository(),
     );
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AppCubit()),
         BlocProvider(
-          create: (_) => HomeCubit(
-            consultantService: consultantService,
-          ),
+          create: (_) => HomeCubit(consultantService),
         ),
         BlocProvider(
-          create: (_) => SearchingCubit(service: consultantService),
+          create: (_) => SearchingCubit(consultantService),
+        ),
+        BlocProvider(
+          create: (_) => ChatRoomCubit(ChatRoomService(ChatRoomRepository())),
         ),
       ],
       child: MaterialApp.router(

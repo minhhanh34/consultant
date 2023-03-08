@@ -41,6 +41,7 @@ class Student extends Equatable {
     int? grade,
   }) {
     return Student(
+      id: id?? this.id,
       name: name ?? this.name,
       birthDay: birthDay ?? this.birthDay,
       address: address ?? this.address,

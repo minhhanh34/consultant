@@ -2,15 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/app/app_cubit.dart';
 import 'package:consultant/cubits/chat_rooms/chat_room_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
+import 'package:consultant/cubits/messages/messages_cubit.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
+import 'package:consultant/cubits/settings/settings_cubit.dart';
 import 'package:consultant/firebase_options.dart';
+import 'package:consultant/models/address.dart';
 import 'package:consultant/models/comment.dart';
 import 'package:consultant/models/consultant.dart';
+import 'package:consultant/models/parent.dart';
 import 'package:consultant/repositories/chat_room_repository.dart';
 import 'package:consultant/repositories/comment_repository.dart';
 import 'package:consultant/repositories/consultant_repository.dart';
+import 'package:consultant/repositories/message_repository.dart';
+import 'package:consultant/repositories/parent_repository.dart';
+import 'package:consultant/repositories/settings_repository.dart';
 import 'package:consultant/services/chat_room_service.dart';
 import 'package:consultant/services/consultant.dart';
+import 'package:consultant/services/message_service.dart';
+import 'package:consultant/services/settings_service.dart';
 import 'package:consultant/views/screens/all_comment_screen.dart';
 import 'package:consultant/views/screens/chat_screen.dart';
 import 'package:consultant/views/screens/consultant_detail_screen.dart';
@@ -18,6 +27,7 @@ import 'package:consultant/views/screens/consultants_screen.dart';
 import 'package:consultant/views/screens/home_screen.dart';
 import 'package:consultant/views/screens/login_screen.dart';
 import 'package:consultant/views/screens/map_screen.dart';
+import 'package:consultant/views/screens/parent_info_screen.dart';
 import 'package:consultant/views/screens/signup_screen.dart';
 import 'package:consultant/views/screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,16 +48,19 @@ void main() async {
     sound: true,
   );
 
-  // final comment = Comment(
-  //   commentatorName: 'Trần Văn An',
-  //   commentatorAvatar: '',
-  //   time: DateTime.now(),
-  //   rate: 5,
-  //   content: 'Gia sư nhiệt tình',
-  // );
+  const parent = Parent(
+    name: 'Nguyễn Văn Chu',
+    phone: '0394122132',
+    email: 'nvchu123@gmail.com',
+    address: Address(
+      city: 'Long An',
+      district: 'Cay Lậy',
+      geoPoint: GeoPoint(10.4044749, 106.0325383),
+    ),
+  );
 
-  // final commentRepo = CommentRepository();
-  // commentRepo.create('YSMcXWeWFzseVHfyDdV5', comment);
+  final repo = ParentRepository();
+  // await repo.create(parent);
 
   runApp(const ConsultantApp());
 }
@@ -88,13 +101,20 @@ final _router = GoRouter(
     GoRoute(
       path: '/ChatRoom',
       pageBuilder: (context, state) => CupertinoPage(
-        child: ChatScreen(partner: state.extra as Consultant),
+        child: ChatScreen(
+          partner: (state.extra as Map)['partner'],
+          room: (state.extra as Map)['room'],
+        ),
       ),
     ),
     GoRoute(
       path: '/Comments',
       builder: (context, state) =>
           CommentsScreen(comments: state.extra as List<Comment>),
+    ),
+    GoRoute(
+      path: '/Info',
+      builder: (context, state) => ParentInfoScreen(parent: state.extra as Parent),
     ),
   ],
 );
@@ -120,6 +140,12 @@ class ConsultantApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => ChatRoomCubit(ChatRoomService(ChatRoomRepository())),
+        ),
+        BlocProvider(
+          create: (_) => MessageCubit(MessageService(MessageRepository())),
+        ),
+        BlocProvider(
+          create: (_) => SettingsCubit(SettingsService(SettingsRepository())),
         ),
       ],
       child: MaterialApp.router(

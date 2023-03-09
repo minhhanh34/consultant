@@ -6,8 +6,11 @@ import '../models/message.dart';
 import 'repository_with_subcollection.dart';
 
 class MessageRepository implements RepositoryWithSubCollection<Message> {
- final _collection = FirebaseFirestore.instance.collection('parents');
+  final _collection = FirebaseFirestore.instance.collection('chatrooms');
   final _subCollection = 'messages';
+
+  CollectionReference get collection => _collection;
+  String get subCollection => _subCollection;
   @override
   Future<Message> create(String id, Message item) async {
     try {

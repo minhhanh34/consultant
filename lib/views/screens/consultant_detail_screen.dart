@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:consultant/constants/const.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
+import 'package:consultant/models/chat_room.dart';
 import 'package:consultant/models/consultant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,14 +11,20 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ConsultantDetailScreen extends StatelessWidget {
+class ConsultantDetailScreen extends StatefulWidget {
   const ConsultantDetailScreen({super.key, required this.consultant});
 
   final Consultant consultant;
 
+  @override
+  State<ConsultantDetailScreen> createState() => _ConsultantDetailScreenState();
+}
+
+class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
+  bool commentsFetched = false;
   String calTime(index) {
     final long = DateTime.now()
-        .subtract(Duration(days: consultant.comments[index].time.day));
+        .subtract(Duration(days: widget.consultant.comments[index].time.day));
     if (long.day > 0) return '${long.day} ngày trước';
     return 'Hôm nay';
   }
@@ -25,13 +32,34 @@ class ConsultantDetailScreen extends StatelessWidget {
   void call() async {
     final phoneLaunchUri = Uri(
       scheme: 'tel',
-      path: consultant.phone,
+      path: widget.consultant.phone,
     );
     await launchUrl(phoneLaunchUri);
   }
 
   void openChatRoom(BuildContext context) {
-    context.push('/ChatRoom', extra: consultant);
+    
+    context.push(
+      '/ChatRoom',
+      extra: {
+        'partner': widget.consultant,
+        'room': ChatRoom(
+          id: 'vLE5iPPgCcL4FRnHj6mN',
+          firstPersonId: '123',
+          secondPersonId: widget.consultant.id!,
+        ),
+      },
+    );
+  }
+
+  Future<Consultant>? _fetchComments() async {
+    if (commentsFetched) {
+      return widget.consultant;
+    }
+    final consultant =
+        await context.read<HomeCubit>().fetchComments(widget.consultant);
+    commentsFetched = true;
+    return consultant;
   }
 
   @override
@@ -114,7 +142,7 @@ class ConsultantDetailScreen extends StatelessWidget {
                     TextButton(
                       onPressed: () => context.push(
                         '/Comments',
-                        extra: consultant.comments,
+                        extra: widget.consultant.comments,
                       ),
                       child: Text(
                         'Xem tất cả',
@@ -217,7 +245,6 @@ class ConsultantDetailScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 44.0,
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ButtonStyle(
@@ -235,8 +262,9 @@ class ConsultantDetailScreen extends StatelessWidget {
             ),
           ),
         ];
+    
     return FutureBuilder<Consultant>(
-      future: context.read<HomeCubit>().fetchComments(consultant),
+      future: _fetchComments(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
@@ -267,7 +295,8 @@ class ConsultantDetailScreen extends StatelessWidget {
                             decoration:
                                 const BoxDecoration(shape: BoxShape.circle),
                             child: CachedNetworkImage(
-                              imageUrl: consultant.avtPath ?? defaultAvtPath,
+                              imageUrl:
+                                  widget.consultant.avtPath ?? defaultAvtPath,
                               fit: BoxFit.cover,
                               filterQuality: FilterQuality.high,
                             ),
@@ -277,13 +306,13 @@ class ConsultantDetailScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             textAlign: TextAlign.center,
-                            consultant.name,
+                            widget.consultant.name,
                             style: Theme.of(context).primaryTextTheme.headline6,
                           ),
                         ),
                         Text(
                           textAlign: TextAlign.center,
-                          consultant.subjectsToString(),
+                          widget.consultant.subjectsToString(),
                           style: Theme.of(context).primaryTextTheme.subtitle1,
                         ),
                         const SizedBox(

@@ -12,12 +12,14 @@ class Message extends Equatable {
   final String receiverId;
   final DateTime time;
   final bool seen;
+  final bool recall;
   const Message({
     this.id,
+    this.recall = false,
+    required this.time,
     required this.content,
     required this.senderId,
     required this.receiverId,
-    required this.time,
     required this.seen,
   });
 
@@ -29,6 +31,7 @@ class Message extends Equatable {
       receiverId,
       time,
       seen,
+      recall,
     ];
   }
 
@@ -39,9 +42,11 @@ class Message extends Equatable {
     String? receiverId,
     DateTime? time,
     bool? seen,
+    bool? recall,
   }) {
     return Message(
       id: id ?? this.id,
+      recall: recall ?? this.recall,
       content: content ?? this.content,
       senderId: senderId ?? this.senderId,
       receiverId: receiverId ?? this.receiverId,
@@ -57,6 +62,7 @@ class Message extends Equatable {
       'receiverId': receiverId,
       'time': time,
       'seen': seen,
+      'recall': recall,
     };
   }
 
@@ -67,6 +73,7 @@ class Message extends Equatable {
       receiverId: json['receiverId'] as String,
       time: (json['time'] as Timestamp).toDate(),
       seen: json['seen'] as bool,
+      recall: json['recall'] as bool,
     );
   }
 }

@@ -1,37 +1,32 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:consultant/constants/const.dart';
 import 'package:equatable/equatable.dart';
+
+import 'package:consultant/models/address.dart';
 
 class Parent extends Equatable {
   final String? id;
   final String name;
   final String phone;
   final String email;
-
+  final Address address;
+  final String avtPath;
   const Parent({
     this.id,
     required this.name,
     required this.phone,
     required this.email,
+    required this.address,
+    this.avtPath = defaultAvtPath,
   });
-
-  Parent copyWith({
-    String? id,
-    String? name,
-    String? phone,
-    String? email,
-  }) {
-    return Parent(
-      id: id,
-      name: name ?? this.name,
-      phone: phone ?? this.phone,
-      email: email ?? this.email,
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'phone': phone,
       'email': email,
+      'address': address.toJson(),
+      'avtPath': avtPath,
     };
   }
 
@@ -40,9 +35,29 @@ class Parent extends Equatable {
       name: json['name'],
       phone: json['phone'],
       email: json['email'],
+      address: Address.fromJson(json['address']),
+      avtPath: json['avtPath'],
     );
   }
 
   @override
-  List<Object?> get props => [id, name, phone, email];
+  List<Object?> get props => [id, name, phone, email, avtPath, address];
+
+  Parent copyWith({
+    String? id,
+    String? name,
+    String? phone,
+    String? email,
+    Address? address,
+    String? avtPath,
+  }) {
+    return Parent(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      address: address ?? this.address,
+      avtPath: avtPath ?? this.avtPath,
+    );
+  }
 }

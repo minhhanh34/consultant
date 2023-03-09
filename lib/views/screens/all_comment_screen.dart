@@ -22,7 +22,7 @@ class CommentsScreen extends StatelessWidget {
   Widget itemBuilder(BuildContext context, int index) {
     final comment = comments[index];
     return ListTile(
-      leading: Avatar(
+      leading: const Avatar(
         // imageUrl: comment.commentatorAvatar,
         radius: 24.0,
       ),

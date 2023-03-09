@@ -54,6 +54,8 @@ dependencies:
   location: ^4.4.0
   http: ^0.13.5
   url_launcher: ^6.1.10
+  chat_bubbles: ^1.4.0
+  flutter_slidable: ^2.0.0
 
 dev_dependencies:
   flutter_test:

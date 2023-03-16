@@ -7,9 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../cubits/app/app_cubit.dart';
-import '../components/home_container.dart';
-import '../components/searching_container.dart';
+import '../../../cubits/app/app_cubit.dart';
+import '../../components/home_container.dart';
+import '../../components/searching_container.dart';
+
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             if (state is Home) {
-              context.read<HomeCubit>().getConsultants();
+              context.read<HomeCubit>().fetchPopularConsultants();
               return const HomeContainer();
             }
             if (state is Searching) return const SearchingContainer();

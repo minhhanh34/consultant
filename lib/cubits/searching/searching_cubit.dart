@@ -1,5 +1,5 @@
-import 'package:consultant/models/consultant.dart';
-import 'package:consultant/services/consultant.dart';
+import 'package:consultant/models/consultant_model.dart';
+import 'package:consultant/services/consultant_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:consultant/cubits/searching/searching_state.dart';
 

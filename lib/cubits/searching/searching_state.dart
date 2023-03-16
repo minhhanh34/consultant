@@ -1,4 +1,4 @@
-import 'package:consultant/models/consultant.dart';
+import 'package:consultant/models/consultant_model.dart';
 
 abstract class SearchingState {}
 

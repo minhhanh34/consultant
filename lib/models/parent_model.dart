@@ -2,7 +2,7 @@
 import 'package:consultant/constants/const.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:consultant/models/address.dart';
+import 'package:consultant/models/address_model.dart';
 
 class Parent extends Equatable {
   final String? id;

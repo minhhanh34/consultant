@@ -1,4 +1,4 @@
-import 'package:consultant/models/parent.dart';
+import 'package:consultant/models/parent_model.dart';
 
 abstract class SettingsState {}
 

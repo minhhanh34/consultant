@@ -12,10 +12,17 @@ class SearchingContainer extends StatefulWidget {
   State<SearchingContainer> createState() => _SearchingContainerState();
 }
 
-class _SearchingContainerState extends State<SearchingContainer> {
+class _SearchingContainerState extends State<SearchingContainer>
+    with SingleTickerProviderStateMixin {
   final style = const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold);
   late TextEditingController _controller;
   bool isSearching = false;
+  late AnimationController _animationController;
+
+  late PersistentBottomSheetController _bottomSheetController;
+
+  double priceSliderValue = 50;
+
   @override
   void initState() {
     super.initState();
@@ -28,11 +35,17 @@ class _SearchingContainerState extends State<SearchingContainer> {
         isSearching = false;
       }
     });
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _animationController.dispose();
+
     super.dispose();
   }
 
@@ -46,6 +59,7 @@ class _SearchingContainerState extends State<SearchingContainer> {
             context.read<SearchingCubit>().featchAllConsultants();
           }
           if (state is SearchingConsultants) {
+            _animationController.forward();
             return CustomScrollView(
               slivers: <Widget>[
                 SliverAppBar(
@@ -100,7 +114,6 @@ class _SearchingContainerState extends State<SearchingContainer> {
                         InkWell(
                           onTap: () {
                             FocusManager.instance.primaryFocus?.unfocus();
-
                             builder(context) {
                               return Scaffold(
                                 appBar: AppBar(
@@ -131,7 +144,7 @@ class _SearchingContainerState extends State<SearchingContainer> {
                                             width: listTileWidth,
                                             child: CheckboxListTile(
                                               title: const Text('Toán'),
-                                              value: true,
+                                              value: false,
                                               controlAffinity:
                                                   ListTileControlAffinity
                                                       .leading,
@@ -230,14 +243,33 @@ class _SearchingContainerState extends State<SearchingContainer> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(16.0),
-                                        child: Text('Giá (cho 1 buổi)',
-                                            style: style),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'Giá (cho 1 buổi)',
+                                              style: style,
+                                            ),
+                                            const Spacer(),
+                                            Text(
+                                              '${priceSliderValue.round().toString()}k',
+                                              style: style,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      const ListTile(
-                                        leading: Text('40k'),
-                                        trailing: Text('200k'),
+                                      Slider(
+                                        divisions: 32,
+                                        label:
+                                            priceSliderValue.round().toString(),
+                                        min: 40.0,
+                                        max: 200.0,
+                                        value: priceSliderValue,
+                                        onChanged: (value) {
+                                          _bottomSheetController.setState!(() {
+                                            priceSliderValue = value;
+                                          });
+                                        },
                                       ),
-                                      Slider(value: 0.5, onChanged: (value) {}),
                                       Padding(
                                         padding: const EdgeInsets.all(16.0),
                                         child: Text('Giới tính', style: style),
@@ -333,7 +365,7 @@ class _SearchingContainerState extends State<SearchingContainer> {
                               );
                             }
 
-                            showBottomSheet(
+                            _bottomSheetController = showBottomSheet(
                               context: context,
                               builder: builder,
                             );
@@ -352,6 +384,8 @@ class _SearchingContainerState extends State<SearchingContainer> {
                     childCount: state.consultants.length,
                     (context, index) {
                       return ConsultantCardInfor(
+                        controller: _animationController,
+                        curve: Curves.elasticInOut,
                         consultant: state.consultants[index],
                         index: index,
                       );

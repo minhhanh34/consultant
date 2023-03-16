@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/models/address.dart';
-import 'package:consultant/models/comment.dart';
-import 'package:consultant/models/subject.dart';
+import 'package:consultant/models/address_model.dart';
+import 'package:consultant/models/comment_model.dart';
+import 'package:consultant/models/subject_model.dart';
 import 'package:equatable/equatable.dart';
 
 class Consultant extends Equatable {

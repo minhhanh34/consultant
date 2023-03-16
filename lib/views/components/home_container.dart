@@ -1,15 +1,48 @@
 import 'package:consultant/cubits/home/home_cubit.dart';
+import 'package:consultant/cubits/posts/post_cubit.dart';
+import 'package:consultant/models/post_model.dart';
 import 'package:consultant/views/components/consultant_card_info.dart';
-import 'package:consultant/views/components/subject.dart';
+import 'package:consultant/views/components/subject_column.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeContainer extends StatelessWidget {
+import '../../constants/const.dart';
+import '../../cubits/home/home_state.dart';
+
+class HomeContainer extends StatefulWidget {
   const HomeContainer({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<HomeContainer> createState() => _HomeContainerState();
+}
+
+class _HomeContainerState extends State<HomeContainer>
+    with SingleTickerProviderStateMixin {
+  late TextEditingController _controller;
+  late PersistentBottomSheetController _bottomSheetController;
+  bool loading = false;
+
+  late AnimationController _animationController;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +56,7 @@ class HomeContainer extends StatelessWidget {
           );
         }
         if (state is HomeConsultants) {
+          _animationController.forward();
           return Scaffold(
             body: CustomScrollView(
               slivers: [
@@ -54,7 +88,6 @@ class HomeContainer extends StatelessWidget {
                     ),
                   ),
                   actions: [
-
                     IconButton(
                       onPressed: () {},
                       icon: const Icon(
@@ -69,7 +102,101 @@ class HomeContainer extends StatelessWidget {
                   pinned: true,
                   backgroundColor: Colors.grey.shade100,
                   title: ListTile(
-                    onTap: (){},
+                    onTap: () async {
+                      _bottomSheetController = showBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          if (loading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .6,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Tìm gia sư',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                // const SizedBox(height: 16.0),
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: TextField(
+                                    controller: _controller,
+                                    maxLines: 8,
+                                    decoration: InputDecoration(
+                                      hintText: 'Soạn bài viết...',
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                        borderSide: const BorderSide(width: 0),
+                                      ),
+                                      fillColor: Theme.of(context).hoverColor,
+                                      filled: true,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        if (_controller.text.isEmpty) {
+                                          SnackBar snackBar = const SnackBar(
+                                            content: Text(
+                                              'Bài đăng chưa có nội dung!',
+                                            ),
+                                          );
+                                          ScaffoldMessenger.of(context)
+                                            ..hideCurrentSnackBar()
+                                            ..showSnackBar(snackBar);
+                                          return;
+                                        }
+                                        _bottomSheetController.setState!(() {
+                                          loading = true;
+                                        });
+
+                                        await context
+                                            .read<PostCubit>()
+                                            .createPost(
+                                              Post(
+                                                content: _controller.text,
+                                                time: DateTime.now(),
+                                                posterId: '123',
+                                                posterAvtPath: defaultAvtPath,
+                                                posterName: 'Nguyen Van Chu',
+                                              ),
+                                            );
+                                        _controller.clear();
+                                        _bottomSheetController.close();
+                                        loading = false;
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+                                      },
+                                      child: const Text('Đăng'),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
                     leading: Icon(Icons.add_circle_outline,
                         color: Theme.of(context).primaryColor),
                     title: Text(
@@ -107,42 +234,80 @@ class HomeContainer extends StatelessWidget {
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                           ),
-                          children: const [
+                          children: [
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.infinity),
-                              label: 'Toán Học',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [math],
+                              ),
+                              icon: const FaIcon(FontAwesomeIcons.infinity),
+                              label: math,
                             ),
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.book),
-                              label: 'Văn Học',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [literature],
+                              ),
+                              icon: const FaIcon(FontAwesomeIcons.book),
+                              label: literature,
                             ),
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.scaleBalanced),
-                              label: 'Vật Lý',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [physical],
+                              ),
+                              icon:
+                                  const FaIcon(FontAwesomeIcons.scaleBalanced),
+                              label: physical,
                             ),
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.flaskVial),
-                              label: 'Hóa Học',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [chemistry],
+                              ),
+                              icon: const FaIcon(FontAwesomeIcons.flaskVial),
+                              label: chemistry,
                             ),
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.language),
-                              label: 'Tiếng Anh',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [english],
+                              ),
+                              icon: const FaIcon(FontAwesomeIcons.language),
+                              label: english,
                             ),
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.earthAsia),
-                              label: 'Địa Lý',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [geography],
+                              ),
+                              icon: const FaIcon(FontAwesomeIcons.earthAsia),
+                              label: geography,
                             ),
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.clockRotateLeft),
-                              label: 'Lịch Sử',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [history],
+                              ),
+                              icon: const FaIcon(
+                                  FontAwesomeIcons.clockRotateLeft),
+                              label: history,
                             ),
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.dna),
-                              label: 'Sinh Học',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [biology],
+                              ),
+                              icon: const FaIcon(FontAwesomeIcons.dna),
+                              label: biology,
                             ),
                             SubjectColumn(
-                              icon: FaIcon(FontAwesomeIcons.laptopCode),
-                              label: 'Tin Học',
+                              ontap: () => context.push(
+                                '/ConsultantsFiltered',
+                                extra: [it],
+                              ),
+                              icon: const FaIcon(FontAwesomeIcons.laptopCode),
+                              label: it,
                             ),
                           ],
                         ),
@@ -181,6 +346,7 @@ class HomeContainer extends StatelessWidget {
                     childCount: state.consultants.length,
                     (context, index) {
                       return ConsultantCardInfor(
+                        controller: _animationController,
                         consultant: state.consultants[index],
                         index: index,
                       );
@@ -189,7 +355,7 @@ class HomeContainer extends StatelessWidget {
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 16.0,
-                    mainAxisSpacing: 16.0,
+                    mainAxisSpacing: 16,
                     childAspectRatio: 1,
                   ),
                 ),

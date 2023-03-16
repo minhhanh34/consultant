@@ -1,5 +1,5 @@
 import 'package:consultant/cubits/settings/settings_state.dart';
-import 'package:consultant/models/parent.dart';
+import 'package:consultant/models/parent_model.dart';
 import 'package:consultant/services/settings_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

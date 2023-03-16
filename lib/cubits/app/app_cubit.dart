@@ -21,6 +21,9 @@ class AppCubit extends Cubit<AppState> {
     if (value == 2) messages();
     if (value == 3) schedules();
     if (value == 4) settings();
+  }
 
+  void setBottomAppBarIndex(int val) {
+    handle(val);
   }
 }

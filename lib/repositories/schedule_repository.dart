@@ -1,12 +1,16 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:consultant/main.dart';
 import 'package:consultant/repositories/repository_interface.dart';
 
-import '../models/schedule.dart';
+import '../models/schedule_model.dart';
 
 class ScheduleRepository extends Repository<Schedule> {
-  final _collection = FirebaseFirestore.instance.collection('schedules');
+  final _collection =
+      FirebaseFirestore.instanceFor(app: app).collection('schedules');
+
+  CollectionReference get collection => _collection;
 
   @override
   Future<Schedule> create(Schedule item) async {

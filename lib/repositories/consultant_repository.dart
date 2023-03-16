@@ -1,11 +1,14 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/models/consultant.dart';
+import 'package:consultant/main.dart';
+import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/repositories/repository_interface.dart';
 
 class ConsultantRepository implements Repository<Consultant> {
-  final _collection = FirebaseFirestore.instance.collection('consultants');
+  final _collection = FirebaseFirestore.instanceFor(app: app).collection('consultants');
+  
+  CollectionReference get collection => _collection;
 
   @override
   Future<Consultant> create(Consultant item) async {

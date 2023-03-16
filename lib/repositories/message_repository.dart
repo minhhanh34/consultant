@@ -1,23 +1,21 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:consultant/main.dart';
 
-import '../models/message.dart';
-import 'repository_with_subcollection.dart';
+import '../models/chat_room_model.dart';
+import 'repository_interface.dart';
 
-class MessageRepository implements RepositoryWithSubCollection<Message> {
-  final _collection = FirebaseFirestore.instance.collection('chatrooms');
-  final _subCollection = 'messages';
+class MessageRepository extends Repository<ChatRoom> {
+  final _collection =
+      FirebaseFirestore.instanceFor(app: app).collection('chatrooms');
 
   CollectionReference get collection => _collection;
-  String get subCollection => _subCollection;
+
   @override
-  Future<Message> create(String id, Message item) async {
+  Future<ChatRoom> create(ChatRoom item) async {
     try {
-      final ref = await _collection
-          .doc(id)
-          .collection(_subCollection)
-          .add(item.toJson());
+      final ref = await _collection.add(item.toJson());
       item = item.copyWith(id: ref.id);
     } catch (error) {
       log('error', error: error);
@@ -26,9 +24,9 @@ class MessageRepository implements RepositoryWithSubCollection<Message> {
   }
 
   @override
-  Future<bool> delete(String id, String subId) async {
+  Future<bool> delete(String id) async {
     try {
-      await _collection.doc(id).collection(_subCollection).doc(subId).delete();
+      await _collection.doc(id).delete();
       return true;
     } catch (error) {
       log('error', error: error);
@@ -37,35 +35,24 @@ class MessageRepository implements RepositoryWithSubCollection<Message> {
   }
 
   @override
-  Future<Message> getOne(String id, String subId) async {
-    final snap =
-        await _collection.doc(id).collection(_subCollection).doc(subId).get();
+  Future<ChatRoom> getOne(String id) async {
+    final snap = await _collection.doc(id).get();
     snap.data()!['id'] = snap.id;
-    return Message.fromJson(snap.data()!);
+    return ChatRoom.fromJson(snap.data()!);
   }
 
   @override
-  Future<List<Message>> list(String id) async {
-    try {
-      final querySnaps =
-          await _collection.doc(id).collection(_subCollection).get();
-      return querySnaps.docs.map((doc) {
-        return Message.fromJson(doc.data()).copyWith(id: doc.id);
-      }).toList();
-    } catch (error) {
-      log('error', error: error);
-      return [];
-    }
+  Future<List<ChatRoom>> list() async {
+    final querySnaps = await _collection.get();
+    return querySnaps.docs.map((doc) {
+      return ChatRoom.fromJson(doc.data()).copyWith(id: doc.id);
+    }).toList();
   }
 
   @override
-  Future<bool> update(String id, String subId, Message item) async {
+  Future<bool> update(String id, ChatRoom item) async {
     try {
-      await _collection
-          .doc(id)
-          .collection(_subCollection)
-          .doc(subId)
-          .update(item.toJson());
+      await _collection.doc(id).update(item.toJson());
       return true;
     } catch (error) {
       log('error', error: error);

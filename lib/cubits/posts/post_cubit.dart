@@ -1,0 +1,13 @@
+import 'package:consultant/cubits/posts/post_state.dart';
+import 'package:consultant/services/post_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../models/post_model.dart';
+
+class PostCubit extends Cubit<PostState> {
+  PostCubit(this._service) : super(PostInitial());
+  final PostService _service;
+  Future<Post> createPost(Post post) async {
+    return await _service.createPost(post);
+  }
+}

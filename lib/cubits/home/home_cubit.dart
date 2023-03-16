@@ -1,26 +1,25 @@
-import 'package:consultant/models/consultant.dart';
-import 'package:consultant/services/consultant.dart';
+import 'package:consultant/models/consultant_model.dart';
+import 'package:consultant/services/consultant_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-part 'home_state.dart';
+import 'home_state.dart';
+
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit(this._consultantService) : super(HomeInitial());
   final ConsultantService _consultantService;
-  List<Consultant>? _consultants;
 
-  Future<void> getConsultants() async {
+  List<Consultant>? popularConsultants;
+
+  Future<void> fetchPopularConsultants() async {
     emit(HomeLoading());
-    _consultants ??= await _consultantService.getConsultants();
-    emit(HomeConsultants(_consultants!));
+    popularConsultants ??= await _consultantService.getPopularConsultants();
+    emit(HomeConsultants(popularConsultants!));
   }
 
   Future<Consultant> fetchComments(Consultant consultant) async {
-    // emit(HomeLoading());
     final comments = await _consultantService.getComments(consultant.id!);
     consultant.setComments(comments);
     return consultant;
-    // emit(HomeConsultant(consultant));
-    // emit(HomeConsultants(_consultants!));
   }
 }

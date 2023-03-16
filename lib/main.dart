@@ -1,35 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/app/app_cubit.dart';
-import 'package:consultant/cubits/chat_rooms/chat_room_cubit.dart';
+import 'package:consultant/cubits/chat/chat_cubit.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/cubits/filter/filter_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
 import 'package:consultant/cubits/messages/messages_cubit.dart';
+import 'package:consultant/cubits/posts/post_cubit.dart';
+import 'package:consultant/cubits/schedules/schedules_cubit.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/cubits/settings/settings_cubit.dart';
 import 'package:consultant/firebase_options.dart';
-import 'package:consultant/models/address.dart';
-import 'package:consultant/models/comment.dart';
-import 'package:consultant/models/consultant.dart';
-import 'package:consultant/models/parent.dart';
-import 'package:consultant/repositories/chat_room_repository.dart';
+import 'package:consultant/repositories/class_repository.dart';
+import 'package:consultant/repositories/message_repository.dart';
 import 'package:consultant/repositories/comment_repository.dart';
 import 'package:consultant/repositories/consultant_repository.dart';
-import 'package:consultant/repositories/message_repository.dart';
-import 'package:consultant/repositories/parent_repository.dart';
+import 'package:consultant/repositories/chat_repository.dart';
+import 'package:consultant/repositories/post_repository.dart';
+import 'package:consultant/repositories/schedule_repository.dart';
 import 'package:consultant/repositories/settings_repository.dart';
-import 'package:consultant/services/chat_room_service.dart';
-import 'package:consultant/services/consultant.dart';
+import 'package:consultant/services/chat_service.dart';
+import 'package:consultant/services/class_service.dart';
+import 'package:consultant/services/consultant_service.dart';
 import 'package:consultant/services/message_service.dart';
+import 'package:consultant/services/post_service.dart';
+import 'package:consultant/services/schedule_service.dart';
 import 'package:consultant/services/settings_service.dart';
-import 'package:consultant/views/screens/all_comment_screen.dart';
-import 'package:consultant/views/screens/chat_screen.dart';
-import 'package:consultant/views/screens/consultant_detail_screen.dart';
-import 'package:consultant/views/screens/consultants_screen.dart';
-import 'package:consultant/views/screens/home_screen.dart';
-import 'package:consultant/views/screens/login_screen.dart';
-import 'package:consultant/views/screens/map_screen.dart';
-import 'package:consultant/views/screens/parent_info_screen.dart';
-import 'package:consultant/views/screens/signup_screen.dart';
-import 'package:consultant/views/screens/welcome_screen.dart';
+import 'package:consultant/views/screens/consultant/consultant_home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,9 +36,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 
+import 'models/comment_model.dart';
+import 'models/consultant_model.dart';
+import 'models/parent_model.dart';
+import 'views/screens/parent/all_comment_screen.dart';
+import 'views/screens/parent/chat_screen.dart';
+import 'views/screens/parent/consultant_detail_screen.dart';
+import 'views/screens/parent/consultant_filtered_screen.dart';
+import 'views/screens/parent/consultants_screen.dart';
+import 'views/screens/parent/home_screen.dart';
+import 'views/screens/parent/login_screen.dart';
+import 'views/screens/parent/map_screen.dart';
+import 'views/screens/parent/parent_info_screen.dart';
+import 'views/screens/parent/signup_screen.dart';
+import 'views/screens/parent/welcome_screen.dart';
+
+late final FirebaseApp _app;
+late final FirebaseAuth _auth;
+
+FirebaseApp get app => _app;
+
 void main() async {
   final flutterBinding = WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  _app = await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform);
   FlutterNativeSplash.preserve(widgetsBinding: flutterBinding);
   FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
@@ -48,25 +67,78 @@ void main() async {
     sound: true,
   );
 
-  const parent = Parent(
-    name: 'Nguyễn Văn Chu',
-    phone: '0394122132',
-    email: 'nvchu123@gmail.com',
-    address: Address(
-      city: 'Long An',
-      district: 'Cay Lậy',
-      geoPoint: GeoPoint(10.4044749, 106.0325383),
-    ),
-  );
+  _auth = FirebaseAuth.instanceFor(app: _app);
 
-  final repo = ParentRepository();
-  // await repo.create(parent);
+  String email = 'hanh@gmail.com';
+  String password = 'hanh123';
+  await _auth.signInWithEmailAndPassword(email: email, password: password);
 
   runApp(const ConsultantApp());
 }
 
+class ConsultantApp extends StatelessWidget {
+  const ConsultantApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    FlutterNativeSplash.remove();
+    final consultantService = ConsultantService(
+      ConsultantRepository(),
+      CommentRepository(),
+    );
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => AppCubit()),
+        BlocProvider(
+          create: (_) => HomeCubit(consultantService),
+        ),
+        BlocProvider(
+          create: (_) => SearchingCubit(consultantService),
+        ),
+        BlocProvider(
+          create: (_) =>
+              ChatCubit(ChatService(ChatRepository()), consultantService),
+        ),
+        BlocProvider(
+          create: (_) => MessageCubit(MessageService(MessageRepository())),
+        ),
+        BlocProvider(
+          create: (_) => SettingsCubit(SettingsService(SettingsRepository())),
+        ),
+        BlocProvider(
+          create: (_) => FilterCubit(consultantService),
+        ),
+        BlocProvider(
+          create: (_) => ScheduleCubit(ScheduleService(ScheduleRepository())),
+        ),
+        BlocProvider(
+          create: (_) => PostCubit(PostService(PostRepository())),
+        ),
+        BlocProvider(
+          create: (_) => ConsultantHomeCubit(
+            ScheduleService(ScheduleRepository()),
+            ClassService(ClassRepository()),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => ClassCubit(ClassService(ClassRepository())),
+        ),
+      ],
+      child: MaterialApp.router(
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+          // fontFamily: 'Poppins',
+        ),
+        routerConfig: _router,
+        debugShowCheckedModeBanner: false,
+        title: 'Material App',
+      ),
+    );
+  }
+}
+
 final _router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/ConsultantHome',
   routes: <RouteBase>[
     GoRoute(
       path: '/',
@@ -100,9 +172,13 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/ChatRoom',
+      // builder: (context, state) => ChatScreen(
+      //   partner: (state.extra as Map)['partner'],
+      //   room: (state.extra as Map)['room'],
+      // ),
       pageBuilder: (context, state) => CupertinoPage(
         child: ChatScreen(
-          partner: (state.extra as Map)['partner'],
+          partnerId: (state.extra as Map)['partnerId'],
           room: (state.extra as Map)['room'],
         ),
       ),
@@ -114,49 +190,18 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/Info',
-      builder: (context, state) => ParentInfoScreen(parent: state.extra as Parent),
+      builder: (context, state) =>
+          ParentInfoScreen(parent: state.extra as Parent),
+    ),
+    GoRoute(
+      path: '/ConsultantsFiltered',
+      builder: (context, state) => ConsultantsFilteredScreen(
+        filtered: state.extra as List<String>,
+      ),
+    ),
+    GoRoute(
+      path: '/ConsultantHome',
+      builder: (context, state) => const ConsultantHomeScreen(),
     ),
   ],
 );
-
-class ConsultantApp extends StatelessWidget {
-  const ConsultantApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    FlutterNativeSplash.remove();
-    final consultantService = ConsultantService(
-      ConsultantRepository(),
-      CommentRepository(),
-    );
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => AppCubit()),
-        BlocProvider(
-          create: (_) => HomeCubit(consultantService),
-        ),
-        BlocProvider(
-          create: (_) => SearchingCubit(consultantService),
-        ),
-        BlocProvider(
-          create: (_) => ChatRoomCubit(ChatRoomService(ChatRoomRepository())),
-        ),
-        BlocProvider(
-          create: (_) => MessageCubit(MessageService(MessageRepository())),
-        ),
-        BlocProvider(
-          create: (_) => SettingsCubit(SettingsService(SettingsRepository())),
-        ),
-      ],
-      child: MaterialApp.router(
-        theme: ThemeData(
-          primarySwatch: Colors.indigo,
-          // fontFamily: 'Poppins',
-        ),
-        routerConfig: _router,
-        debugShowCheckedModeBanner: false,
-        title: 'Material App',
-      ),
-    );
-  }
-}

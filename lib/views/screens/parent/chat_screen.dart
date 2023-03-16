@@ -1,9 +1,9 @@
 import 'package:chat_bubbles/chat_bubbles.dart';
-import 'package:consultant/cubits/messages/messages_cubit.dart';
-import 'package:consultant/cubits/messages/messages_state.dart';
-import 'package:consultant/models/chat_room.dart';
-import 'package:consultant/models/consultant.dart';
-import 'package:consultant/models/message.dart';
+import 'package:consultant/cubits/chat/chat_cubit.dart';
+import 'package:consultant/cubits/chat/chat_state.dart';
+import 'package:consultant/models/chat_room_model.dart';
+import 'package:consultant/models/consultant_model.dart';
+import 'package:consultant/models/message_model.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +12,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, required this.partner, required this.room});
-  final Consultant partner;
+  const ChatScreen({super.key, required this.partnerId, required this.room});
+  final String partnerId;
   final ChatRoom room;
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -21,55 +21,70 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final List<Message> messages = [];
-
+  late ChatCubit chatCubit;
   Future<void> sendMessage(String content) async {
     final message = Message(
       time: DateTime.now(),
       content: content,
       senderId: '123',
-      receiverId: widget.partner.id!,
+      receiverId: widget.partnerId,
       seen: false,
     );
-    await context.read<MessageCubit>().createMessage(widget.room.id!, message);
+    await context.read<ChatCubit>().createMessage(widget.room.id!, message);
     // messages.add(newMessage);
     // setState(() {});
   }
 
   @override
+  void dispose() {
+    chatCubit.initialize();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: InkWell(
-          onTap: () => context.pop(),
-          child: const Icon(
-            CupertinoIcons.back,
-            color: Colors.white,
-          ),
-        ),
-        elevation: 1,
-        backgroundColor: Theme.of(context).primaryColor,
-        leadingWidth: 40.0,
-        title: ListTile(
-          textColor: Colors.white,
-          contentPadding: EdgeInsets.zero,
-          leading: Avatar(imageUrl: widget.partner.avtPath!, radius: 25),
-          title: Text(widget.partner.name),
-          subtitle: Text(widget.partner.subjectsToString()),
-        ),
-      ),
-      body: BlocBuilder<MessageCubit, MessageState>(
-        builder: (context, state) {
-          if (state is MessageInitial) {
-            context.read<MessageCubit>().fetchMessages(widget.room);
-          }
-          if (state is MessageFatched) {
-            return Column(
+    chatCubit = context.read<ChatCubit>();
+    return BlocBuilder<ChatCubit, ChatState>(
+      builder: (context, state) {
+        if (state is ChatInitial) {
+          context
+              .read<ChatCubit>()
+              .fetchMessages(widget.room, widget.partnerId);
+        }
+        if (state is ChatLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (state is ChatFetched) {
+          final partner = state.partner;
+          return Scaffold(
+            appBar: AppBar(
+              leading: InkWell(
+                onTap: () => context.pop(),
+                child: const Icon(
+                  CupertinoIcons.back,
+                  color: Colors.white,
+                ),
+              ),
+              elevation: 1,
+              backgroundColor: Theme.of(context).primaryColor,
+              leadingWidth: 40.0,
+              title: ListTile(
+                textColor: Colors.white,
+                contentPadding: EdgeInsets.zero,
+                leading: Avatar(imageUrl: partner.avtPath!, radius: 25),
+                title: Text(partner.name),
+                subtitle: Text(partner.subjectsToString()),
+              ),
+            ),
+            body: Column(
               children: [
                 Expanded(
                   child: ChatBubbles(
                     room: widget.room,
                     messages: state.messages,
-                    partner: widget.partner,
+                    partner: partner,
                   ),
                 ),
                 MessageBar(
@@ -87,19 +102,24 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 // MessageField(partner: partner),
               ],
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
+            ),
           );
-        },
-      ),
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }
 
 class ChatBubbles extends StatefulWidget {
-  const ChatBubbles({super.key, required this.room, required this.messages, required this.partner,});
+  const ChatBubbles({
+    super.key,
+    required this.room,
+    required this.messages,
+    required this.partner,
+  });
   final List<Message> messages;
   final Consultant partner;
   final ChatRoom room;
@@ -108,12 +128,26 @@ class ChatBubbles extends StatefulWidget {
 }
 
 class _ChatBubblesState extends State<ChatBubbles> {
+  // late final SlidableController _controller;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _controller = SlidableController(this);
+  // }
+
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
+
   void showAlert({
     required BuildContext context,
     required int messageIndex,
     required String roomId,
   }) async {
-    final messageCubit = context.read<MessageCubit>();
+    final chatCubit = context.read<ChatCubit>();
     FocusManager.instance.primaryFocus?.unfocus();
     bool result = await showDialog(
       context: context,
@@ -135,7 +169,7 @@ class _ChatBubblesState extends State<ChatBubbles> {
       },
     );
     if (result) {
-      messageCubit.recallMessage(
+      chatCubit.recallMessage(
         'vLE5iPPgCcL4FRnHj6mN',
         widget.messages[messageIndex].id!,
         widget.messages[messageIndex].copyWith(recall: true),
@@ -150,6 +184,7 @@ class _ChatBubblesState extends State<ChatBubbles> {
       reverse: true,
       itemCount: widget.messages.length,
       itemBuilder: (context, index) => Slidable(
+        enabled: !widget.messages[index].recall,
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
           extentRatio: 0.4,

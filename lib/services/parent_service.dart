@@ -1,4 +1,4 @@
-import '../models/parent.dart';
+import '../models/parent_model.dart';
 import '../repositories/parent_repository.dart';
 
 class ParentService {

@@ -1,14 +1,14 @@
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const defaultAvtPath =
     'https://firebasestorage.googleapis.com/v0/b/consultant-d76cd.appspot.com/o/avatars%2Fdefault_avt.png?alt=media&token=dbbffbc5-0bcc-4737-8b50-6ac34ec7792c';
 
-Map<String, dynamic> subjects = {
-  'label': 'Toán Học',
-  'icon': FontAwesomeIcons.infinity,
-};
+String math = 'Toán Học';
+String literature = 'Văn Học';
+String physical = 'Vật Lý';
+String chemistry = 'Hóa Học';
+String english = 'Tiếng Anh';
+String geography = 'Địa Lý';
+String history = 'Lịch Sử';
+String biology = 'Sinh Học';
+String it = 'Tin học';
 
-const apiKey = 'AIzaSyD5qpUhzS6opItJgZY0amNyA-HISo7Lk1s';
-
-const placeUrl =
-    'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=$apiKey';

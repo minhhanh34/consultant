@@ -1,4 +1,9 @@
+import 'package:consultant/cubits/schedules/schedules_cubit.dart';
+import 'package:consultant/cubits/schedules/schedules_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'schedule_card.dart';
 
 class ScheduleContainer extends StatefulWidget {
   const ScheduleContainer({super.key});
@@ -60,156 +65,48 @@ class _ScheduleContainerState extends State<ScheduleContainer>
                   color: Theme.of(context).primaryColor,
                 ),
                 tabs: const [
-                  Text('Sắp diễn ra'),
-                  Text('Hoàn thành'),
-                  Text('Đã hủy'),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                    child: Text('Sắp diễn ra'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                    child: Text('Hoàn thành'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                    child: Text('Đã hủy'),
+                  ),
                 ],
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          'Thông tin',
-                          style: Theme.of(context).textTheme.headline6,
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                          ),
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Column(
-                          children: [
-                            ListTile(
-                              title: const Text('Tên gia sư'),
-                              subtitle: const Text('Môn học'),
-                              trailing: Container(
-                                width: 48.0,
-                                height: 48.0,
-                                clipBehavior: Clip.hardEdge,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset(
-                                  'assets/dog.jpeg',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            const Divider(
-                              color: Colors.grey,
-                              indent: 24.0,
-                              endIndent: 24.0,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_month,
-                                        color: Theme.of(context).hintColor,
-                                      ),
-                                      const Text('01/01/2023'),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.watch_later_rounded,
-                                        color: Theme.of(context).hintColor,
-                                      ),
-                                      const Text('10:30 AM'),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: const [
-                                      Icon(
-                                        Icons.fiber_manual_record,
-                                        color: Colors.green,
-                                        size: 14,
-                                      ),
-                                      Text('Confirmed'),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      margin: const EdgeInsets.only(
-                                        left: 8.0,
-                                        right: 8.0,
-                                        bottom: 8.0,
-                                      ),
-                                      height: 42.0,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade400,
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'Hủy',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .button,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      margin: const EdgeInsets.only(
-                                        left: 8.0,
-                                        right: 8.0,
-                                        bottom: 8.0,
-                                      ),
-                                      height: 42.0,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                        color: Theme.of(context)
-                                            .buttonTheme
-                                            .colorScheme
-                                            ?.primary,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'Đặt lại',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .button,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  );
+              child: BlocBuilder<ScheduleCubit, ScheduleState>(
+                builder: (context, state) {
+                  if (state is ScheduleInitial) {
+                    context.read<ScheduleCubit>().fetchSchedules('123');
+                  }
+                  if (state is ScheduleLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (state is ScheduleFetched) {
+                    return ListView.builder(
+                      itemCount: state.schedules.length,
+                      itemBuilder: (context, index) {
+                        return ScheduleCard(
+                          schedule: state.schedules[index],
+                          cancel: () async => context
+                              .read<ScheduleCubit>()
+                              .cancelSchedule(state.schedules[index]),
+                          undo: () =>
+                              context.read<ScheduleCubit>().undoSchedule(),
+                        );
+                      },
+                    );
+                  }
+                  return const SizedBox();
                 },
               ),
             ),

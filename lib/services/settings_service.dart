@@ -1,4 +1,4 @@
-import 'package:consultant/models/parent.dart';
+import 'package:consultant/models/parent_model.dart';
 import 'package:consultant/repositories/settings_repository.dart';
 
 class SettingsService {

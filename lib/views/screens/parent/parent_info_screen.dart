@@ -1,4 +1,4 @@
-import 'package:consultant/models/parent.dart';
+import 'package:consultant/models/parent_model.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

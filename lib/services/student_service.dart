@@ -1,6 +1,6 @@
 import 'package:consultant/repositories/student_repository.dart';
 
-import '../models/student.dart';
+import '../models/student_model.dart';
 
 class StudentService {
   final StudentRepository _repository;

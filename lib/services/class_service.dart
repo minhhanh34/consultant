@@ -1,10 +1,13 @@
+import 'package:consultant/models/student_model.dart';
 import 'package:consultant/repositories/class_repository.dart';
+import 'package:consultant/repositories/class_student_subcollection_repository.dart';
 
 import '../models/class_model.dart';
 
 class ClassService {
   final ClassRepository _repository;
-  ClassService(this._repository);
+  final ClassStudentRepository _classStudentRepository;
+  ClassService(this._repository, this._classStudentRepository);
   Future<Class> create(Class item) async {
     return await _repository.create(item);
   }
@@ -33,5 +36,9 @@ class ClassService {
         doc.data() as Map<String, dynamic>,
       ).copyWith(id: doc.id);
     }).toList();
+  }
+
+  Future<Student> addStudentToClass(String id, Student student) async {
+    return await _classStudentRepository.create(id, student);
   }
 }

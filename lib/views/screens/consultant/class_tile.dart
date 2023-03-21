@@ -55,13 +55,14 @@ class ClassTile extends StatelessWidget {
         ],
       ),
       child: ListTile(
+        onTap: () => context.push('/ClassDetail', extra: consultantClass),
         leading: Avatar(
           imageUrl: consultantClass.avtPath,
           radius: 24.0,
         ),
         title: Text(consultantClass.name),
         subtitle: Text('Môn ${consultantClass.subject.name}'),
-        trailing: Text(consultantClass.studentSize.toString()),
+        trailing: Text('Số lượng\n      ${consultantClass.studentSize}'),
       ),
     );
   }

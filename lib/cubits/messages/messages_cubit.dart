@@ -22,4 +22,8 @@ class MessageCubit extends Cubit<MessageState> {
   Future<ChatRoom> createChatRoom(ChatRoom room) async {
     return await _service.createRoom(room);
   }
+
+  Future<ChatRoom> checkRoom(ChatRoom room) async {
+    return await _service.checkRoom(room);
+  }
 }

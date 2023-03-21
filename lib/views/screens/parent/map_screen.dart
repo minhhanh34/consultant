@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapScreen extends StatefulWidget {
@@ -112,23 +113,34 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Maps'),
-        elevation: 0,
-      ),
       body: SafeArea(
-        child: GoogleMap(
-          mapType: MapType.hybrid,
-          initialCameraPosition: _cameraPosition,
-          onMapCreated: (controller) {
-            _controller.complete(controller);
-          },
-          markers: Set.of(_makers),
-          // circles: Set.of(circles),
-          myLocationButtonEnabled: true,
-          myLocationEnabled: true,
-          // zoomControlsEnabled: true,
-          // mapToolbarEnabled: true,
+        child: Stack(
+          children: [
+            GoogleMap(
+              mapType: MapType.hybrid,
+              initialCameraPosition: _cameraPosition,
+              onMapCreated: (controller) {
+                _controller.complete(controller);
+              },
+              markers: Set.of(_makers),
+              // circles: Set.of(circles),
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
+              // zoomControlsEnabled: true,
+              // mapToolbarEnabled: true,
+            ),
+            Container(
+              margin: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: Colors.white54,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+              ),
+            ),
+          ],
         ),
       ),
     );

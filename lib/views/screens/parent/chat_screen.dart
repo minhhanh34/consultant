@@ -184,10 +184,11 @@ class _ChatBubblesState extends State<ChatBubbles> {
       reverse: true,
       itemCount: widget.messages.length,
       itemBuilder: (context, index) => Slidable(
+        key: UniqueKey(),
         enabled: !widget.messages[index].recall,
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
-          extentRatio: 0.4,
+          extentRatio: 0.15,
           children: [
             SlidableAction(
               onPressed: (context) => showAlert(
@@ -195,8 +196,10 @@ class _ChatBubblesState extends State<ChatBubbles> {
                 roomId: widget.room.id!,
                 messageIndex: index,
               ),
-              label: 'Thu hồi',
-              icon: Icons.undo,
+              backgroundColor: Colors.red,
+              borderRadius: BorderRadius.circular(24.0),
+              icon: Icons.rotate_left_outlined,
+              autoClose: true,
             ),
           ],
         ),

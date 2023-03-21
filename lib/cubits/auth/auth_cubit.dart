@@ -5,5 +5,6 @@ import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._service) : super(AuthInitial());
+  // ignore: unused_field
   final AuthService _service;
 }

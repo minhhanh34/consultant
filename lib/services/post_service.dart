@@ -9,4 +9,8 @@ class PostService {
     return await _repository.create(post);
   }
   
+
+  Future<List<Post>> list() async {
+    return await _repository.list();
+  }
 }

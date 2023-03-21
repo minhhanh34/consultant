@@ -1,8 +1,11 @@
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/app/app_cubit.dart';
 import 'package:consultant/cubits/chat/chat_cubit.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_app/consultant_app_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_settings/consultant_settings_cubit.dart';
 import 'package:consultant/cubits/filter/filter_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
 import 'package:consultant/cubits/messages/messages_cubit.dart';
@@ -12,6 +15,7 @@ import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/cubits/settings/settings_cubit.dart';
 import 'package:consultant/firebase_options.dart';
 import 'package:consultant/repositories/class_repository.dart';
+import 'package:consultant/repositories/class_student_subcollection_repository.dart';
 import 'package:consultant/repositories/message_repository.dart';
 import 'package:consultant/repositories/comment_repository.dart';
 import 'package:consultant/repositories/consultant_repository.dart';
@@ -26,6 +30,7 @@ import 'package:consultant/services/message_service.dart';
 import 'package:consultant/services/post_service.dart';
 import 'package:consultant/services/schedule_service.dart';
 import 'package:consultant/services/settings_service.dart';
+import 'package:consultant/views/screens/consultant/class_detail.dart';
 import 'package:consultant/views/screens/consultant/consultant_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,9 +41,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 
+import 'models/class_model.dart';
 import 'models/comment_model.dart';
 import 'models/consultant_model.dart';
 import 'models/parent_model.dart';
+import 'views/screens/consultant/camera_screen.dart';
 import 'views/screens/parent/all_comment_screen.dart';
 import 'views/screens/parent/chat_screen.dart';
 import 'views/screens/parent/consultant_detail_screen.dart';
@@ -53,8 +60,10 @@ import 'views/screens/parent/welcome_screen.dart';
 
 late final FirebaseApp _app;
 late final FirebaseAuth _auth;
+late final List<CameraDescription> _cameras;
 
 FirebaseApp get app => _app;
+List<CameraDescription> get cameras => _cameras;
 
 void main() async {
   final flutterBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -117,11 +126,18 @@ class ConsultantApp extends StatelessWidget {
         BlocProvider(
           create: (_) => ConsultantHomeCubit(
             ScheduleService(ScheduleRepository()),
-            ClassService(ClassRepository()),
+            ClassService(ClassRepository(), ClassStudentRepository()),
           ),
         ),
         BlocProvider(
-          create: (_) => ClassCubit(ClassService(ClassRepository())),
+          create: (_) => ClassCubit(
+              ClassService(ClassRepository(), ClassStudentRepository())),
+        ),
+        BlocProvider(
+          create: (_) => ConsultantAppCubit(),
+        ),
+        BlocProvider(
+          create: (_) => ConsultantSettingsCubit(consultantService),
         ),
       ],
       child: MaterialApp.router(
@@ -202,6 +218,16 @@ final _router = GoRouter(
     GoRoute(
       path: '/ConsultantHome',
       builder: (context, state) => const ConsultantHomeScreen(),
+    ),
+    GoRoute(
+      path: '/ClassDetail',
+      builder: (context, state) => ClassDetail(classRoom: state.extra as Class),
+    ),
+    GoRoute(
+      path: '/Camera',
+      builder: (context, state) => CameraScreen(
+        cameras: state.extra as List<CameraDescription>,
+      ),
     ),
   ],
 );

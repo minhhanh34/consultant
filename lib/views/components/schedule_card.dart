@@ -1,4 +1,3 @@
-import 'package:consultant/cubits/app/app_state.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

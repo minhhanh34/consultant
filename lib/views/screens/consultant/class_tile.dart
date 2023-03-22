@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
@@ -55,7 +56,10 @@ class ClassTile extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        onTap: () => context.push('/ClassDetail', extra: consultantClass),
+        onTap: () {
+          context.push('/ClassDetail', extra: consultantClass);
+          context.read<ClassCubit>().goToClass();
+        },
         leading: Avatar(
           imageUrl: consultantClass.avtPath,
           radius: 24.0,

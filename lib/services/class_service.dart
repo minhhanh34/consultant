@@ -1,4 +1,6 @@
+import 'package:consultant/models/exercise_model.dart';
 import 'package:consultant/models/student_model.dart';
+import 'package:consultant/repositories/class_exercise_subcollection_repository.dart';
 import 'package:consultant/repositories/class_repository.dart';
 import 'package:consultant/repositories/class_student_subcollection_repository.dart';
 
@@ -7,7 +9,9 @@ import '../models/class_model.dart';
 class ClassService {
   final ClassRepository _repository;
   final ClassStudentRepository _classStudentRepository;
-  ClassService(this._repository, this._classStudentRepository);
+  final ClassExerciseRepository _classExerciseRepository;
+  ClassService(this._repository, this._classStudentRepository,
+      this._classExerciseRepository);
   Future<Class> create(Class item) async {
     return await _repository.create(item);
   }
@@ -40,5 +44,17 @@ class ClassService {
 
   Future<Student> addStudentToClass(String id, Student student) async {
     return await _classStudentRepository.create(id, student);
+  }
+
+  Future<List<Exercise>> fetchExercise(String id) async {
+    return await _classExerciseRepository.list(id);
+  }
+
+  Future<Exercise> createExercise(String id, Exercise exercise) async {
+    return await _classExerciseRepository.create(id, exercise);
+  }
+
+  Future<bool> deleteExcercise(String classId, String exerciseId) async {
+    return await _classExerciseRepository.delete(classId, exerciseId);
   }
 }

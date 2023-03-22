@@ -14,6 +14,7 @@ import 'package:consultant/cubits/schedules/schedules_cubit.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/cubits/settings/settings_cubit.dart';
 import 'package:consultant/firebase_options.dart';
+import 'package:consultant/repositories/class_exercise_subcollection_repository.dart';
 import 'package:consultant/repositories/class_repository.dart';
 import 'package:consultant/repositories/class_student_subcollection_repository.dart';
 import 'package:consultant/repositories/message_repository.dart';
@@ -126,12 +127,13 @@ class ConsultantApp extends StatelessWidget {
         BlocProvider(
           create: (_) => ConsultantHomeCubit(
             ScheduleService(ScheduleRepository()),
-            ClassService(ClassRepository(), ClassStudentRepository()),
+            ClassService(ClassRepository(), ClassStudentRepository(),
+                ClassExerciseRepository()),
           ),
         ),
         BlocProvider(
-          create: (_) => ClassCubit(
-              ClassService(ClassRepository(), ClassStudentRepository())),
+          create: (_) => ClassCubit(ClassService(ClassRepository(),
+              ClassStudentRepository(), ClassExerciseRepository())),
         ),
         BlocProvider(
           create: (_) => ConsultantAppCubit(),

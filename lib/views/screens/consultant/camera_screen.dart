@@ -19,7 +19,7 @@ class _CameraScreenState extends State<CameraScreen> {
     _initializeCameraFuture = _controller.initialize().then((value) {
       if (!mounted) return;
       setState(() {});
-    });
+    }).catchError((error) {});
   }
 
   @override

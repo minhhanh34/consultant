@@ -1,12 +1,16 @@
-import 'dart:io';
-
-import 'package:badges/badges.dart';
 import 'package:camera/camera.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_class/class_state.dart';
 import 'package:consultant/models/class_model.dart';
+import 'package:consultant/views/components/center_circular_indicator.dart';
+import 'package:consultant/views/screens/consultant/exercise_tile.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../models/exercise_model.dart';
 
 class ClassDetail extends StatefulWidget {
   const ClassDetail({Key? key, required this.classRoom}) : super(key: key);
@@ -245,17 +249,53 @@ class _ClassDetailState extends State<ClassDetail>
                           ),
                           const SizedBox(width: 16),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.read<ClassCubit>().createExercise(
+                                    '3va8glsR7Gl3suoLE5Wz',
+                                    Exercise(
+                                      title: _textController.text,
+                                      timeCreated: DateTime.now(),
+                                    ),
+                                  );
+                              setState(() {
+                                _textController.clear();
+                                filePickerResult = null;
+                                visibleTextField = false;
+                              });
+                            },
                             child: const Text('Thêm'),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
             ],
-          )
+          ),
+          Expanded(
+            child: BlocBuilder<ClassCubit, ClassState>(
+              builder: (context, state) {
+                if (state is ClassExerciseInitial) {
+                  context
+                      .read<ClassCubit>()
+                      .fetchExercises('3va8glsR7Gl3suoLE5Wz');
+                }
+                if (state is ClassLoading) {
+                  return const CenterCircularIndicator();
+                }
+                if (state is ClassExerciseFetched) {
+                  return ListView.builder(
+                    itemCount: state.exercises.length,
+                    itemBuilder: (context, index) => ExerciseTile(
+                      exercise: state.exercises[index],
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
+          ),
         ],
       ),
     );

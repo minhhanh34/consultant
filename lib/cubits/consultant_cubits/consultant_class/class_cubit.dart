@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:consultant/cubits/consultant_cubits/consultant_class/class_state.dart';
 import 'package:consultant/models/exercise_model.dart';
 import 'package:consultant/services/class_service.dart';
@@ -35,7 +33,7 @@ class ClassCubit extends Cubit<ClassState> {
 
   void fetchExercises(String id) async {
     emit(ClassLoading());
-    _exercises ??= await _service.fetchExercise(id);
+    _exercises = await _service.fetchExercise(id);
     emit(ClassExerciseFetched(_exercises!));
   }
 
@@ -45,5 +43,12 @@ class ClassCubit extends Cubit<ClassState> {
     await _service.deleteExcercise(classId, exercise.id!);
     _exercises?.remove(exercise);
     emit(ClassExerciseFetched(_exercises!));
+   
   }
+
+  void onLoading() => emit(ClassLoading());
+
+  // Future<void> downloadFileAttach(String path) async {
+
+  // }
 }

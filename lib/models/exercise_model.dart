@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
@@ -8,51 +9,95 @@ import 'package:flutter/foundation.dart';
 class Exercise extends Equatable {
   final String? id;
   final String? title;
-  final List<String>? fileUrls;
   final DateTime timeCreated;
   final DateTime? timeIsUp;
+  final List<FileName>? fileNames;
   const Exercise({
     required this.timeCreated,
     this.id,
     this.title,
-    this.fileUrls,
     this.timeIsUp,
+    this.fileNames,
   });
 
   Exercise copyWith({
     String? id,
     String? title,
-    List<String>? fileUrls,
     DateTime? timeCreated,
     DateTime? timeIsUp,
+    List<FileName>? fileNames,
   }) {
     return Exercise(
       id: id ?? this.id,
       title: title ?? this.title,
-      fileUrls: fileUrls ?? this.fileUrls,
       timeCreated: timeCreated ?? this.timeCreated,
       timeIsUp: timeIsUp ?? this.timeIsUp,
+      fileNames: fileNames ?? this.fileNames,
     );
   }
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'title': title,
-      'fileUrls': fileUrls,
       'timeCreated': timeCreated,
       'timeIsUp': timeIsUp,
+      'fileNames': fileNames?.map((e) => e.toJson()).toList(),
     };
   }
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
     return Exercise(
-      timeIsUp: (json['timeIsUp'] as Timestamp).toDate(),
+      timeIsUp: (json['timeIsUp'] as Timestamp?)?.toDate(),
       timeCreated: (json['timeCreated'] as Timestamp).toDate(),
       title: json['title'] as String?,
-      fileUrls: (json['fileUrls'] as List?)?.map((e) => e as String).toList(),
+      fileNames: (json['fileNames'] as List?)
+          ?.map((e) => FileName.fromJson(e))
+          .toList(),
     );
   }
 
   @override
   List<Object> get props => [id!, timeCreated];
+}
+
+class FileName extends Equatable {
+  final String url;
+  final String name;
+  final String storageName;
+  const FileName({
+    required this.url,
+    required this.name,
+    required this.storageName,
+  });
+
+  FileName copyWith({
+    String? url,
+    String? name,
+    String? storageName,
+  }) {
+    return FileName(
+      url: url ?? this.url,
+      name: name ?? this.name,
+      storageName: storageName ?? this.storageName,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'url': url,
+      'name': name,
+      'storageName': storageName,
+    };
+  }
+
+  factory FileName.fromJson(Map<String, dynamic> json) {
+    return FileName(
+      url: json['url'] as String,
+      name: json['name'] as String,
+      storageName: json['storageName'] as String,
+    );
+  }
+
+  @override
+  List<Object?> get props => [url, name, storageName];
 }

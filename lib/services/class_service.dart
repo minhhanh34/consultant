@@ -10,8 +10,12 @@ class ClassService {
   final ClassRepository _repository;
   final ClassStudentRepository _classStudentRepository;
   final ClassExerciseRepository _classExerciseRepository;
-  ClassService(this._repository, this._classStudentRepository,
-      this._classExerciseRepository);
+
+  ClassService(
+    this._repository,
+    this._classStudentRepository,
+    this._classExerciseRepository,
+  );
   Future<Class> create(Class item) async {
     return await _repository.create(item);
   }

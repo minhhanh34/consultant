@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_class/class_state.dart';
 import 'package:consultant/models/class_model.dart';
+import 'package:consultant/services/firebase_storage_service.dart';
 import 'package:consultant/views/components/center_circular_indicator.dart';
 import 'package:consultant/views/screens/consultant/exercise_tile.dart';
 import 'package:file_picker/file_picker.dart';
@@ -46,6 +47,7 @@ class _ClassDetailState extends State<ClassDetail>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         elevation: 0,
         title: Text(widget.classRoom.name),
@@ -116,6 +118,8 @@ class _ClassDetailState extends State<ClassDetail>
                   title: TextField(
                     controller: _textController,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       border: const OutlineInputBorder(),
                       suffixIcon: InkWell(
                         onTap: () async {
@@ -249,12 +253,31 @@ class _ClassDetailState extends State<ClassDetail>
                           ),
                           const SizedBox(width: 16),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              context.read<ClassCubit>().onLoading();
+                              List<FileName> fileNames = [];
+                              final storageService = FirebaseStorageService();
+                              if (filePickerResult != null) {
+                                fileNames =
+                                    await storageService.createExerciseFiles(
+                                  filePickerResult!.paths,
+                                );
+                              }
+
+                              if (!mounted) return;
+
+                              for (int i = 0; i < fileNames.length; i++) {
+                                fileNames[i] = fileNames[i].copyWith(
+                                  name: filePickerResult?.names[i] ?? '',
+                                );
+                              }
                               context.read<ClassCubit>().createExercise(
                                     '3va8glsR7Gl3suoLE5Wz',
                                     Exercise(
                                       title: _textController.text,
                                       timeCreated: DateTime.now(),
+                                      fileNames: fileNames,
                                     ),
                                   );
                               setState(() {
@@ -276,6 +299,7 @@ class _ClassDetailState extends State<ClassDetail>
           Expanded(
             child: BlocBuilder<ClassCubit, ClassState>(
               builder: (context, state) {
+                print(state);
                 if (state is ClassExerciseInitial) {
                   context
                       .read<ClassCubit>()
@@ -285,7 +309,10 @@ class _ClassDetailState extends State<ClassDetail>
                   return const CenterCircularIndicator();
                 }
                 if (state is ClassExerciseFetched) {
-                  return ListView.builder(
+                  return ListView.separated(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 16),
                     itemCount: state.exercises.length,
                     itemBuilder: (context, index) => ExerciseTile(
                       exercise: state.exercises[index],

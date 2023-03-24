@@ -39,6 +39,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 
@@ -83,6 +84,12 @@ void main() async {
   String password = 'hanh123';
   await _auth.signInWithEmailAndPassword(email: email, password: password);
 
+  // final storage = FirebaseStorageService();
+  await FlutterDownloader.initialize(
+    debug: true,
+    ignoreSsl: true,
+  );
+  // await storage.ref.child('exercises').child('abc').putString('ad');
   runApp(const ConsultantApp());
 }
 
@@ -127,13 +134,21 @@ class ConsultantApp extends StatelessWidget {
         BlocProvider(
           create: (_) => ConsultantHomeCubit(
             ScheduleService(ScheduleRepository()),
-            ClassService(ClassRepository(), ClassStudentRepository(),
-                ClassExerciseRepository()),
+            ClassService(
+              ClassRepository(),
+              ClassStudentRepository(),
+              ClassExerciseRepository(),
+            ),
           ),
         ),
         BlocProvider(
-          create: (_) => ClassCubit(ClassService(ClassRepository(),
-              ClassStudentRepository(), ClassExerciseRepository())),
+          create: (_) => ClassCubit(
+            ClassService(
+              ClassRepository(),
+              ClassStudentRepository(),
+              ClassExerciseRepository(),
+            ),
+          ),
         ),
         BlocProvider(
           create: (_) => ConsultantAppCubit(),

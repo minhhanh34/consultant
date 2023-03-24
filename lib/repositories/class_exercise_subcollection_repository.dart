@@ -51,6 +51,7 @@ class ClassExerciseRepository implements RepositoryWithSubCollection<Exercise> {
     try {
       final querySnaps =
           await _collection.doc(id).collection(_subCollection).get();
+
       return querySnaps.docs.map((doc) {
         return Exercise.fromJson(doc.data()).copyWith(id: doc.id);
       }).toList();

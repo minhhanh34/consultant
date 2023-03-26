@@ -22,7 +22,7 @@ class SettingsContainer extends StatelessWidget {
                 'Cài đặt',
                 style: Theme.of(context)
                     .textTheme
-                    .headline5
+                    .headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
@@ -43,7 +43,7 @@ class SettingsContainer extends StatelessWidget {
                         ),
                         title: Text(
                           state.parent.name,
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                         subtitle: Text(state.parent.email),
                       ),

@@ -73,4 +73,6 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
     await _scheduleService.update(schedule);
     emit(ConsultantHomeFetched(_schedules!, _classes!));
   }
+
+ 
 }

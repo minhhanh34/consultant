@@ -7,12 +7,14 @@ class Student extends Equatable {
   final DateTime birthDay;
   final String address;
   final int grade;
+  final String gender;
   const Student({
     this.id,
     required this.name,
     required this.birthDay,
     required this.address,
     required this.grade,
+    required this.gender,
   });
 
   factory Student.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class Student extends Equatable {
       birthDay: (json['birthDay'] as Timestamp).toDate(),
       address: json['address'],
       grade: json['grade'],
+      gender: json['gender'] as String,
     );
   }
 
@@ -30,6 +33,7 @@ class Student extends Equatable {
       'birthDay': birthDay,
       'address': address,
       'grade': grade,
+      'gender': gender,
     };
   }
 
@@ -39,16 +43,20 @@ class Student extends Equatable {
     DateTime? birthDay,
     String? address,
     int? grade,
+    String? gender,
   }) {
     return Student(
-      id: id?? this.id,
+      id: id ?? this.id,
       name: name ?? this.name,
       birthDay: birthDay ?? this.birthDay,
       address: address ?? this.address,
       grade: grade ?? this.grade,
+      gender: gender ?? this.gender,
     );
   }
 
   @override
-  List<Object?> get props => [name, birthDay, address, grade];
+  List<Object?> get props => [name, birthDay, address, grade, gender];
 }
+
+

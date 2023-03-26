@@ -23,7 +23,7 @@ class MessagesContainer extends StatelessWidget {
               'Tin nhắn',
               style: Theme.of(context)
                   .textTheme
-                  .headline5
+                  .headlineSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),

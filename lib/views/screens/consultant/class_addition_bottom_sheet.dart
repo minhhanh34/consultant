@@ -64,7 +64,7 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     'Thêm lớp học',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 Padding(

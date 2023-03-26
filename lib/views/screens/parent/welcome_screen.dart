@@ -24,7 +24,7 @@ class WelcomeScreen extends StatelessWidget {
             Image.asset('assets/welcome_image.png'),
             Text(
               'Teacher Appointment',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(
               height: 16.0,

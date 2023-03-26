@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:consultant/services/downloader_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -64,21 +64,26 @@ class FileName extends Equatable {
   final String url;
   final String name;
   final String storageName;
+  final DownloadState state;
+
   const FileName({
     required this.url,
     required this.name,
     required this.storageName,
+    this.state = DownloadState.unDownload,
   });
 
   FileName copyWith({
     String? url,
     String? name,
     String? storageName,
+    DownloadState? state,
   }) {
     return FileName(
       url: url ?? this.url,
       name: name ?? this.name,
       storageName: storageName ?? this.storageName,
+      state: state ?? this.state,
     );
   }
 
@@ -97,6 +102,8 @@ class FileName extends Equatable {
       storageName: json['storageName'] as String,
     );
   }
+
+
 
   @override
   List<Object?> get props => [url, name, storageName];

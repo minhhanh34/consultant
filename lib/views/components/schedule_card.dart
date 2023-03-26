@@ -49,7 +49,7 @@ class ScheduleCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
             'Thông tin',
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
         Container(
@@ -158,7 +158,7 @@ class ScheduleCard extends StatelessWidget {
                           child: Center(
                             child: Text(
                               cancelLabel,
-                              style: Theme.of(context).primaryTextTheme.button,
+                              style: Theme.of(context).primaryTextTheme.labelLarge,
                             ),
                           ),
                         ),
@@ -188,7 +188,7 @@ class ScheduleCard extends StatelessWidget {
                           child: Center(
                             child: Text(
                               confirmLabel,
-                              style: Theme.of(context).primaryTextTheme.button,
+                              style: Theme.of(context).primaryTextTheme.labelLarge,
                             ),
                           ),
                         ),

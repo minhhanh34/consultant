@@ -67,7 +67,7 @@ class _SearchingContainerState extends State<SearchingContainer>
                     'Tìm kiếm',
                     style: Theme.of(context)
                         .textTheme
-                        .headline5
+                        .headlineSmall
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   backgroundColor: Colors.white,
@@ -108,7 +108,7 @@ class _SearchingContainerState extends State<SearchingContainer>
                       children: [
                         Text(
                           'Lọc',
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const Spacer(),
                         InkWell(

@@ -126,7 +126,7 @@ class _HomeContainerState extends State<HomeContainer>
                                     'Tìm gia sư',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .headline6
+                                        .titleLarge
                                         ?.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -201,7 +201,7 @@ class _HomeContainerState extends State<HomeContainer>
                         color: Theme.of(context).primaryColor),
                     title: Text(
                       'Đăng bài tìm gia sư',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).primaryColor,
                           ),
@@ -218,7 +218,7 @@ class _HomeContainerState extends State<HomeContainer>
                           children: [
                             Text(
                               'Môn học',
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context).textTheme.titleLarge,
                             ),
                             const Spacer(),
                             const Icon(Icons.arrow_forward_ios_rounded),
@@ -323,7 +323,7 @@ class _HomeContainerState extends State<HomeContainer>
                       children: [
                         Text(
                           'Phổ biến',
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const Spacer(),
                         InkWell(

@@ -154,13 +154,13 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                         child: Text(
                           textAlign: TextAlign.center,
                           widget.consultant.name,
-                          style: Theme.of(context).primaryTextTheme.headline6,
+                          style: Theme.of(context).primaryTextTheme.titleLarge,
                         ),
                       ),
                       Text(
                         textAlign: TextAlign.center,
                         widget.consultant.subjectsToString(),
-                        style: Theme.of(context).primaryTextTheme.subtitle1,
+                        style: Theme.of(context).primaryTextTheme.titleMedium,
                       ),
                       const SizedBox(
                         height: 16.0,
@@ -232,7 +232,7 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                     child: Text(
                                       'Môn ${subject.name}',
                                       style:
-                                          Theme.of(context).textTheme.headline6,
+                                          Theme.of(context).textTheme.titleLarge,
                                     ),
                                   ),
                                   Padding(

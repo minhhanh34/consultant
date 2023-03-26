@@ -12,17 +12,17 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
   late CameraController _controller;
-  late Future<void> _initializeCameraFuture;
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _controller = CameraController(widget.cameras[0], ResolutionPreset.max);
-    _initializeCameraFuture = _controller.initialize().then((value) {
-      if (!mounted) return;
-      setState(() {});
-    }).catchError((error) {});
-  }
+  // late Future<void> _initializeCameraFuture;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addObserver(this);
+  //   _controller = CameraController(widget.cameras[0], ResolutionPreset.max);
+  //   _initializeCameraFuture = _controller.initialize().then((value) {
+  //     if (!mounted) return;
+  //     setState(() {});
+  //   }).catchError((error) {});
+  // }
 
   @override
   void dispose() {
@@ -31,19 +31,19 @@ class _CameraScreenState extends State<CameraScreen>
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    final CameraController? cameraController = _controller;
-    if (cameraController == null || !cameraController.value.isInitialized) {
-      return;
-    }
-    if (state == AppLifecycleState.inactive) {
-      cameraController.dispose();
-    } else if (state == AppLifecycleState.resumed) {
-      return;
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   super.didChangeAppLifecycleState(state);
+  //   final CameraController? cameraController = _controller;
+  //   if (cameraController == null || !cameraController.value.isInitialized) {
+  //     return;
+  //   }
+  //   if (state == AppLifecycleState.inactive) {
+  //     cameraController.dispose();
+  //   } else if (state == AppLifecycleState.resumed) {
+  //     return;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +56,12 @@ class _CameraScreenState extends State<CameraScreen>
           const SizedBox(height: 16),
           GestureDetector(
             onTap: () async {
-              try {
-                await _initializeCameraFuture;
-                final XFile file = await _controller.takePicture();
-              } catch (e) {
-                print(e);
-              }
+              // try {
+              //   await _initializeCameraFuture;
+              //   final XFile file = await _controller.takePicture();
+              // } catch (e) {
+              //   print(e);
+              // }
             },
             child: Align(
               alignment: Alignment.center,

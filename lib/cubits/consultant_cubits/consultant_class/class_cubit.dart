@@ -18,9 +18,9 @@ class ClassCubit extends Cubit<ClassState> {
   List<Exercise>? _exercises;
   List<Student>? _students;
 
-  void fetchClasses(String id) async {
-    _classes ??= await _service.fetchClasses(id);
-  }
+  // void fetchClasses(String id) async {
+  //   _classes ??= await _service.fetchClasses(id);
+  // }
 
   Future<Class> createClass(Class cla) async {
     emit(ClassLoading());
@@ -33,31 +33,31 @@ class ClassCubit extends Cubit<ClassState> {
   void createExercise(String id, Exercise exercise) async {
     final newExc = await _service.createExercise(id, exercise);
     _exercises?.add(newExc);
-    emit(ClassExerciseFetched(_exercises!));
+    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
   }
 
-  void fetchExercises(String id) async {
-    emit(ClassLoading());
-    _exercises = await _service.fetchExercise(id);
-    emit(ClassExerciseFetched(_exercises!));
-  }
+  // void fetchExercises(String id) async {
+  //   emit(ClassLoading());
+  //   _exercises = await _service.fetchExercise(id);
+  //   emit(ClassExerciseFetched(_exercises!));
+  // }
 
-  void goToClass() => emit(ClassExerciseInitial());
+  void goToClass() => emit(ClassInitial());
 
   void deleteExcercise(String classId, Exercise exercise) async {
     await _service.deleteExcercise(classId, exercise.id!);
     _exercises?.remove(exercise);
-    emit(ClassExerciseFetched(_exercises!));
+    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
   }
 
   void onLoading() => emit(ClassLoading());
 
   Future<void> downloadFileAttach(FileName fileName) async {
     changeStateForFileName(fileName, DownloadState.downloading);
-    emit(ClassExerciseFetched(_exercises!));
+    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
     await downloader.download(fileName);
     changeStateForFileName(fileName, DownloadState.downloaded);
-    emit(ClassExerciseFetched(_exercises!));
+    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
   }
 
   void changeStateForFileName(FileName fileName, DownloadState state) {
@@ -75,7 +75,7 @@ class ClassCubit extends Cubit<ClassState> {
       final dir = await getExternalStorageDirectory();
       final path = '${dir!.path}/${fileName.name}';
       openFile(path);
-      previousState(oldState);
+      emit(oldState);
     } else if (fileName.state == DownloadState.unDownload) {
       downloadFileAttach(fileName);
     }
@@ -87,18 +87,18 @@ class ClassCubit extends Cubit<ClassState> {
     return await File(path).exists();
   }
 
-  void previousState(ClassState oldState) => emit(oldState);
+  // void previousState(ClassState oldState) => emit(oldState);
 
-  Future<void> onRefresh() async {
-    _classes = null;
-    fetchClasses('3va8glsR7Gl3suoLE5Wz');
-  }
+  // Future<void> onRefresh() async {
+  //   _classes = null;
+  //   fetchClasses('3va8glsR7Gl3suoLE5Wz');
+  // }
 
-  void onMemberTab(String classId) async {
-    emit(ClassLoading());
-    _students ??= await _service.fetchStudents(classId);
-    emit(ClassStudentFetched(_students!));
-  }
+  // void onMemberTab(String classId) async {
+  //   emit(ClassLoading());
+  //   _students ??= await _service.fetchStudents(classId);
+  //   emit(ClassStudentFetched(_students!));
+  // }
 
   void fetchDetailClass(String classId) async {
     emit(ClassLoading());

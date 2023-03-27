@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_class/class_state.dart';
+
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/services/firebase_storage_service.dart';
 import 'package:consultant/views/components/center_circular_indicator.dart';
@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_filex/open_filex.dart';
 
+import '../../../cubits/consultant_cubits/consultant_class/class_state.dart';
 import '../../../models/exercise_model.dart';
 import 'member_tab.dart';
 
@@ -48,6 +49,7 @@ class _ClassDetailState extends State<ClassDetail>
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ClassCubit>();
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
@@ -316,9 +318,7 @@ class _ClassDetailState extends State<ClassDetail>
                   },
                   builder: (context, state) {
                     if (state is ClassInitial) {
-                      context
-                          .read<ClassCubit>()
-                          .fetchDetailClass('3va8glsR7Gl3suoLE5Wz');
+                      cubit.fetchDetailClass('3va8glsR7Gl3suoLE5Wz');
                     }
                     if (state is ClassLoading) {
                       return const CenterCircularIndicator();
@@ -334,7 +334,8 @@ class _ClassDetailState extends State<ClassDetail>
                         ),
                       );
                     }
-                    return const SizedBox();
+
+                    return const CenterCircularIndicator();
                   },
                 ),
               ),

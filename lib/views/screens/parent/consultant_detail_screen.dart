@@ -231,8 +231,9 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                         vertical: 8.0),
                                     child: Text(
                                       'Môn ${subject.name}',
-                                      style:
-                                          Theme.of(context).textTheme.titleLarge,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge,
                                     ),
                                   ),
                                   Padding(
@@ -396,20 +397,24 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    context.read<ScheduleCubit>().bookSchedule(
-                                          Schedule(
-                                            parentId: '123',
-                                            consultantId: widget.consultant.id!,
-                                            consultantName:
-                                                widget.consultant.name,
-                                            subjectName: widget
-                                                .consultant.subjects[0].name,
-                                            dateTime: DateTime.now(),
-                                            state: ScheduleStates.upComing,
-                                          ),
-                                        );
+                                    call();
+                                    // context.read<ScheduleCubit>().bookSchedule(
+                                    //       Schedule(
+                                    //         parentId: '123',
+                                    //         consultantId: widget.consultant.id!,
+                                    //         consultantName:
+                                    //             widget.consultant.name,
+                                    //         subjectName: widget
+                                    //             .consultant.subjects[0].name,
+                                    //         dateTime: DateTime.now(),
+                                    //         state: ScheduleStates.upComing,
+                                    //       ),
+                                    //     );
                                   },
                                   style: ButtonStyle(
+                                    padding: MaterialStateProperty.all(
+                                      const EdgeInsets.all(8),
+                                    ),
                                     shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
                                         borderRadius:
@@ -417,7 +422,17 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                       ),
                                     ),
                                   ),
-                                  child: const Text('Đặt lịch hẹn'),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.phone),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        widget.consultant.phone,
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

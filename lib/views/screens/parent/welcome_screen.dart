@@ -43,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
                   width: 120.0,
                   height: 44.0,
                   child: ElevatedButton(
-                    onPressed: () => context.go('/Login'),
+                    onPressed: () => context.go('/SignIn'),
                     child: const Text('Log in'),
                   ),
                 ),
@@ -51,11 +51,19 @@ class WelcomeScreen extends StatelessWidget {
                   width: 120.0,
                   height: 44.0,
                   child: ElevatedButton(
-                    onPressed: () => context.go('/Signup'),
+                    onPressed: () => context.go('/SignUp'),
                     child: const Text('Sign up'),
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextButton(
+                onPressed: () => context.go('/Enroll'),
+                child: const Text('Dành cho học sinh'),
+              ),
             ),
           ],
         ),

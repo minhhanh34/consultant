@@ -33,6 +33,8 @@ import 'package:consultant/services/schedule_service.dart';
 import 'package:consultant/services/settings_service.dart';
 import 'package:consultant/views/screens/consultant/class_detail.dart';
 import 'package:consultant/views/screens/consultant/consultant_home_screen.dart';
+import 'package:consultant/views/screens/sign_screen/sign_in_screen.dart';
+import 'package:consultant/views/screens/student/enroll_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -83,13 +85,6 @@ void main() async {
   String password = 'hanh123';
   await _auth.signInWithEmailAndPassword(email: email, password: password);
 
-  // final storage = FirebaseStorageService();
-  // await FlutterDownloader.initialize(
-  //   debug: true,
-  //   ignoreSsl: true,
-  // );
-
-  // await storage.ref.child('exercises').child('abc').putString('ad');
   runApp(const ConsultantApp());
 }
 
@@ -171,7 +166,7 @@ class ConsultantApp extends StatelessWidget {
 }
 
 final _router = GoRouter(
-  initialLocation: '/ConsultantHome',
+  initialLocation: '/SignIn',
   routes: <RouteBase>[
     GoRoute(
       path: '/',
@@ -188,11 +183,11 @@ final _router = GoRouter(
       builder: (context, state) => const WelcomeScreen(),
     ),
     GoRoute(
-      path: '/Login',
+      path: '/SignIn',
       builder: (context, state) => const LogInScreen(),
     ),
     GoRoute(
-      path: '/Signup',
+      path: '/SignUp',
       builder: (context, state) => const SignUpScreen(),
     ),
     GoRoute(
@@ -246,5 +241,13 @@ final _router = GoRouter(
         cameras: state.extra as List<CameraDescription>,
       ),
     ),
+    GoRoute(
+      path: '/Enroll',
+      builder: (context, state) => const EnrollScreen(),
+    ),
+    // GoRoute(
+    //   path: '/SignUp',
+    //   builder: (context, state) => const SignInScreen(),
+    // ),
   ],
 );

@@ -22,32 +22,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
 
-        <!-- openfilex -->
-        <!-- tools:replace="android:authorities" -->
-        <!-- tools:replace="android:resource" -->
-        <!-- <provider
-                android:name="androidx.core.content.FileProvider"
-                android:authorities="${applicationId}.fileProvider"
-                android:exported="false"
-                android:grantUriPermissions="true"
-                >
-            <meta-data
-                    android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/filepaths"
-                     />
-        </provider> -->
-
-
-        <!-- flutter_downloader -->
-        <!-- <provider
-            android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
-            android:authorities="${applicationId}.flutter_downloader.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
-        </provider> -->
+    
 
 
 

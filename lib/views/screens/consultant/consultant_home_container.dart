@@ -65,7 +65,7 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
                       tabs: const [
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Text('Lịch hẹn'),
+                          child: Text('Thời khóa biểu'),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -15,6 +16,11 @@ class _LogInScreenState extends State<LogInScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          color: Colors.indigo,
+          onPressed: () => context.go('/Welcome'),
+          icon: const Icon(Icons.arrow_back),
+        ),
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: [
@@ -38,8 +44,8 @@ class _LogInScreenState extends State<LogInScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.0),
                         ),
-                        prefixIcon: const Icon(Icons.person),
-                        hintText: 'Enter Username',
+                        prefixIcon: const Icon(Icons.mail),
+                        hintText: 'example@gmail.com',
                       ),
                     ),
                     const SizedBox(
@@ -51,21 +57,28 @@ class _LogInScreenState extends State<LogInScreen> {
                           borderRadius: BorderRadius.circular(16.0),
                         ),
                         prefixIcon: const Icon(Icons.lock),
-                        hintText: 'Enter password',
+                        hintText: '********',
                         suffixIcon: InkWell(
                           onTap: () {
                             setState(() {
                               isHidePassword = !isHidePassword;
                             });
                           },
-                          child: const Icon(Icons.visibility_off),
+                          child: Icon(isHidePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility),
                         ),
                       ),
                       obscureText: isHidePassword,
                     ),
-                    const SizedBox(
-                      height: 32.0,
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: const Text('Quên mật khẩu?'),
+                      ),
                     ),
+                    const SizedBox(height: 16),
                     ElevatedButton(
                       style: ButtonStyle(
                         shape: MaterialStateProperty.all(
@@ -78,7 +91,7 @@ class _LogInScreenState extends State<LogInScreen> {
                         ),
                       ),
                       onPressed: () => context.go('/'),
-                      child: const Text('Log in'),
+                      child: const Text('Đăng nhập'),
                     ),
                   ],
                 ),
@@ -88,7 +101,7 @@ class _LogInScreenState extends State<LogInScreen> {
               ),
               TextButton(
                 onPressed: () => context.go('/Signup'),
-                child: const Text('Sign up'),
+                child: const Text('Đăng ký'),
               ),
             ],
           ),

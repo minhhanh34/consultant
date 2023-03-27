@@ -17,7 +17,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         elevation: 0,
         actions: [
           TextButton(
-            onPressed: () => context.go('/login'),
+            onPressed: () => context.go('/SignIn'),
             child: const Text('Log in'),
           ),
         ],
@@ -92,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: 16.0,
                     ),
                     ElevatedButton(
-                      onPressed: () => context.go('/Login'),
+                      onPressed: () => context.go('/SignIn'),
                       style: ButtonStyle(
                         fixedSize: MaterialStateProperty.all(
                           Size(MediaQuery.of(context).size.width, 48.0),

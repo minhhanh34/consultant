@@ -10,28 +10,24 @@ class MemberTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        BlocBuilder<ClassCubit, ClassState>(
-          builder: (context, state) {
-            if (state is ClassDetailFethed) {
-              if (state.students.isEmpty) {
-                return const Center(
-                  child: Text('Chưa có thành viên'),
-                );
-              }
-              return ListView.builder(
-                itemCount: state.students.length,
-                itemBuilder: (context, index) {
-                  return StudentTile(state.students[index]);
-                },
-              );
-            }
-            if (state is ClassLoading) return const CenterCircularIndicator();
-            return const SizedBox();
-          },
-        ),
-      ],
+    return BlocBuilder<ClassCubit, ClassState>(
+      builder: (context, state) {
+        if (state is ClassDetailFethed) {
+          if (state.students.isEmpty) {
+            return const Center(
+              child: Text('Chưa có thành viên'),
+            );
+          }
+          return ListView.builder(
+            itemCount: state.students.length,
+            itemBuilder: (context, index) {
+              return StudentTile(state.students[index]);
+            },
+          );
+        }
+        if (state is ClassLoading) return const CenterCircularIndicator();
+        return const SizedBox();
+      },
     );
   }
 }

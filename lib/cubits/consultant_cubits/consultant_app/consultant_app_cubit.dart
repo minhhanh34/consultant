@@ -12,12 +12,14 @@ class ConsultantAppCubit extends Cubit<ConsultantAppState> {
   void home() => emit(ConsultantHome());
   void posts() => emit(ConsultantPost());
   void settings() => emit(ConsultantSettings());
+  void message() => emit(ConsultantMessage());
 
   void handle(int value) {
     _bottomAppBarIndex = value;
     if (value == 0) home();
     if (value == 1) posts();
-    if (value == 2) settings();
+    if (value == 2) message();
+    if (value == 3) settings();
   }
 
   void setBottomAppBarIndex(int val) {

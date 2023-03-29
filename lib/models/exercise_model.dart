@@ -9,11 +9,13 @@ import 'package:flutter/foundation.dart';
 class Exercise extends Equatable {
   final String? id;
   final String? title;
+  final bool submissionEnabled;
   final DateTime timeCreated;
   final DateTime? timeIsUp;
   final List<FileName>? fileNames;
   const Exercise({
     required this.timeCreated,
+    required this.submissionEnabled,
     this.id,
     this.title,
     this.timeIsUp,
@@ -26,6 +28,7 @@ class Exercise extends Equatable {
     DateTime? timeCreated,
     DateTime? timeIsUp,
     List<FileName>? fileNames,
+    bool? submissionEnabled,
   }) {
     return Exercise(
       id: id ?? this.id,
@@ -33,6 +36,7 @@ class Exercise extends Equatable {
       timeCreated: timeCreated ?? this.timeCreated,
       timeIsUp: timeIsUp ?? this.timeIsUp,
       fileNames: fileNames ?? this.fileNames,
+      submissionEnabled: submissionEnabled ?? this.submissionEnabled,
     );
   }
 
@@ -42,6 +46,7 @@ class Exercise extends Equatable {
       'timeCreated': timeCreated,
       'timeIsUp': timeIsUp,
       'fileNames': fileNames?.map((e) => e.toJson()).toList(),
+      'submissionEnabled': submissionEnabled,
     };
   }
 
@@ -53,6 +58,7 @@ class Exercise extends Equatable {
       fileNames: (json['fileNames'] as List?)
           ?.map((e) => FileName.fromJson(e))
           .toList(),
+      submissionEnabled: json['submissionEnabled'] as bool,
     );
   }
 
@@ -102,8 +108,6 @@ class FileName extends Equatable {
       storageName: json['storageName'] as String,
     );
   }
-
-
 
   @override
   List<Object?> get props => [url, name, storageName];

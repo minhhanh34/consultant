@@ -13,4 +13,9 @@ class ConsultantSettingsCubit extends Cubit<ConsultantSettingsState> {
     _consultant ??= await _service.get(id);
     emit(ConsultantSettingsFetched(_consultant!));
   }
+
+  void dispose() {
+    _consultant = null;
+    emit(ConsultantSettingsInitial());
+  }
 }

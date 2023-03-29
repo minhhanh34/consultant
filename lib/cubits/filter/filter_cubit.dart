@@ -15,4 +15,8 @@ class FilterCubit extends Cubit<FilterState> {
     final filteredConsultants = await _service.applyFilter(filter);
     emit(FilteredConsultants(filteredConsultants));
   }
+
+  void dispose() {
+    emit(FilterInitial());
+  }
 }

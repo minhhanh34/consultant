@@ -11,10 +11,12 @@ import 'package:intl/intl.dart';
 class ExerciseTile extends StatefulWidget {
   const ExerciseTile({
     super.key,
+    required this.classId,
     required this.exercise,
     this.state = DownloadState.unDownload,
   });
   final Exercise exercise;
+  final String classId;
   final DownloadState state;
   @override
   State<ExerciseTile> createState() => _ExerciseTileState();
@@ -29,13 +31,13 @@ class _ExerciseTileState extends State<ExerciseTile> {
       onDismissed: (direction) async {
         if (widget.exercise.fileNames != null) {
           final storageRef = FirebaseStorageService();
-          for (var fileName in widget.exercise.fileNames!) {
-            storageRef.deleteFile(fileName.storageName);
-          }
+          storageRef.deleteFiles(
+            widget.exercise.fileNames!.map((e) => e.storageName).toList(),
+          );
         }
         context
             .read<ClassCubit>()
-            .deleteExcercise('3va8glsR7Gl3suoLE5Wz', widget.exercise);
+            .deleteExcercise(widget.classId, widget.exercise);
       },
       background: Container(
         padding: const EdgeInsets.only(right: 16),

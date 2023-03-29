@@ -22,4 +22,9 @@ class SearchingCubit extends Cubit<SearchingState> {
         .toList();
     emit(SearchingConsultants(filteredConsultants));
   }
+  void dispose() {
+    _consultants = null;
+    emit(SearchingInitial());
+  }
+
 }

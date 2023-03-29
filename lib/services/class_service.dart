@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:consultant/models/exercise_model.dart';
@@ -6,6 +7,7 @@ import 'package:consultant/repositories/class_exercise_subcollection_repository.
 import 'package:consultant/repositories/class_repository.dart';
 import 'package:consultant/repositories/class_student_subcollection_repository.dart';
 import 'package:consultant/services/downloader_service.dart';
+import 'package:consultant/services/firebase_storage_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/class_model.dart';
@@ -85,11 +87,57 @@ class ClassService {
     return await _classExerciseRepository.create(id, exercise);
   }
 
-  Future<bool> deleteExcercise(String classId, String exerciseId) async {
-    return await _classExerciseRepository.delete(classId, exerciseId);
+  Future<bool> deleteExcercise(String classId, Exercise exercise) async {
+    final storage = FirebaseStorageService();
+    if (exercise.fileNames != null && exercise.fileNames!.isNotEmpty) {
+      await storage
+          .deleteFiles(exercise.fileNames!.map((e) => e.storageName).toList());
+    }
+    return await _classExerciseRepository.delete(classId, exercise.id!);
   }
 
   Future<List<Student>> fetchStudents(String classId) async {
     return await _classStudentRepository.list(classId);
+  }
+
+  Future<bool> enroll(String id, Student student) async {
+    try {
+      final snap = await _repository.collection.doc(id).get();
+      if (!snap.exists) {
+        return false;
+      }
+      await _classStudentRepository.create(id, student);
+      return true;
+    } catch (e) {
+      log('error', error: e);
+      return false;
+    }
+  }
+
+  Future<bool> deleteStudent(String id, String studentId) async {
+    return await _classStudentRepository.delete(id, studentId);
+  }
+
+  Future deleteExerciseCollection(String classId) async {
+    final snaps = await _classExerciseRepository.collection
+        .doc(classId)
+        .collection(_classExerciseRepository.subCollection)
+        .get();
+    for (var doc in snaps.docs) {
+      await deleteExcercise(
+        classId,
+        Exercise.fromJson(doc.data()).copyWith(id: doc.id),
+      );
+    }
+  }
+
+  Future deleteStudentCollection(String classId) async {
+    final snaps = await _classStudentRepository.collection
+        .doc(classId)
+        .collection(_classStudentRepository.subCollection)
+        .get();
+    for (var doc in snaps.docs) {
+      await deleteStudent(classId, doc.id);
+    }
   }
 }

@@ -12,7 +12,10 @@ class ClassLoading extends ClassState {}
 class ClassDetailFethed extends ClassState {
   final List<Exercise> exercises;
   final List<Student> students;
-  ClassDetailFethed({required this.exercises, required this.students});
+  ClassDetailFethed({
+    required this.exercises,
+    required this.students,
+  });
 }
 
 class ClassFethed extends ClassState {

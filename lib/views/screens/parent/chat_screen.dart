@@ -128,20 +128,6 @@ class ChatBubbles extends StatefulWidget {
 }
 
 class _ChatBubblesState extends State<ChatBubbles> {
-  // late final SlidableController _controller;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _controller = SlidableController(this);
-  // }
-
-  // @override
-  // void dispose() {
-  //   _controller.dispose();
-  //   super.dispose();
-  // }
-
   void showAlert({
     required BuildContext context,
     required int messageIndex,
@@ -175,6 +161,11 @@ class _ChatBubblesState extends State<ChatBubbles> {
         widget.messages[messageIndex].copyWith(recall: true),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

@@ -19,4 +19,9 @@ class SettingsCubit extends Cubit<SettingsState> {
     _parent ??= await _service.fetchParent(id);
     emit(SettingsParentFetched(_parent!));
   }
+
+  void dispose() {
+    _parent = null;
+    emit(SettingsInitial());
+  }
 }

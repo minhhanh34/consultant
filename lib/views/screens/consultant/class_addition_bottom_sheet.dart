@@ -1,5 +1,6 @@
 import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:consultant/models/class_model.dart';
+import 'package:consultant/models/consultant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +9,9 @@ import '../../../constants/const.dart';
 import '../../../models/subject_model.dart';
 
 class ClassAdditionBottomSheet extends StatefulWidget {
-  const ClassAdditionBottomSheet({Key? key}) : super(key: key);
+  const ClassAdditionBottomSheet({Key? key, required this.consultant})
+      : super(key: key);
+  final Consultant consultant;
   @override
   State<ClassAdditionBottomSheet> createState() =>
       _ClassAdditionBottomSheetState();
@@ -114,8 +117,8 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                       if (valid) {
                         context.read<ConsultantHomeCubit>().createClass(Class(
                             avtPath: defaultAvtPath,
-                            consultantId: 'RsuE11mvohH5PtwAokg6',
-                            consultantName: 'Minh Hạnh',
+                            consultantId: widget.consultant.id!,
+                            consultantName: widget.consultant.name,
                             name: _classNameController.text,
                             studentSize: 0,
                             subject: Subject(

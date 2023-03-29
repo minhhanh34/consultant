@@ -1,4 +1,11 @@
+import 'package:consultant/cubits/enroll/enroll_state.dart';
+import 'package:consultant/models/student_model.dart';
+import 'package:consultant/views/components/center_circular_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../cubits/enroll/enroll_cubit.dart';
 
 class EnrollScreen extends StatefulWidget {
   const EnrollScreen({super.key});
@@ -8,7 +15,19 @@ class EnrollScreen extends StatefulWidget {
 }
 
 class _EnrollScreenState extends State<EnrollScreen> {
-  final GlobalKey<State<Tooltip>> _key = GlobalKey<State<Tooltip>>();
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    _controller = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,23 +40,61 @@ class _EnrollScreenState extends State<EnrollScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(32.0),
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
             child: TextField(
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
+              controller: _controller,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
                 hintText: 'Nhập mã lớp học',
                 prefixIcon: Tooltip(
                   triggerMode: TooltipTriggerMode.tap,
-                  key: _key,
                   message: 'Mã lớp học được cung cấp từ giáo viên của bạn',
-                  child: const Icon(Icons.info),
+                  child: Icon(Icons.info),
                 ),
               ),
             ),
           ),
-          ElevatedButton(
-            onPressed: () {},
-            child: const Text('Ghi danh'),
+          BlocConsumer<EnrollCubit, EnrollState>(
+            listener: (context, state) {
+              if (state is EnrollSuccess) {
+                context.go('/StudentClass', extra: state.classId);
+              }
+            },
+            builder: (context, state) {
+              if (state is EnrollMessage) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    state.message,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
+              }
+              if (state is EnrollLoading) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CenterCircularIndicator(),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                final student = Student(
+                  name: 'Minh Hanh',
+                  birthDay: DateTime(1, 1, 2001),
+                  address: 'AG',
+                  grade: 12,
+                  gender: 'Nam',
+                );
+                context.read<EnrollCubit>().enroll(_controller.text, student);
+              },
+              child: const Text('Ghi danh'),
+            ),
           ),
         ],
       ),

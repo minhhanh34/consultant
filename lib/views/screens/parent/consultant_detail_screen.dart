@@ -7,7 +7,6 @@ import 'package:consultant/cubits/schedules/schedules_cubit.dart';
 import 'package:consultant/cubits/schedules/schedules_state.dart';
 import 'package:consultant/models/chat_room_model.dart';
 import 'package:consultant/models/consultant_model.dart';
-import 'package:consultant/models/schedule_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

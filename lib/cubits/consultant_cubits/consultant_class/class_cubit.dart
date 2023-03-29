@@ -30,9 +30,9 @@ class ClassCubit extends Cubit<ClassState> {
     return newClass;
   }
 
-  void createExercise(String id, Exercise exercise) async {
+  Future<void> createExercise(String id, Exercise exercise) async {
     final newExc = await _service.createExercise(id, exercise);
-    _exercises?.add(newExc);
+    _exercises?.insert(0, newExc);
     emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
   }
 
@@ -45,7 +45,7 @@ class ClassCubit extends Cubit<ClassState> {
   void goToClass() => emit(ClassInitial());
 
   void deleteExcercise(String classId, Exercise exercise) async {
-    await _service.deleteExcercise(classId, exercise.id!);
+    await _service.deleteExcercise(classId, exercise);
     _exercises?.remove(exercise);
     emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
   }
@@ -87,23 +87,24 @@ class ClassCubit extends Cubit<ClassState> {
     return await File(path).exists();
   }
 
-  // void previousState(ClassState oldState) => emit(oldState);
-
-  // Future<void> onRefresh() async {
-  //   _classes = null;
-  //   fetchClasses('3va8glsR7Gl3suoLE5Wz');
-  // }
-
-  // void onMemberTab(String classId) async {
-  //   emit(ClassLoading());
-  //   _students ??= await _service.fetchStudents(classId);
-  //   emit(ClassStudentFetched(_students!));
-  // }
-
   void fetchDetailClass(String classId) async {
     emit(ClassLoading());
     _exercises = await _service.fetchExercise(classId);
     _students = await _service.fetchStudents(classId);
     emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+  }
+
+  Future<void> rejectStudent(String classId, String studentId) async {
+    emit(ClassLoading());
+    await _service.deleteStudent(classId, studentId);
+    _students?.removeWhere((element) => element.id == studentId);
+    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+  }
+
+  void dispose() {
+    _classes = null;
+    _exercises = null;
+    _students = null;
+    emit(ClassInitial());
   }
 }

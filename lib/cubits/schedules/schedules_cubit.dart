@@ -7,8 +7,8 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   ScheduleCubit(this._service) : super(ScheduleInitial());
   final ScheduleService _service;
   List<Schedule>? _schedules;
-  Schedule? scheduleUndo;
-  int undoIndex = -1;
+  Schedule? _scheduleUndo;
+  int _undoIndex = -1;
 
   void fetchSchedules(String id) async {
     emit(ScheduleLoading());
@@ -24,20 +24,28 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   }
 
   Future<bool> cancelSchedule(Schedule schedule) async {
-    scheduleUndo = await _service.deleteSchedule(schedule);
-    undoIndex = _schedules!.indexOf(schedule);
+    _scheduleUndo = await _service.deleteSchedule(schedule);
+    _undoIndex = _schedules!.indexOf(schedule);
     _schedules?.remove(schedule);
     emit(ScheduleFetched(_schedules!));
     return true;
   }
 
   void undoSchedule() async {
-    if (scheduleUndo != null) {
-      final newSchedule = await _service.createSchedule(scheduleUndo!);
-      _schedules?.insert(undoIndex, newSchedule);
-      scheduleUndo = null;
-      undoIndex = -1;
+    if (_scheduleUndo != null) {
+      final newSchedule = await _service.createSchedule(_scheduleUndo!);
+      _schedules?.insert(_undoIndex, newSchedule);
+      _scheduleUndo = null;
+      _undoIndex = -1;
       emit(ScheduleFetched(_schedules!));
     }
   }
+
+  void dispose() {
+    _scheduleUndo = null;
+    _schedules = null;
+    _undoIndex = -1;
+    emit(ScheduleInitial());
+  }
+
 }

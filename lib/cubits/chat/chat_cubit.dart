@@ -14,16 +14,16 @@ class ChatCubit extends Cubit<ChatState> {
   final ChatService _service;
   final ConsultantService _consultantService;
   StreamSubscription<List<Message>>? _subscription;
-  Consultant? partner;
+  Consultant? _partner;
 
   void openRoom(ChatRoom room) async {}
 
   void fetchMessages(ChatRoom room, String partnerId) async {
     emit(ChatLoading());
-    partner = await _consultantService.get(partnerId);
+    _partner = await _consultantService.get(partnerId);
     _subscription =
         _service.fetchMessages(room).listen((List<Message> messages) {
-      emit(ChatFetched(partner!, messages));
+      emit(ChatFetched(_partner!, messages));
     });
   }
 
@@ -39,10 +39,16 @@ class ChatCubit extends Cubit<ChatState> {
 
   Future<void> streamCancel() async {
     await _subscription?.cancel();
-    partner = null;
+    _partner = null;
   }
 
   Future<Message> createMessage(String id, Message message) async {
     return await _service.createMessage(id, message);
+  }
+
+  void dispose() {
+    _subscription = null;
+    _partner = null;
+    emit(ChatInitial());
   }
 }

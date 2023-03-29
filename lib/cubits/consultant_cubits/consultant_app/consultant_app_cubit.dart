@@ -25,4 +25,9 @@ class ConsultantAppCubit extends Cubit<ConsultantAppState> {
   void setBottomAppBarIndex(int val) {
     handle(val);
   }
+
+  void dispose() {
+    _bottomAppBarIndex = 0;
+    emit(ConsultantHome());
+  }
 }

@@ -17,4 +17,10 @@ class PostCubit extends Cubit<PostState> {
     _posts ??= await _service.list();
     emit(PostFetched(_posts!));
   }
+
+  void dispose() {
+    _posts = null;
+    emit(PostInitial());
+  }
+
 }

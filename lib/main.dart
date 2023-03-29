@@ -1,11 +1,13 @@
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/app/app_cubit.dart';
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/chat/chat_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_app/consultant_app_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_settings/consultant_settings_cubit.dart';
+import 'package:consultant/cubits/enroll/enroll_cubit.dart';
 import 'package:consultant/cubits/filter/filter_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
 import 'package:consultant/cubits/messages/messages_cubit.dart';
@@ -13,6 +15,7 @@ import 'package:consultant/cubits/posts/post_cubit.dart';
 import 'package:consultant/cubits/schedules/schedules_cubit.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/cubits/settings/settings_cubit.dart';
+import 'package:consultant/cubits/student_class/student_class_cubit.dart';
 import 'package:consultant/firebase_options.dart';
 import 'package:consultant/repositories/class_exercise_subcollection_repository.dart';
 import 'package:consultant/repositories/class_repository.dart';
@@ -24,6 +27,7 @@ import 'package:consultant/repositories/chat_repository.dart';
 import 'package:consultant/repositories/post_repository.dart';
 import 'package:consultant/repositories/schedule_repository.dart';
 import 'package:consultant/repositories/settings_repository.dart';
+import 'package:consultant/services/auth_service.dart';
 import 'package:consultant/services/chat_service.dart';
 import 'package:consultant/services/class_service.dart';
 import 'package:consultant/services/consultant_service.dart';
@@ -33,8 +37,8 @@ import 'package:consultant/services/schedule_service.dart';
 import 'package:consultant/services/settings_service.dart';
 import 'package:consultant/views/screens/consultant/class_detail.dart';
 import 'package:consultant/views/screens/consultant/consultant_home_screen.dart';
-import 'package:consultant/views/screens/sign_screen/sign_in_screen.dart';
 import 'package:consultant/views/screens/student/enroll_screen.dart';
+import 'package:consultant/views/screens/student/student_class_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -81,10 +85,6 @@ void main() async {
 
   _auth = FirebaseAuth.instanceFor(app: _app);
 
-  String email = 'hanh@gmail.com';
-  String password = 'hanh123';
-  await _auth.signInWithEmailAndPassword(email: email, password: password);
-
   runApp(const ConsultantApp());
 }
 
@@ -101,6 +101,9 @@ class ConsultantApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AppCubit()),
+        BlocProvider(
+          create: (_) => AuthCubit(AuthService(_auth)),
+        ),
         BlocProvider(
           create: (_) => HomeCubit(consultantService),
         ),
@@ -127,7 +130,17 @@ class ConsultantApp extends StatelessWidget {
           create: (_) => PostCubit(PostService(PostRepository())),
         ),
         BlocProvider(
+          create: (_) => EnrollCubit(
+            ClassService(
+              ClassRepository(),
+              ClassStudentRepository(),
+              ClassExerciseRepository(),
+            ),
+          ),
+        ),
+        BlocProvider(
           create: (_) => ConsultantHomeCubit(
+            consultantService,
             ScheduleService(ScheduleRepository()),
             ClassService(
               ClassRepository(),
@@ -151,6 +164,15 @@ class ConsultantApp extends StatelessWidget {
         BlocProvider(
           create: (_) => ConsultantSettingsCubit(consultantService),
         ),
+        BlocProvider(
+          create: (_) => StudentClassCubit(
+            ClassService(
+              ClassRepository(),
+              ClassStudentRepository(),
+              ClassExerciseRepository(),
+            ),
+          ),
+        ),
       ],
       child: MaterialApp.router(
         theme: ThemeData(
@@ -166,7 +188,7 @@ class ConsultantApp extends StatelessWidget {
 }
 
 final _router = GoRouter(
-  initialLocation: '/SignIn',
+  initialLocation: '/Enroll',
   routes: <RouteBase>[
     GoRoute(
       path: '/',
@@ -200,10 +222,6 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/ChatRoom',
-      // builder: (context, state) => ChatScreen(
-      //   partner: (state.extra as Map)['partner'],
-      //   room: (state.extra as Map)['room'],
-      // ),
       pageBuilder: (context, state) => CupertinoPage(
         child: ChatScreen(
           partnerId: (state.extra as Map)['partnerId'],
@@ -245,9 +263,11 @@ final _router = GoRouter(
       path: '/Enroll',
       builder: (context, state) => const EnrollScreen(),
     ),
-    // GoRoute(
-    //   path: '/SignUp',
-    //   builder: (context, state) => const SignInScreen(),
-    // ),
+    GoRoute(
+      path: '/StudentClass',
+      builder: (context, state) => StudentClassScreen(
+        id: state.extra as String,
+      ),
+    ),
   ],
 );

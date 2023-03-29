@@ -26,4 +26,9 @@ class AppCubit extends Cubit<AppState> {
   void setBottomAppBarIndex(int val) {
     handle(val);
   }
+
+  void dispose() {
+    _bottomAppBarIndex = 0;
+    emit(Home());
+  }
 }

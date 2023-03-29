@@ -9,14 +9,14 @@ import 'messages_state.dart';
 class MessageCubit extends Cubit<MessageState> {
   MessageCubit(this._service) : super(MessageInitial());
   final MessageService  _service;
-  List<ChatRoom>? rooms;
+  List<ChatRoom>? _rooms;
 
   void initialize() => emit(MessageInitial());
 
   Future<void> fetchRooms(String id) async {
     emit(MessageLoading());
-    rooms ??= await _service.getRecentlyChatRoom(id);
-    emit(MessageRooms(rooms!));
+    _rooms ??= await _service.getRecentlyChatRoom(id);
+    emit(MessageRooms(_rooms!));
   }
 
   Future<ChatRoom> createChatRoom(ChatRoom room) async {
@@ -26,4 +26,10 @@ class MessageCubit extends Cubit<MessageState> {
   Future<ChatRoom> checkRoom(ChatRoom room) async {
     return await _service.checkRoom(room);
   }
+
+  void dispose() {
+    _rooms = null;
+    emit(MessageInitial());
+  }
+
 }

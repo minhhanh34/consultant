@@ -49,8 +49,11 @@ class ClassExerciseRepository implements RepositoryWithSubCollection<Exercise> {
   @override
   Future<List<Exercise>> list(String id) async {
     try {
-      final querySnaps =
-          await _collection.doc(id).collection(_subCollection).get();
+      final querySnaps = await _collection
+          .doc(id)
+          .collection(_subCollection)
+          .orderBy('timeCreated', descending: true)
+          .get();
 
       return querySnaps.docs.map((doc) {
         return Exercise.fromJson(doc.data()).copyWith(id: doc.id);

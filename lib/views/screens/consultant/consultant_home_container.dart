@@ -99,7 +99,7 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
                               showBottomSheet(
                                 context: context,
                                 builder: (context) =>
-                                    const ClassAdditionBottomSheet(),
+                                    ClassAdditionBottomSheet(consultant: state.consultant),
                               );
                             },
                             tileColor: Colors.grey.shade100,

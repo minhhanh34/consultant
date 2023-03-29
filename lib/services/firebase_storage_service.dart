@@ -45,7 +45,9 @@ class FirebaseStorageService {
 
   Future<void> downloadFileAttach(String url) async {}
 
-  Future<void> deleteFile(String path) async {
-    await ref.child('exercises').child(path).delete();
+  Future<void> deleteFiles(List<String> storageNames) async {
+    for (var name in storageNames) {
+      await ref.child('exercises').child(name).delete();
+    }
   }
 }

@@ -27,7 +27,7 @@ class ChatCubit extends Cubit<ChatState> {
     });
   }
 
-  void initialize() => emit(ChatInitial());
+  // void initialize() => emit(ChatInitial());
 
   Future<bool> recallMessage(
     String roomId,

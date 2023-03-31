@@ -1,5 +1,6 @@
 import 'package:consultant/cubits/student_class/student_class_cubit.dart';
 import 'package:consultant/models/exercise_model.dart';
+import 'package:consultant/models/submission_model.dart';
 import 'package:consultant/services/downloader_service.dart';
 import 'package:consultant/utils/select_files_bottom_sheet.dart';
 import 'package:consultant/views/components/center_circular_indicator.dart';
@@ -14,10 +15,14 @@ class StudentExerciseTile extends StatefulWidget {
     super.key,
     required this.classId,
     required this.exercise,
+    required this.submissions,
+    required this.studentId,
     this.state = DownloadState.unDownload,
   });
   final Exercise exercise;
+  final String studentId;
   final String classId;
+  final List<Submission?> submissions;
   final DownloadState state;
 
   @override
@@ -99,7 +104,7 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Đã tải lên',
+                      'Bài nộp đã tải lên',
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
@@ -148,10 +153,13 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                   ),
                   OutlinedButton(
                     onPressed: () async {
-                      if(filePickerResult != null) {
-                        // context.read<StudentClassCubit>().submit(
-                        //   StudentSubmission();
-                        // );
+                      if (filePickerResult != null) {
+                        context.read<StudentClassCubit>().createSubmission(
+                              widget.classId,
+                              widget.exercise.id!,
+                              widget.studentId,
+                              filePickerResult!.paths.map((e) => e).toList(),
+                            );
                         return;
                       }
                       filePickerResult =

@@ -2,6 +2,7 @@ import 'package:consultant/models/class_model.dart';
 import 'package:consultant/models/exercise_model.dart';
 
 import '../../../models/student_model.dart';
+import '../../../models/submission_model.dart';
 
 abstract class ClassState {}
 
@@ -41,3 +42,10 @@ class ClassStudentFetched extends ClassState {
   List<Student> students;
   ClassStudentFetched(this.students);
 }
+
+class ClassSubmissions extends ClassState {
+  List<Submission> submissions;
+  ClassSubmissions(this.submissions);
+}
+
+class ClassMarked extends ClassState {}

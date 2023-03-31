@@ -20,21 +20,26 @@ import 'package:consultant/firebase_options.dart';
 import 'package:consultant/repositories/class_exercise_subcollection_repository.dart';
 import 'package:consultant/repositories/class_repository.dart';
 import 'package:consultant/repositories/class_student_subcollection_repository.dart';
+import 'package:consultant/repositories/class_submission_subcollection_repository.dart';
 import 'package:consultant/repositories/message_repository.dart';
 import 'package:consultant/repositories/comment_repository.dart';
 import 'package:consultant/repositories/consultant_repository.dart';
 import 'package:consultant/repositories/chat_repository.dart';
+import 'package:consultant/repositories/parent_repository.dart';
 import 'package:consultant/repositories/post_repository.dart';
 import 'package:consultant/repositories/schedule_repository.dart';
 import 'package:consultant/repositories/settings_repository.dart';
+import 'package:consultant/repositories/student_repository.dart';
 import 'package:consultant/services/auth_service.dart';
 import 'package:consultant/services/chat_service.dart';
 import 'package:consultant/services/class_service.dart';
 import 'package:consultant/services/consultant_service.dart';
 import 'package:consultant/services/message_service.dart';
+import 'package:consultant/services/parent_service.dart';
 import 'package:consultant/services/post_service.dart';
 import 'package:consultant/services/schedule_service.dart';
 import 'package:consultant/services/settings_service.dart';
+import 'package:consultant/services/student_service.dart';
 import 'package:consultant/views/screens/consultant/class_detail.dart';
 import 'package:consultant/views/screens/consultant/consultant_home_screen.dart';
 import 'package:consultant/views/screens/student/enroll_screen.dart';
@@ -52,6 +57,7 @@ import 'models/class_model.dart';
 import 'models/comment_model.dart';
 import 'models/consultant_model.dart';
 import 'models/parent_model.dart';
+import 'models/student_model.dart';
 import 'views/screens/consultant/camera_screen.dart';
 import 'views/screens/parent/all_comment_screen.dart';
 import 'views/screens/parent/chat_screen.dart';
@@ -59,7 +65,7 @@ import 'views/screens/parent/consultant_detail_screen.dart';
 import 'views/screens/parent/consultant_filtered_screen.dart';
 import 'views/screens/parent/consultants_screen.dart';
 import 'views/screens/parent/home_screen.dart';
-import 'views/screens/parent/login_screen.dart';
+import 'views/screens/parent/signin_screen.dart';
 import 'views/screens/parent/map_screen.dart';
 import 'views/screens/parent/parent_info_screen.dart';
 import 'views/screens/parent/signup_screen.dart';
@@ -85,6 +91,17 @@ void main() async {
 
   _auth = FirebaseAuth.instanceFor(app: _app);
 
+  // final consultantRepo = ConsultantRepository();
+  // final consultants = await consultantRepo.list();
+  // for (var consultant in consultants) {
+  //   await consultantRepo.update(
+  //     consultant.id!,
+  //     consultant.copyWith(
+
+  //     ),
+  //   );
+  // }
+
   runApp(const ConsultantApp());
 }
 
@@ -102,7 +119,17 @@ class ConsultantApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => AppCubit()),
         BlocProvider(
-          create: (_) => AuthCubit(AuthService(_auth)),
+          create: (_) => AuthCubit(
+            AuthService(
+              _auth,
+              ConsultantRepository(),
+              ParentRepository(),
+              StudentRepository(),
+            ),
+            ConsultantService(ConsultantRepository(), CommentRepository()),
+            ParentService(ParentRepository()),
+            StudentService(StudentRepository()),
+          ),
         ),
         BlocProvider(
           create: (_) => HomeCubit(consultantService),
@@ -111,8 +138,12 @@ class ConsultantApp extends StatelessWidget {
           create: (_) => SearchingCubit(consultantService),
         ),
         BlocProvider(
-          create: (_) =>
-              ChatCubit(ChatService(ChatRepository()), consultantService),
+          create: (_) => ChatCubit(
+              ChatService(
+                ChatRepository(),
+                MessageRepository(),
+              ),
+              consultantService),
         ),
         BlocProvider(
           create: (_) => MessageCubit(MessageService(MessageRepository())),
@@ -135,6 +166,7 @@ class ConsultantApp extends StatelessWidget {
               ClassRepository(),
               ClassStudentRepository(),
               ClassExerciseRepository(),
+              ClassSubmissionRepository(),
             ),
           ),
         ),
@@ -146,6 +178,7 @@ class ConsultantApp extends StatelessWidget {
               ClassRepository(),
               ClassStudentRepository(),
               ClassExerciseRepository(),
+              ClassSubmissionRepository(),
             ),
           ),
         ),
@@ -155,6 +188,7 @@ class ConsultantApp extends StatelessWidget {
               ClassRepository(),
               ClassStudentRepository(),
               ClassExerciseRepository(),
+              ClassSubmissionRepository(),
             ),
           ),
         ),
@@ -170,6 +204,7 @@ class ConsultantApp extends StatelessWidget {
               ClassRepository(),
               ClassStudentRepository(),
               ClassExerciseRepository(),
+              ClassSubmissionRepository(),
             ),
           ),
         ),
@@ -188,7 +223,7 @@ class ConsultantApp extends StatelessWidget {
 }
 
 final _router = GoRouter(
-  initialLocation: '/Enroll',
+  initialLocation: '/Welcome',
   routes: <RouteBase>[
     GoRoute(
       path: '/',
@@ -261,12 +296,15 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/Enroll',
-      builder: (context, state) => const EnrollScreen(),
+      builder: (context, state) => EnrollScreen(
+        student: state.extra as Student,
+      ),
     ),
     GoRoute(
       path: '/StudentClass',
       builder: (context, state) => StudentClassScreen(
-        id: state.extra as String,
+        id: (state.extra as Map<String, dynamic>)['classId'] as String,
+        studentId: (state.extra as Map<String, dynamic>)['studentId'] as String,
       ),
     ),
   ],

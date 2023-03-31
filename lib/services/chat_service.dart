@@ -1,14 +1,27 @@
 import 'package:consultant/models/chat_room_model.dart';
 import 'package:consultant/repositories/chat_repository.dart';
+import 'package:consultant/repositories/message_repository.dart';
 
 import '../models/message_model.dart';
 
 class ChatService {
   final ChatRepository _repository;
-  ChatService(this._repository);
+  final MessageRepository _messageRepository;
+  ChatService(this._repository, this._messageRepository);
 
   Future<Message> createMessage(String id, Message message) async {
-    return await _repository.create(id, message);
+    final snap = await _messageRepository.collection.doc(id).get();
+    if (snap.exists) {
+      return await _repository.create(id, message);
+    } else {
+      final room = await _messageRepository.create(
+        ChatRoom(
+          firstPersonId: message.senderId,
+          secondPersonId: message.receiverId,
+        ),
+      );
+      return await _repository.create(room.id!, message);
+    }
   }
 
   Stream<List<Message>> fetchMessages(ChatRoom room) async* {
@@ -24,7 +37,6 @@ class ChatService {
           .toList();
     }
   }
-
 
   Future<bool> recallMessage(
     String roomId,

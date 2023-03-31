@@ -1,4 +1,5 @@
 import 'package:chat_bubbles/chat_bubbles.dart';
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/chat/chat_cubit.dart';
 import 'package:consultant/cubits/chat/chat_state.dart';
 import 'package:consultant/models/chat_room_model.dart';
@@ -26,7 +27,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final message = Message(
       time: DateTime.now(),
       content: content,
-      senderId: '123',
+      senderId: AuthCubit.currentUserId,
       receiverId: widget.partnerId,
       seen: false,
     );
@@ -37,7 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    chatCubit.initialize();
+    chatCubit.dispose();
     super.dispose();
   }
 

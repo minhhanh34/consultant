@@ -11,7 +11,10 @@ class FirebaseStorageService {
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   final Random _rnd = Random();
 
-  Future<List<FileName>> createExerciseFiles(List<String?> paths) async {
+  Future<List<FileName>> createFolderFiles(
+    String folderName,
+    List<String?> paths,
+  ) async {
     List<Reference> refs = [];
     List<String> urls = [];
     List<String> storageNames = [];
@@ -21,7 +24,7 @@ class FirebaseStorageService {
         String randomName = getRandomString(20);
         storageNames.add(randomName);
         final uploadTask =
-            await ref.child('exercises').child(randomName).putFile(File(path));
+            await ref.child(folderName).child(randomName).putFile(File(path));
         refs.add(uploadTask.ref);
       }
     }

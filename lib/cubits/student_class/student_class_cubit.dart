@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:consultant/cubits/student_class/student_class_state.dart';
 import 'package:consultant/models/exercise_model.dart';
+import 'package:consultant/models/submission_model.dart';
 import 'package:consultant/services/class_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,20 +13,22 @@ class StudentClassCubit extends Cubit<StudentClassState> {
   StudentClassCubit(this._service) : super(StudentClassInitlal());
   final ClassService _service;
   List<Exercise>? _exercises;
+  List<Submission>? _submissions;
   final downloader = DownloaderService.instance;
 
-  Future<void> fetchExercises(String id) async {
+  Future<void> fetchExercises(String classId, String studentId) async {
     emit(StudentClassLoading());
-    _exercises ??= await _service.fetchExercise(id);
-    emit(StudentClassExerciseFetched(_exercises!));
+    _exercises ??= await _service.fetchExercise(classId);
+    _submissions ??= await _service.fetchStudentSubmissions(classId, studentId);
+    emit(StudentClassExerciseFetched(_exercises!, _submissions!));
   }
 
   Future<void> downloadFileAttach(FileName fileName) async {
     changeStateForFileName(fileName, DownloadState.downloading);
-    emit(StudentClassExerciseFetched(_exercises!));
+    emit(StudentClassExerciseFetched(_exercises!, _submissions!));
     await downloader.download(fileName);
     changeStateForFileName(fileName, DownloadState.downloaded);
-    emit(StudentClassExerciseFetched(_exercises!));
+    emit(StudentClassExerciseFetched(_exercises!, _submissions!));
   }
 
   void changeStateForFileName(FileName fileName, DownloadState state) {
@@ -53,5 +56,25 @@ class StudentClassCubit extends Cubit<StudentClassState> {
 
   Future<bool> existInLocal(String path) async {
     return await File(path).exists();
+  }
+
+  Future<void> createSubmission(
+    String classId,
+    String exercieId,
+    String studentId,
+    List<String?> paths,
+  ) async {
+    final oldState = state;
+    emit(StudentClassLoading());
+    final newSubmission =
+        await _service.createSubmission(classId, exercieId, studentId, paths);
+    _submissions?.add(newSubmission);
+    emit(oldState);
+  }
+
+  void dispose() {
+    _exercises = null;
+    _submissions = null;
+    emit(StudentClassInitlal());
   }
 }

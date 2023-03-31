@@ -8,8 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../../../cubits/enroll/enroll_cubit.dart';
 
 class EnrollScreen extends StatefulWidget {
-  const EnrollScreen({super.key});
-
+  const EnrollScreen({super.key, required this.student});
+  final Student student;
   @override
   State<EnrollScreen> createState() => _EnrollScreenState();
 }
@@ -57,7 +57,13 @@ class _EnrollScreenState extends State<EnrollScreen> {
           BlocConsumer<EnrollCubit, EnrollState>(
             listener: (context, state) {
               if (state is EnrollSuccess) {
-                context.go('/StudentClass', extra: state.classId);
+                context.go(
+                  '/StudentClass',
+                  extra: {
+                    'classId': state.classId,
+                    'studentId': state.studentId,
+                  },
+                );
               }
             },
             builder: (context, state) {
@@ -84,14 +90,9 @@ class _EnrollScreenState extends State<EnrollScreen> {
             child: ElevatedButton(
               onPressed: () {
                 FocusManager.instance.primaryFocus?.unfocus();
-                final student = Student(
-                  name: 'Minh Hanh',
-                  birthDay: DateTime(1, 1, 2001),
-                  address: 'AG',
-                  grade: 12,
-                  gender: 'Nam',
-                );
-                context.read<EnrollCubit>().enroll(_controller.text, student);
+                context
+                    .read<EnrollCubit>()
+                    .enroll(_controller.text, widget.student);
               },
               child: const Text('Ghi danh'),
             ),

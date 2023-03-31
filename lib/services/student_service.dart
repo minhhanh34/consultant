@@ -10,4 +10,11 @@ class StudentService {
   Future<List<Student>> getStudents() async {
     return _repository.list();
   }
+
+  Future<Student> getStudentByUid(String uid) async {
+      final snap =
+        await _repository.collection.where('uid', isEqualTo: uid).get();
+    return Student.fromJson(snap.docs.first.data() as Map<String, dynamic>)
+        .copyWith(id: snap.docs.first.id);
+  }
 }

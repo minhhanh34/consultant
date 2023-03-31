@@ -6,6 +6,7 @@ import 'package:consultant/models/address_model.dart';
 
 class Parent extends Equatable {
   final String? id;
+  final String uid;
   final String name;
   final String phone;
   final String email;
@@ -13,6 +14,7 @@ class Parent extends Equatable {
   final String avtPath;
   const Parent({
     this.id,
+    required this.uid,
     required this.name,
     required this.phone,
     required this.email,
@@ -22,6 +24,7 @@ class Parent extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
+      'uid': uid,
       'name': name,
       'phone': phone,
       'email': email,
@@ -32,6 +35,7 @@ class Parent extends Equatable {
 
   factory Parent.fromJson(Map<String, dynamic> json) {
     return Parent(
+      uid: json['uid'],
       name: json['name'],
       phone: json['phone'],
       email: json['email'],
@@ -50,9 +54,11 @@ class Parent extends Equatable {
     String? email,
     Address? address,
     String? avtPath,
+    String? uid,
   }) {
     return Parent(
       id: id ?? this.id,
+      uid: uid ?? this.uid,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       email: email ?? this.email,

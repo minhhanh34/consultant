@@ -1,15 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:consultant/models/address_model.dart';
 import 'package:equatable/equatable.dart';
 
 class Student extends Equatable {
   final String? id;
+  final String uid;
   final String name;
   final DateTime birthDay;
-  final String address;
+  final Address address;
   final int grade;
   final String gender;
   const Student({
     this.id,
+    required this.uid,
     required this.name,
     required this.birthDay,
     required this.address,
@@ -19,9 +22,10 @@ class Student extends Equatable {
 
   factory Student.fromJson(Map<String, dynamic> json) {
     return Student(
+      uid: json['uid'],
       name: json['name'],
       birthDay: (json['birthDay'] as Timestamp).toDate(),
-      address: json['address'],
+      address: Address.fromJson(json['address']),
       grade: json['grade'],
       gender: json['gender'] as String,
     );
@@ -29,9 +33,10 @@ class Student extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
+      'uid': uid,
       'name': name,
       'birthDay': birthDay,
-      'address': address,
+      'address': address.toJson(),
       'grade': grade,
       'gender': gender,
     };
@@ -41,11 +46,13 @@ class Student extends Equatable {
     String? id,
     String? name,
     DateTime? birthDay,
-    String? address,
+    Address? address,
     int? grade,
     String? gender,
+    String? uid,
   }) {
     return Student(
+      uid: uid ?? this.uid,
       id: id ?? this.id,
       name: name ?? this.name,
       birthDay: birthDay ?? this.birthDay,
@@ -56,7 +63,5 @@ class Student extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, birthDay, address, grade, gender];
+  List<Object?> get props => [name, birthDay, address, grade, gender, uid];
 }
-
-

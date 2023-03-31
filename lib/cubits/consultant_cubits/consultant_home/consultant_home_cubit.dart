@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_state.dart';
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/models/consultant_model.dart';
@@ -5,6 +6,7 @@ import 'package:consultant/models/schedule_model.dart';
 import 'package:consultant/services/class_service.dart';
 import 'package:consultant/services/consultant_service.dart';
 import 'package:consultant/services/schedule_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
@@ -33,11 +35,16 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
   void changeHeaderChip(bool value) => _headerChipSelected = value;
 
   Future<void> fetchData(String id) async {
-    emit(ConsultantHomeLoading());
     _consultant ??= await _consultantService.get(id);
     _schedules ??= await _scheduleService.fetchConsultantSchedules(id);
     _classes ??= await _classService.fetchClasses(id);
-    emit(ConsultantHomeFetched(_consultant!,_schedules!, _classes!));
+  }
+
+  Future<void> initialize(BuildContext context) async {
+    emit(ConsultantHomeLoading());
+
+    await fetchData(AuthCubit.currentUserId);
+    emit(ConsultantHomeFetched(_consultant!, _schedules!, _classes!));
   }
 
   Future<bool> denySchedule(Schedule schedule) async {
@@ -45,7 +52,7 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
     _scheduleUndo = await _scheduleService.deleteSchedule(schedule);
     _scheduleUndoIndex = _schedules!.indexOf(schedule);
     _schedules?.remove(schedule);
-    emit(ConsultantHomeFetched(_consultant!,_schedules!, _classes!));
+    emit(ConsultantHomeFetched(_consultant!, _schedules!, _classes!));
     return true;
   }
 
@@ -53,7 +60,7 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
     if (_scheduleUndo != null && _scheduleUndoIndex != -1) {
       final newSchedule = await _scheduleService.createSchedule(_scheduleUndo!);
       _schedules?.insert(_scheduleUndoIndex, newSchedule);
-      emit(ConsultantHomeFetched(_consultant!,_schedules!, _classes!));
+      emit(ConsultantHomeFetched(_consultant!, _schedules!, _classes!));
     }
   }
 
@@ -61,7 +68,7 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
     emit(ConsultantHomeLoading());
     final newClass = await _classService.create(consultantClass);
     _classes?.add(newClass);
-    emit(ConsultantHomeFetched(_consultant!,_schedules!, _classes!));
+    emit(ConsultantHomeFetched(_consultant!, _schedules!, _classes!));
   }
 
   Future<bool> deleteClass(Class cla) async {
@@ -72,14 +79,14 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
     if (result) {
       _classes?.remove(cla);
     }
-    emit(ConsultantHomeFetched(_consultant!,_schedules!, _classes!));
+    emit(ConsultantHomeFetched(_consultant!, _schedules!, _classes!));
     return result;
   }
 
   void confirmSchedule(Schedule schedule) async {
     emit(ConsultantHomeLoading());
     await _scheduleService.update(schedule);
-    emit(ConsultantHomeFetched(_consultant!,_schedules!, _classes!));
+    emit(ConsultantHomeFetched(_consultant!, _schedules!, _classes!));
   }
 
   void dispose() {

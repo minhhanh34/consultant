@@ -25,6 +25,33 @@ class MessageService {
   }
 
   Future<ChatRoom> checkRoom(ChatRoom room) async {
+    // print(room.firstPersonId);
+    // print(room.secondPersonId);
+
+    // final first = await _repository.collection.where(
+    //   'firstPersonId',
+    //   whereIn: [room.firstPersonId, room.secondPersonId],
+    // ).get();
+    // final second = await _repository.collection.where('secondPersonId',
+    //     whereIn: [room.firstPersonId, room.secondPersonId]).get();
+
+    // final firstRooms = first.docs
+    //     .map((e) =>
+    //         ChatRoom.fromJson(e.data() as Map<String, dynamic>).copyWith(id: e.id))
+    //     .toList();
+    // final secondRooms = second.docs
+    //     .map((e) =>
+    //         ChatRoom.fromJson(e.data() as Map<String, dynamic>).copyWith(id: e.id))
+    //     .toList();
+
+    // firstRooms.removeWhere((room) => secondRooms.contains(room));
+
+    // if (firstRooms.isNotEmpty && firstRooms.length == 1) {
+    //   return ChatRoom.fromJson(first.docs.first.data() as Map<String, dynamic>)
+    //       .copyWith(id: first.docs.first.id);
+    // }
+    // final newRoom = await createRoom(room);
+    // return newRoom;
     final snap = await _repository.collection.doc(room.id).get();
     if (snap.exists) {
       return ChatRoom.fromJson(snap.data() as Map<String, dynamic>)

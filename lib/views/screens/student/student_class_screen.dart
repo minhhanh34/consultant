@@ -8,9 +8,13 @@ import '../../../cubits/student_class/student_class_cubit.dart';
 import '../../../cubits/student_class/student_class_state.dart';
 
 class StudentClassScreen extends StatelessWidget {
-  const StudentClassScreen({super.key, required this.id});
+  const StudentClassScreen({
+    super.key,
+    required this.id,
+    required this.studentId,
+  });
   final String id;
-
+  final String studentId;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,13 +24,13 @@ class StudentClassScreen extends StatelessWidget {
       ),
       body: BlocConsumer<StudentClassCubit, StudentClassState>(
         listener: (context, state) {
-          if(state is StudentClassOpenFile) {
+          if (state is StudentClassOpenFile) {
             OpenFilex.open(state.path);
           }
         },
         builder: (context, state) {
           if (state is StudentClassInitlal) {
-            context.read<StudentClassCubit>().fetchExercises(id);
+            context.read<StudentClassCubit>().fetchExercises(id, studentId);
           }
           if (state is StudentClassLoading) {
             return const CenterCircularIndicator();
@@ -39,6 +43,8 @@ class StudentClassScreen extends StatelessWidget {
               itemBuilder: (context, index) => StudentExerciseTile(
                 classId: id,
                 exercise: state.exercises[index],
+                studentId: studentId,
+                submissions: state.submissions,
               ),
             );
           }

@@ -41,5 +41,5 @@ class ChatRoom extends Equatable {
   }
 
   @override
-  List<Object> get props => [firstPersonId, secondPersonId];
+  List<Object> get props => [firstPersonId, secondPersonId, id!];
 }

@@ -18,6 +18,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _key = GlobalKey<FormState>();
 
   bool invalid = false;
+  var userType = UserType.parent;
 
   @override
   void initState() {
@@ -42,6 +43,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => context.go('/SignIn'),
@@ -59,6 +67,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 key: _key,
                 child: Column(
                   children: [
+                    DropdownButtonFormField<UserType>(
+                      value: userType,
+                      items: const [
+                        DropdownMenuItem(
+                          value: UserType.consultant,
+                          child: Text('Gia sư'),
+                        ),
+                        DropdownMenuItem(
+                          value: UserType.parent,
+                          child: Text('Phụ huynh'),
+                        ),
+                        DropdownMenuItem(
+                          value: UserType.student,
+                          child: Text('Học sinh'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        userType = value ?? userType;
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -82,30 +116,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hintText: 'example@gmail.com',
                       ),
                     ),
-                    // const SizedBox(
-                    //   height: 16.0,
-                    // ),
-                    // TextFormField(
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(16.0),
-                    //     ),
-                    //     prefixIcon: const Icon(Icons.email_outlined),
-                    //     hintText: 'Email address',
-                    //   ),
-                    // ),
-                    // const SizedBox(
-                    //   height: 16.0,
-                    // ),
-                    // TextFormField(
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(16.0),
-                    //     ),
-                    //     prefixIcon: const Icon(Icons.phone_outlined),
-                    //     hintText: 'Phone numbers',
-                    //   ),
-                    // ),
                     const SizedBox(
                       height: 16.0,
                     ),
@@ -173,9 +183,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           return;
                         }
                         context.read<AuthCubit>().createUser(
+                              userType: userType,
                               email: _emailController.text,
                               password: _pwdController.text,
                             );
+                        _key.currentState?.reset();
                       },
                       style: ButtonStyle(
                         fixedSize: MaterialStateProperty.all(
@@ -238,4 +250,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+}
+
+enum UserType {
+  consultant,
+  parent,
+  student,
 }

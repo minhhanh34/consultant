@@ -31,5 +31,4 @@ class MessageCubit extends Cubit<MessageState> {
     _rooms = null;
     emit(MessageInitial());
   }
-
 }

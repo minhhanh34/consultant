@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:consultant/cubits/consultant_cubits/consultant_class/class_state.dart';
 import 'package:consultant/models/exercise_model.dart';
+import 'package:consultant/models/submission_model.dart';
 import 'package:consultant/services/class_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +18,7 @@ class ClassCubit extends Cubit<ClassState> {
   List<Class>? _classes;
   List<Exercise>? _exercises;
   List<Student>? _students;
+  List<Submission>? _submissions;
 
   // void fetchClasses(String id) async {
   //   _classes ??= await _service.fetchClasses(id);
@@ -101,10 +103,30 @@ class ClassCubit extends Cubit<ClassState> {
     emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
   }
 
+  Future<void> fetchSubmissions(String classId, String exercieId) async {
+    emit(ClassLoading());
+    _submissions ??= await _service.fetchSubmissions(classId, exercieId);
+    emit(ClassSubmissions(_submissions!));
+  }
+
+  Future<void> mark(
+    String classId,
+    String submissionId,
+    Submission submission,
+  ) async {
+    emit(ClassLoading());
+    await _service.updateSubmission(classId, submissionId, submission);
+    emit(ClassMarked());
+    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+  }
+
+  
+
   void dispose() {
     _classes = null;
     _exercises = null;
     _students = null;
+    _submissions = null;
     emit(ClassInitial());
   }
 }

@@ -1,6 +1,9 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
+import 'package:consultant/cubits/auth/auth_state.dart';
 import 'package:consultant/views/components/center_circular_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../cubits/consultant_cubits/consultant_settings/consultant_settings_cubit.dart';
 import '../../../cubits/consultant_cubits/consultant_settings/consultant_settings_state.dart';
@@ -19,7 +22,14 @@ class ConsultantSettingsContainer extends StatelessWidget {
               .fetchData('RsuE11mvohH5PtwAokg6');
         }
         if (state is ConsultantSettingsFetched) {
-          return ConsultantProfile(consultant: state.consultant);
+          return BlocListener<AuthCubit, AuthState>(
+            listener: (context, state) {
+              if (state is AuthSignOuted) {
+                context.go('/SignIn');
+              }
+            },
+            child: ConsultantProfile(consultant: state.consultant),
+          );
         }
         if (state is ConsultantSettingsLoading) {
           return const CenterCircularIndicator();

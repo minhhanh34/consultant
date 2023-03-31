@@ -41,7 +41,7 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
       child: BlocBuilder<ConsultantHomeCubit, ConsultantHomeState>(
         builder: (context, state) {
           if (state is ConsultantHomeInitial) {
-            cubit.fetchData('RsuE11mvohH5PtwAokg6');
+            cubit.initialize(context);
           }
           if (state is ConsultantHomeFetched) {
             return Column(
@@ -79,27 +79,34 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
                   child: TabBarView(
                     controller: _controller,
                     children: [
-                      ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: state.schedules.length,
-                        itemBuilder: (context, index) => ScheduleCard(
-                          cancelLabel: 'Từ chối',
-                          confirmLabel: 'Chấp nhận',
-                          schedule: state.schedules[index],
-                          cancel: () async => cubit.denySchedule(
-                            state.schedules[index],
+                      Builder(builder: (context) {
+                        if (state.schedules.isEmpty) {
+                          return const Center(
+                            child: Text('Chưa có thời khóa biểu'),
+                          );
+                        }
+                        return ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: state.schedules.length,
+                          itemBuilder: (context, index) => ScheduleCard(
+                            cancelLabel: 'Từ chối',
+                            confirmLabel: 'Chấp nhận',
+                            schedule: state.schedules[index],
+                            cancel: () async => cubit.denySchedule(
+                              state.schedules[index],
+                            ),
+                            undo: () => cubit.undoScheduleDeny(),
                           ),
-                          undo: () => cubit.undoScheduleDeny(),
-                        ),
-                      ),
+                        );
+                      }),
                       Column(
                         children: [
                           ListTile(
                             onTap: () {
                               showBottomSheet(
                                 context: context,
-                                builder: (context) =>
-                                    ClassAdditionBottomSheet(consultant: state.consultant),
+                                builder: (context) => ClassAdditionBottomSheet(
+                                    consultant: state.consultant),
                               );
                             },
                             tileColor: Colors.grey.shade100,

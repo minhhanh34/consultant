@@ -7,8 +7,9 @@ import 'package:consultant/repositories/repository_interface.dart';
 import '../models/student_model.dart';
 
 class StudentRepository implements Repository<Student> {
-  final _collection = FirebaseFirestore.instanceFor(app: app).collection('students');
-
+  final _collection =
+      FirebaseFirestore.instanceFor(app: app).collection('students');
+  CollectionReference get collection => _collection;
   @override
   Future<Student> create(Student item) async {
     try {

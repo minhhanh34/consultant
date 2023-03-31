@@ -168,8 +168,14 @@ class _LogInScreenState extends State<LogInScreen> {
                       },
                       child: BlocConsumer<AuthCubit, AuthState>(
                         listener: (context, state) {
-                          if(state is AuthSignInSuccessed) {
+                          if (state is AuthSignInConsultant) {
+                            context.go('/ConsultantHome');
+                          }
+                          if (state is AuthSignInParent) {
                             context.go('/');
+                          }
+                          if (state is AuthSignInStudent) {
+                            context.go('/Student');
                           }
                         },
                         builder: (context, state) {

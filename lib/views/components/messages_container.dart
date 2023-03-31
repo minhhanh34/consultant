@@ -1,4 +1,5 @@
 import 'package:consultant/constants/const.dart';
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/messages/messages_cubit.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,9 @@ class MessagesContainer extends StatelessWidget {
               BlocBuilder<MessageCubit, MessageState>(
                 builder: (context, state) {
                   if (state is MessageInitial) {
-                    context.read<MessageCubit>().fetchRooms('123');
+                    context
+                        .read<MessageCubit>()
+                        .fetchRooms(AuthCubit.currentUserId);
                   }
                   if (state is MessageRooms) {
                     for (var room in state.rooms) {

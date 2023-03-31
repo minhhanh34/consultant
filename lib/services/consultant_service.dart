@@ -45,4 +45,11 @@ class ConsultantService {
   Future<Consultant> get(String id) async {
     return await _repository.getOne(id);
   }
+
+  Future<Consultant> getConsultantByUid(String uid) async {
+    final snap =
+        await _repository.collection.where('uid', isEqualTo: uid).get();
+    return Consultant.fromJson(snap.docs.first.data() as Map<String, dynamic>)
+        .copyWith(id: snap.docs.first.id);
+  }
 }

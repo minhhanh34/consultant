@@ -1,4 +1,3 @@
-
 abstract class EnrollState {}
 
 class EnrollInitial extends EnrollState {}
@@ -12,5 +11,6 @@ class EnrollMessage extends EnrollState {
 
 class EnrollSuccess extends EnrollState {
   String classId;
-  EnrollSuccess(this.classId);
+  String studentId;
+  EnrollSuccess(this.classId, this.studentId);
 }

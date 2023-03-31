@@ -22,6 +22,6 @@ class EnrollCubit extends Cubit<EnrollState> {
       emit(EnrollMessage(message));
       return;
     }
-    emit(EnrollSuccess(id));
+    emit(EnrollSuccess(id, student.id!));
   }
 }

@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:consultant/constants/const.dart';
 import 'package:consultant/cubits/app/app_cubit.dart';
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/chat/chat_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
+import 'package:consultant/cubits/messages/messages_cubit.dart';
 import 'package:consultant/cubits/schedules/schedules_cubit.dart';
 import 'package:consultant/cubits/schedules/schedules_state.dart';
 import 'package:consultant/models/chat_room_model.dart';
@@ -44,16 +46,19 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
     await launchUrl(phoneLaunchUri);
   }
 
-  void openChatRoom(BuildContext context) {
+  void openChatRoom(BuildContext context) async {
+    final room = await context.read<MessageCubit>().checkRoom(
+          ChatRoom(
+            firstPersonId: AuthCubit.currentUserId,
+            secondPersonId: widget.consultant.id!,
+          ),
+        );
+    if (!mounted) return;
     context.push(
       '/ChatRoom',
       extra: {
         'partnerId': widget.consultant.id,
-        'room': ChatRoom(
-          id: 'vLE5iPPgCcL4FRnHj6mN',
-          firstPersonId: '123',
-          secondPersonId: widget.consultant.id!,
-        ),
+        'room': room,
       },
     );
   }
@@ -78,7 +83,7 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
 
   @override
   void dispose() {
-    chatCubit.initialize();
+    chatCubit.dispose();
     super.dispose();
   }
 

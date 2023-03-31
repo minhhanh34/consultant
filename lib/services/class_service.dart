@@ -6,21 +6,24 @@ import 'package:consultant/models/student_model.dart';
 import 'package:consultant/repositories/class_exercise_subcollection_repository.dart';
 import 'package:consultant/repositories/class_repository.dart';
 import 'package:consultant/repositories/class_student_subcollection_repository.dart';
+import 'package:consultant/repositories/class_submission_subcollection_repository.dart';
 import 'package:consultant/services/downloader_service.dart';
 import 'package:consultant/services/firebase_storage_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/class_model.dart';
+import '../models/submission_model.dart';
 
 class ClassService {
   final ClassRepository _repository;
   final ClassStudentRepository _classStudentRepository;
   final ClassExerciseRepository _classExerciseRepository;
-
+  final ClassSubmissionRepository _classSubmissionRepository;
   ClassService(
     this._repository,
     this._classStudentRepository,
     this._classExerciseRepository,
+    this._classSubmissionRepository,
   );
   Future<Class> create(Class item) async {
     return await _repository.create(item);
@@ -139,5 +142,57 @@ class ClassService {
     for (var doc in snaps.docs) {
       await deleteStudent(classId, doc.id);
     }
+  }
+
+  Future<List<Submission>> fetchSubmissions(
+      String classId, String excerciseId) async {
+    final snaps = await _classSubmissionRepository.collection
+        .doc(classId)
+        .collection(_classExerciseRepository.subCollection)
+        .where('exerciseId', isEqualTo: excerciseId)
+        .get();
+    return snaps.docs
+        .map((doc) => Submission.fromJson(doc.data()).copyWith(id: doc.id))
+        .toList();
+  }
+
+  Future<List<Submission>> fetchStudentSubmissions(String classId, String studentId) async {
+    final snaps = await _classSubmissionRepository.collection
+        .doc(classId)
+        .collection(_classExerciseRepository.subCollection)
+        .where('studentId', isEqualTo: studentId)
+        .get();
+    return snaps.docs
+        .map((doc) => Submission.fromJson(doc.data()).copyWith(id: doc.id))
+        .toList();
+  }
+
+  Future<bool> updateSubmission(
+    String classId,
+    String submissionId,
+    Submission submission,
+  ) async {
+    return await _classSubmissionRepository.update(
+      classId,
+      submissionId,
+      submission,
+    );
+  }
+
+  Future<Submission> createSubmission(
+    String classId,
+    String exercieId,
+    String studentId,
+    List<String?> paths,
+  ) async {
+    final storage = FirebaseStorageService();
+    final submissionFileNames =
+        await storage.createFolderFiles('submissions', paths);
+    final submission = Submission(
+      exerciseId: exercieId,
+      studentId: studentId,
+      fileNames: submissionFileNames,
+    );
+    return await _classSubmissionRepository.create(classId, submission);
   }
 }

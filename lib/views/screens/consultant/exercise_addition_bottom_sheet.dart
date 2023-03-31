@@ -163,6 +163,7 @@ class _ExerciseAdditionBottomSheetState
                   ),
                 ),
                 subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Visibility(
                       visible: filePickerResult != null,
@@ -257,7 +258,8 @@ class _ExerciseAdditionBottomSheetState
                             final storageService = FirebaseStorageService();
                             if (filePickerResult != null) {
                               fileNames =
-                                  await storageService.createExerciseFiles(
+                                  await storageService.createFolderFiles(
+                                'exercises',
                                 filePickerResult!.paths,
                               );
                             }

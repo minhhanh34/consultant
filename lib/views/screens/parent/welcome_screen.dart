@@ -62,7 +62,9 @@ class WelcomeScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextButton(
-                  onPressed: () => context.push('/Enroll'),
+                  onPressed: () => context.push(
+                    '/Enroll',
+                  ),
                   child: const Text('Dành cho học sinh'),
                 ),
               ),

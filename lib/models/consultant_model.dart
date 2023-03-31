@@ -6,8 +6,9 @@ import 'package:equatable/equatable.dart';
 
 class Consultant extends Equatable {
   final String? id;
+  final String uid;
   final String name;
-  final DateTime birthDay;
+  final DateTime? birthDay;
   final Address address;
   final String phone;
   final List<Subject> subjects;
@@ -23,24 +24,30 @@ class Consultant extends Equatable {
   }
 
   Consultant({
+    required this.uid,
     this.id,
     this.rate,
     this.raters,
     this.avtPath,
-    required this.phone,
-    required this.name,
-    required this.birthDay,
-    required this.address,
-    required this.subjects,
+    this.phone = '',
+    this.name = '',
+    this.birthDay,
+    this.address = const Address(
+      city: '',
+      district: '',
+      geoPoint: GeoPoint(0, 0),
+    ),
+    this.subjects = const [],
   });
 
   factory Consultant.fromJson(Map<String, dynamic> json) {
     return Consultant(
+      uid: json['uid'],
       raters: json['raters'],
       rate: (json['rate'] as num?)?.toDouble(),
       phone: json['phone'],
       name: json['name'],
-      birthDay: (json['birthDay'] as Timestamp).toDate(),
+      birthDay: (json['birthDay'] as Timestamp?)?.toDate(),
       address: Address.fromJson(json['address']),
       subjects: (json['subjects'] as List)
           .map((subject) => Subject.fromJson(subject))
@@ -51,6 +58,7 @@ class Consultant extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
+      'uid': uid,
       'name': name,
       'birthDay': birthDay,
       'address': address.toJson(),
@@ -72,8 +80,10 @@ class Consultant extends Equatable {
     double? rate,
     int? raters,
     String? avtPath,
+    String? uid,
   }) {
     return Consultant(
+      uid: uid ?? this.uid,
       id: id ?? this.id,
       avtPath: avtPath ?? this.avtPath,
       rate: rate ?? this.rate,
@@ -87,7 +97,7 @@ class Consultant extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, birthDay, address, subjects, phone];
+  List<Object?> get props => [uid, name, birthDay, address, subjects, phone];
 
   String subjectsToString() {
     StringBuffer str = StringBuffer();

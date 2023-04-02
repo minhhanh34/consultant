@@ -177,7 +177,9 @@ class _ExerciseAdditionBottomSheetState
                                 if (filePickerResult?.count == 0) {
                                   filePickerResult = null;
                                 }
-                                setState(() {});
+                                setState(() {
+                                  filePickerResult?.files.removeAt(i);
+                                });
                               },
                               name: filePickerResult?.names[i] ?? '',
                             )

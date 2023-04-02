@@ -15,11 +15,11 @@ import 'package:consultant/services/auth_service.dart';
 import 'package:consultant/services/consultant_service.dart';
 import 'package:consultant/services/parent_service.dart';
 import 'package:consultant/services/student_service.dart';
-import 'package:consultant/views/screens/parent/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../utils/user_type_enum.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {

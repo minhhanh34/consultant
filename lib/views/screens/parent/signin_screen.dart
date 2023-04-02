@@ -48,12 +48,12 @@ class _LogInScreenState extends State<LogInScreen> {
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        actions: [
-          TextButton(
-            onPressed: () => context.go('/'),
-            child: const Text('SKIP'),
-          ),
-        ],
+        // actions: [
+        //   TextButton(
+        //     onPressed: () => context.go('/'),
+        //     child: const Text('SKIP'),
+        //   ),
+        // ],
       ),
       body: Container(
         padding: const EdgeInsets.all(16.0),

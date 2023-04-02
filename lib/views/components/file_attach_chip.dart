@@ -19,7 +19,6 @@ class FileAttachChip extends StatelessWidget {
             right: 0,
             child: InkWell(
               onTap: onRemove, // filePickerResult?.files.removeAt(i);
-
               child: const CircleAvatar(
                 radius: 12,
                 child: Icon(Icons.close),

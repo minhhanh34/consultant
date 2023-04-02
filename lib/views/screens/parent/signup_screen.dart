@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../utils/user_type_enum.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -44,7 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => context.go('/Welcome'),
           icon: const Icon(
             Icons.arrow_back,
             color: Colors.black,
@@ -252,8 +254,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-enum UserType {
-  consultant,
-  parent,
-  student,
-}
+

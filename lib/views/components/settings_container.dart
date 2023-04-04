@@ -40,7 +40,7 @@ class SettingsContainer extends StatelessWidget {
                   if (state is SettingsInitial) {
                     context
                         .read<SettingsCubit>()
-                        .fetchPatent(SettingsCubit.parentId);
+                        .fetchPatent(AuthCubit.currentUserId);
                   }
                   if (state is SettingsLoading) {
                     return const CenterCircularIndicator();

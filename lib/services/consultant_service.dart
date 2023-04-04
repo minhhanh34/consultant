@@ -1,8 +1,10 @@
 import 'package:consultant/models/comment_model.dart';
 import 'package:consultant/repositories/comment_repository.dart';
 import 'package:consultant/repositories/consultant_repository.dart';
+import 'package:flutter/material.dart';
 
 import '../models/consultant_model.dart';
+import '../views/components/search_bottom_sheet.dart';
 
 class ConsultantService {
   final ConsultantRepository _repository;
@@ -51,5 +53,26 @@ class ConsultantService {
         await _repository.collection.where('uid', isEqualTo: uid).get();
     return Consultant.fromJson(snap.docs.first.data() as Map<String, dynamic>)
         .copyWith(id: snap.docs.first.id);
+  }
+
+  Future<List<Consultant>> query(
+    List<String> subjects,
+    RangeValues priceRange,
+    Gender gender,
+    RangeValues rateRange,
+    RangeValues classRange,
+    String location,
+  ) async {
+    final consultants = await _repository.list();
+    return consultants.where((consultant) {
+      return consultant.match(
+        subjects,
+        priceRange,
+        gender,
+        rateRange,
+        classRange,
+        location,
+      );
+    }).toList();
   }
 }

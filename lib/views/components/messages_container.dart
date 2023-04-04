@@ -5,6 +5,7 @@ import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../cubits/messages/messages_state.dart';
 
@@ -33,69 +34,6 @@ class MessagesContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16.0),
-                      hintText: 'Tìm kiếm',
-                      suffixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                ),
-                // Padding(
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: Text(
-                //     'Đang trực tuyến',
-                //     style: Theme.of(context)
-                //         .textTheme
-                //         .titleLarge
-                //         ?.copyWith(fontWeight: FontWeight.bold),
-                //   ),
-                // ),
-                // SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   child: Row(
-                //     children: [
-                //       for (int i = 0; i < 10; i++)
-                //         Padding(
-                //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                //           child: Badge(
-                //             position: BadgePosition.custom(
-                //               top: 2,
-                //               end: 4,
-                //             ),
-                //             badgeStyle: BadgeStyle(
-                //               badgeColor: Colors.green.shade400,
-                //               borderSide: const BorderSide(
-                //                 width: 1,
-                //                 color: Colors.white,
-                //               ),
-                //             ),
-                //             child: CircleAvatar(
-                //               radius: 26.0,
-                //               child: Container(
-                //                 width: 48.0,
-                //                 height: 48.0,
-                //                 clipBehavior: Clip.hardEdge,
-                //                 decoration: const BoxDecoration(
-                //                   shape: BoxShape.circle,
-                //                 ),
-                //                 child: Image.asset(
-                //                   'assets/dog.jpeg',
-                //                   fit: BoxFit.cover,
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //     ],
-                //   ),
-                // ),
-                Padding(
                   padding: const EdgeInsets.only(
                     left: 16.0,
                     top: 16.0,
@@ -116,45 +54,64 @@ class MessagesContainer extends StatelessWidget {
             delegate: SliverChildListDelegate([
               BlocBuilder<MessageCubit, MessageState>(
                 builder: (context, state) {
+                  print(state);
                   if (state is MessageInitial) {
                     context
                         .read<MessageCubit>()
                         .fetchRooms(AuthCubit.currentUserId);
                   }
                   if (state is MessageRooms) {
-                    for (var room in state.rooms) {
-                      return ListTile(
-                        onTap: () => context.push(
-                          '/ChatRoom',
-                          extra: {
-                            'room': room,
-                            'partnerId': room.secondPersonId,
-                          },
+                    if (state.rooms.isEmpty) {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * .7,
+                        child: Center(
+                          child: Text(
+                            'Chưa có tin nhắn',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
                         ),
-                        leading: const Avatar(
-                          imageUrl: defaultAvtPath,
-                          radius: 24.0,
-                        ),
-                        title: Text(room.firstPersonId),
-                        subtitle: Text(room.secondPersonId),
-                        trailing: const Text('6:00'),
                       );
                     }
+                    final tiles = <ListTile>[];
+                    for (int i = 0; i < state.rooms.length; i++) {
+                      if (state.rooms[i].lastMessage != null) {
+                        tiles.add(
+                          ListTile(
+                            onTap: () => context.push(
+                              '/ChatRoom',
+                              extra: {
+                                'room': state.rooms[i],
+                                'partnerId': state.rooms[i].secondPersonId,
+                              },
+                            ),
+                            leading: Avatar(
+                              imageUrl: state.consultants[i].avtPath ??
+                                  defaultAvtPath,
+                              radius: 24.0,
+                            ),
+                            title: Text(state.consultants[i].name),
+                            subtitle: Text(state.rooms[i].lastMessage!.content),
+                            trailing: Text(DateFormat('hh:mm')
+                                .format(state.rooms[i].lastMessage!.time)),
+                          ),
+                        );
+                      }
+                    }
+                    return Column(
+                      children: tiles,
+                    );
                   }
                   if (state is MessageLoading) {
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height,
+                      height: MediaQuery.of(context).size.height * .7,
                       child: const Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                          color: Colors.indigo,
+                        ),
                       ),
                     );
                   }
-                  return const SizedBox(
-                    height: 360.0,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
+                  return const SizedBox();
                 },
               ),
             ]),

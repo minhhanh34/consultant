@@ -9,6 +9,8 @@ import 'repository_interface.dart';
 class PostRepository implements Repository<Post> {
   final _collection =
       FirebaseFirestore.instanceFor(app: app).collection('posts');
+  
+  CollectionReference get collection => _collection;
 
   @override
   Future<Post> create(Post item) async {

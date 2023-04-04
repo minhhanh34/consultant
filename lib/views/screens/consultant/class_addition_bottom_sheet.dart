@@ -315,7 +315,7 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                       if (valid) {
                         context.read<ConsultantHomeCubit>().createClass(
                               Class(
-                                avtPath: defaultAvtPath,
+                                avtPath: defaultClassImageUrl,
                                 consultantId: widget.consultant.id!,
                                 consultantName: widget.consultant.name,
                                 name: _classNameController.text,

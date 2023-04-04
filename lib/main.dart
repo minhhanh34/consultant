@@ -16,6 +16,7 @@ import 'package:consultant/cubits/schedules/schedules_cubit.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/cubits/settings/settings_cubit.dart';
 import 'package:consultant/cubits/student_class/student_class_cubit.dart';
+import 'package:consultant/cubits/student_home/student_home_cubit.dart';
 import 'package:consultant/firebase_options.dart';
 import 'package:consultant/repositories/class_exercise_subcollection_repository.dart';
 import 'package:consultant/repositories/class_repository.dart';
@@ -43,6 +44,7 @@ import 'package:consultant/services/student_service.dart';
 import 'package:consultant/views/screens/consultant/class_detail.dart';
 import 'package:consultant/views/screens/consultant/consultant_home_screen.dart';
 import 'package:consultant/views/screens/student/enroll_screen.dart';
+import 'package:consultant/views/screens/student/student_class_overview.dart';
 import 'package:consultant/views/screens/student/student_class_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -97,7 +99,7 @@ void main() async {
   //   await consultantRepo.update(
   //     consultant.id!,
   //     consultant.copyWith(
-
+  //       gender: 'Nam',
   //     ),
   //   );
   // }
@@ -132,7 +134,12 @@ class ConsultantApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (_) => HomeCubit(consultantService),
+          create: (_) => HomeCubit(
+            consultantService,
+            ParentService(
+              ParentRepository(),
+            ),
+          ),
         ),
         BlocProvider(
           create: (_) => SearchingCubit(consultantService),
@@ -146,7 +153,8 @@ class ConsultantApp extends StatelessWidget {
               consultantService),
         ),
         BlocProvider(
-          create: (_) => MessageCubit(MessageService(MessageRepository())),
+          create: (_) => MessageCubit(
+              MessageService(MessageRepository()), consultantService),
         ),
         BlocProvider(
           create: (_) => SettingsCubit(SettingsService(SettingsRepository())),
@@ -162,13 +170,13 @@ class ConsultantApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => EnrollCubit(
-            ClassService(
-              ClassRepository(),
-              ClassStudentRepository(),
-              ClassExerciseRepository(),
-              ClassSubmissionRepository(),
-            ),
-          ),
+              ClassService(
+                ClassRepository(),
+                ClassStudentRepository(),
+                ClassExerciseRepository(),
+                ClassSubmissionRepository(),
+              ),
+              StudentService(StudentRepository())),
         ),
         BlocProvider(
           create: (_) => ConsultantHomeCubit(
@@ -197,6 +205,16 @@ class ConsultantApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => ConsultantSettingsCubit(consultantService),
+        ),
+        BlocProvider(
+          create: (_) => StudentHomeCubit(
+            ClassService(
+              ClassRepository(),
+              ClassStudentRepository(),
+              ClassExerciseRepository(),
+              ClassSubmissionRepository(),
+            ),
+          ),
         ),
         BlocProvider(
           create: (_) => StudentClassCubit(
@@ -305,6 +323,12 @@ final _router = GoRouter(
       builder: (context, state) => StudentClassScreen(
         id: (state.extra as Map<String, dynamic>)['classId'] as String,
         studentId: (state.extra as Map<String, dynamic>)['studentId'] as String,
+      ),
+    ),
+    GoRoute(
+      path: '/Student',
+      builder: (context, state) => StudentClassHome(
+        student: state.extra as Student,
       ),
     ),
   ],

@@ -10,6 +10,7 @@ class Student extends Equatable {
   final Address address;
   final int grade;
   final String gender;
+  final List<String> classIds;
   const Student({
     this.id,
     required this.uid,
@@ -18,6 +19,7 @@ class Student extends Equatable {
     required this.address,
     required this.grade,
     required this.gender,
+    this.classIds = const [],
   });
 
   factory Student.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class Student extends Equatable {
       address: Address.fromJson(json['address']),
       grade: json['grade'],
       gender: json['gender'] as String,
+      classIds: (json['classIds'] as List).map((e) => e as String).toList(),
     );
   }
 
@@ -39,6 +42,7 @@ class Student extends Equatable {
       'address': address.toJson(),
       'grade': grade,
       'gender': gender,
+      'classIds': classIds,
     };
   }
 
@@ -50,6 +54,7 @@ class Student extends Equatable {
     int? grade,
     String? gender,
     String? uid,
+    List<String>? classIds,
   }) {
     return Student(
       uid: uid ?? this.uid,
@@ -59,9 +64,11 @@ class Student extends Equatable {
       address: address ?? this.address,
       grade: grade ?? this.grade,
       gender: gender ?? this.gender,
+      classIds: classIds ?? this.classIds,
     );
   }
 
   @override
-  List<Object?> get props => [name, birthDay, address, grade, gender, uid];
+  List<Object?> get props =>
+      [name, birthDay, address, grade, gender, uid, classIds];
 }

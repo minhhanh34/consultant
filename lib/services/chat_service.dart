@@ -12,7 +12,13 @@ class ChatService {
   Future<Message> createMessage(String id, Message message) async {
     final snap = await _messageRepository.collection.doc(id).get();
     if (snap.exists) {
-      return await _repository.create(id, message);
+      final newMessage = await _repository.create(id, message);
+      _messageRepository.update(
+        id,
+        ChatRoom.fromJson(snap.data() as Map<String, dynamic>)
+            .copyWith(id: snap.id, lastMessage: newMessage),
+      );
+      return newMessage;
     } else {
       final room = await _messageRepository.create(
         ChatRoom(

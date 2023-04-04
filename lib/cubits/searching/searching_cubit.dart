@@ -1,5 +1,7 @@
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/services/consultant_service.dart';
+import 'package:consultant/views/components/search_bottom_sheet.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:consultant/cubits/searching/searching_state.dart';
 
@@ -22,9 +24,29 @@ class SearchingCubit extends Cubit<SearchingState> {
         .toList();
     emit(SearchingConsultants(filteredConsultants));
   }
+
+  Future<void> search({
+    required List<String> subjects,
+    required RangeValues priceRange,
+    required Gender gender,
+    required RangeValues rateRange,
+    required RangeValues classRange,
+    required String location,
+  }) async {
+    emit(SearchingLoading());
+    final consultants = await _service.query(
+      subjects,
+      priceRange,
+      gender,
+      rateRange,
+      classRange,
+      location,
+    );
+    emit(SearchingConsultants(consultants));
+  }
+
   void dispose() {
     _consultants = null;
     emit(SearchingInitial());
   }
-
 }

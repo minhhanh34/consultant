@@ -40,12 +40,19 @@ class StudentClassScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8),
               separatorBuilder: (context, index) => const SizedBox(height: 16),
               itemCount: state.exercises.length,
-              itemBuilder: (context, index) => StudentExerciseTile(
-                classId: id,
-                exercise: state.exercises[index],
-                studentId: studentId,
-                submissions: state.submissions,
-              ),
+              itemBuilder: (context, index) {
+                final submissionIndex = state.submissions.indexWhere(
+                  (element) => element.exerciseId == state.exercises[index].id,
+                );
+                return StudentExerciseTile(
+                  classId: id,
+                  exercise: state.exercises[index],
+                  studentId: studentId,
+                  submission: submissionIndex == -1
+                      ? null
+                      : state.submissions[submissionIndex],
+                );
+              },
             );
           }
           return const SizedBox();

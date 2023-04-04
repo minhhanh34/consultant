@@ -1,6 +1,7 @@
 import 'package:consultant/cubits/home/home_cubit.dart';
 import 'package:consultant/cubits/posts/post_cubit.dart';
 import 'package:consultant/models/post_model.dart';
+import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:consultant/views/components/consultant_card_info.dart';
 import 'package:consultant/views/components/subject_column.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,9 @@ class _HomeContainerState extends State<HomeContainer>
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
+        // if(state is HomeInitial) {
+        //   context.read<HomeCubit>().onInitialize(AuthCubit.currentUserId);
+        // }
         if (state is HomeLoading) {
           return const Scaffold(
             body: Center(
@@ -73,15 +77,15 @@ class _HomeContainerState extends State<HomeContainer>
                       clipBehavior: Clip.hardEdge,
                       decoration: const BoxDecoration(
                           shape: BoxShape.circle, color: Colors.black),
-                      child: Image.asset(
-                        'assets/dog.jpeg',
-                        fit: BoxFit.cover,
+                      child: Avatar(
+                        imageUrl: state.parent.avtPath,
+                        radius: 24,
                       ),
                     ),
                   ),
-                  title: const Text(
-                    'Chào Hạnh',
-                    style: TextStyle(
+                  title: Text(
+                    '${state.parent.name.isEmpty ? "" : "Xin chào "}${state.parent.name}',
+                    style: const TextStyle(
                       fontSize: 24.0,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -176,11 +180,13 @@ class _HomeContainerState extends State<HomeContainer>
                                               Post(
                                                 content: _controller.text,
                                                 time: DateTime.now(),
-                                                posterId: '123',
-                                                posterAvtPath: defaultAvtPath,
-                                                posterName: 'Nguyen Van Chu',
+                                                posterId: state.parent.id!,
+                                                posterAvtPath:
+                                                    state.parent.avtPath,
+                                                posterName: state.parent.name,
                                               ),
                                             );
+                                        if (!mounted) return;
                                         _controller.clear();
                                         _bottomSheetController.close();
                                         loading = false;

@@ -2,6 +2,7 @@ import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/chat/chat_cubit.dart';
 import 'package:consultant/cubits/chat/chat_state.dart';
+import 'package:consultant/cubits/messages/messages_cubit.dart';
 import 'package:consultant/models/chat_room_model.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/models/message_model.dart';
@@ -32,8 +33,6 @@ class _ChatScreenState extends State<ChatScreen> {
       seen: false,
     );
     await context.read<ChatCubit>().createMessage(widget.room.id!, message);
-    // messages.add(newMessage);
-    // setState(() {});
   }
 
   @override
@@ -62,7 +61,10 @@ class _ChatScreenState extends State<ChatScreen> {
           return Scaffold(
             appBar: AppBar(
               leading: InkWell(
-                onTap: () => context.pop(),
+                onTap: () {
+                  context.read<MessageCubit>().refresh();
+                  context.pop();
+                },
                 child: const Icon(
                   CupertinoIcons.back,
                   color: Colors.white,

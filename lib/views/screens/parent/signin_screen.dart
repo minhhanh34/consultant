@@ -126,17 +126,21 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
                     ),
                     // const SizedBox(height: 8),
-                    Visibility(
-                      visible: invalid,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Sai tài khoản hoặc mật khẩu',
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ),
-                      ),
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, state) {
+                        if (state is AuthInvalid) {
+                          return const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Sai tài khoản hoặc mật khẩu',
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox();
+                      },
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
@@ -175,7 +179,7 @@ class _LogInScreenState extends State<LogInScreen> {
                             context.go('/');
                           }
                           if (state is AuthSignInStudent) {
-                            context.go('/Student');
+                            context.go('/Student', extra: state.student);
                           }
                         },
                         builder: (context, state) {

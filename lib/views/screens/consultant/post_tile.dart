@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/messages/messages_cubit.dart';
 import 'package:consultant/models/chat_room_model.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
@@ -45,7 +46,7 @@ class _PostTileState extends State<PostTile> {
             trailing: InkWell(
               onTap: () async {
                 final room = ChatRoom(
-                  firstPersonId: 'RsuE11mvohH5PtwAokg6',
+                  firstPersonId: AuthCubit.currentUserId,
                   secondPersonId: widget.post.posterId,
                 );
                 final roomAfterCheck =

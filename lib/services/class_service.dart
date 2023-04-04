@@ -156,7 +156,8 @@ class ClassService {
         .toList();
   }
 
-  Future<List<Submission>> fetchStudentSubmissions(String classId, String studentId) async {
+  Future<List<Submission>> fetchStudentSubmissions(
+      String classId, String studentId) async {
     final snaps = await _classSubmissionRepository.collection
         .doc(classId)
         .collection(_classExerciseRepository.subCollection)
@@ -181,18 +182,16 @@ class ClassService {
 
   Future<Submission> createSubmission(
     String classId,
-    String exercieId,
-    String studentId,
-    List<String?> paths,
+    Submission submission,
   ) async {
-    final storage = FirebaseStorageService();
-    final submissionFileNames =
-        await storage.createFolderFiles('submissions', paths);
-    final submission = Submission(
-      exerciseId: exercieId,
-      studentId: studentId,
-      fileNames: submissionFileNames,
-    );
     return await _classSubmissionRepository.create(classId, submission);
+  }
+
+  Future<List<Class>> fetchClassesForStudent(Student student) async {
+    List<Class> classes = [];
+    for (var classId in student.classIds) {
+      classes.add(await _repository.getOne(classId));
+    }
+    return classes;
   }
 }

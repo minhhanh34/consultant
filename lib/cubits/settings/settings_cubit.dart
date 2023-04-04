@@ -6,10 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SettingsCubit extends Cubit<SettingsState> {
   SettingsCubit(this._service) : super(SettingsInitial());
   final SettingsService _service;
-
   Parent? _parent;
-
-  static const parentId = 'Hcf1IhArIcwq33RTseoG';
   Future<Parent> create(Parent parent) async {
     return await _service.create(parent);
   }

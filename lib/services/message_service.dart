@@ -13,6 +13,9 @@ class MessageService {
         .where('secondPersonId', isEqualTo: id)
         .get();
     final roomsDocs = [...firstPartDocs.docs, ...secondPartDocs.docs];
+    if (roomsDocs.isEmpty) {
+      return <ChatRoom>[];
+    }
     final rooms = roomsDocs
         .map((doc) => ChatRoom.fromJson(doc.data()! as Map<String, dynamic>)
             .copyWith(id: doc.id))
@@ -25,39 +28,22 @@ class MessageService {
   }
 
   Future<ChatRoom> checkRoom(ChatRoom room) async {
-    // print(room.firstPersonId);
-    // print(room.secondPersonId);
-
-    // final first = await _repository.collection.where(
-    //   'firstPersonId',
-    //   whereIn: [room.firstPersonId, room.secondPersonId],
-    // ).get();
-    // final second = await _repository.collection.where('secondPersonId',
-    //     whereIn: [room.firstPersonId, room.secondPersonId]).get();
-
-    // final firstRooms = first.docs
-    //     .map((e) =>
-    //         ChatRoom.fromJson(e.data() as Map<String, dynamic>).copyWith(id: e.id))
-    //     .toList();
-    // final secondRooms = second.docs
-    //     .map((e) =>
-    //         ChatRoom.fromJson(e.data() as Map<String, dynamic>).copyWith(id: e.id))
-    //     .toList();
-
-    // firstRooms.removeWhere((room) => secondRooms.contains(room));
-
-    // if (firstRooms.isNotEmpty && firstRooms.length == 1) {
-    //   return ChatRoom.fromJson(first.docs.first.data() as Map<String, dynamic>)
-    //       .copyWith(id: first.docs.first.id);
-    // }
-    // final newRoom = await createRoom(room);
-    // return newRoom;
-    final snap = await _repository.collection.doc(room.id).get();
-    if (snap.exists) {
-      return ChatRoom.fromJson(snap.data() as Map<String, dynamic>)
-          .copyWith(id: snap.id);
+    final rooms = await _repository.list();
+    String roomFirstSecond = '${room.firstPersonId}${room.secondPersonId}';
+    final filteredRooms = rooms.where((roomElement) {
+      String roomElementFirstSecond =
+          '${roomElement.firstPersonId}${roomElement.secondPersonId}';
+      String roomElementSecondFirst =
+          '${roomElement.secondPersonId}${roomElement.firstPersonId}';
+      return (roomFirstSecond == roomElementFirstSecond) ||
+          (roomFirstSecond == roomElementSecondFirst);
+    }).toList();
+    if (filteredRooms.isEmpty) {
+      final newRoom = await createRoom(room);
+    //TODO add new room to message cubit
+      return newRoom;
     }
-    final newRoom = await createRoom(room);
-    return newRoom;
+    final firstFilteredRoom = filteredRooms.first;
+    return firstFilteredRoom;
   }
 }

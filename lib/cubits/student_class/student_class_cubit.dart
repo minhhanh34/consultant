@@ -60,17 +60,15 @@ class StudentClassCubit extends Cubit<StudentClassState> {
 
   Future<void> createSubmission(
     String classId,
-    String exercieId,
-    String studentId,
-    List<String?> paths,
+    Submission submission,
   ) async {
-    final oldState = state;
     emit(StudentClassLoading());
-    final newSubmission =
-        await _service.createSubmission(classId, exercieId, studentId, paths);
+    final newSubmission = await _service.createSubmission(classId, submission);
     _submissions?.add(newSubmission);
-    emit(oldState);
+    emit(StudentClassExerciseFetched(_exercises!, _submissions!));
   }
+
+  void loading() => emit(StudentClassLoading());
 
   void dispose() {
     _exercises = null;

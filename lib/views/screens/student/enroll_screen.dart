@@ -57,7 +57,7 @@ class _EnrollScreenState extends State<EnrollScreen> {
           BlocConsumer<EnrollCubit, EnrollState>(
             listener: (context, state) {
               if (state is EnrollSuccess) {
-                context.go(
+                context.push(
                   '/StudentClass',
                   extra: {
                     'classId': state.classId,

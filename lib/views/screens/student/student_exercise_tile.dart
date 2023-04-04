@@ -10,19 +10,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../services/firebase_storage_service.dart';
+
 class StudentExerciseTile extends StatefulWidget {
   const StudentExerciseTile({
     super.key,
     required this.classId,
     required this.exercise,
-    required this.submissions,
+    this.submission,
     required this.studentId,
     this.state = DownloadState.unDownload,
   });
   final Exercise exercise;
   final String studentId;
   final String classId;
-  final List<Submission?> submissions;
+  final Submission? submission;
+
   final DownloadState state;
 
   @override
@@ -129,6 +132,31 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Visibility(
+              visible: widget.submission != null &&
+                  widget.submission!.fileNames.isNotEmpty,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Divider(color: Colors.black),
+                  Wrap(
+                    children: [
+                      for (int i = 0;
+                          i < (widget.submission?.fileNames.length ?? 0);
+                          i++)
+                        FileAttachChip(
+                          enable: false,
+                          onRemove: () {},
+                          name: widget.submission?.fileNames[i].name ?? '',
+                        )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 8),
           Visibility(
             visible: widget.exercise.submissionEnabled,
@@ -151,36 +179,68 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                       ),
                     ),
                   ),
-                  OutlinedButton(
-                    onPressed: () async {
-                      if (filePickerResult != null) {
-                        context.read<StudentClassCubit>().createSubmission(
-                              widget.classId,
-                              widget.exercise.id!,
-                              widget.studentId,
-                              filePickerResult!.paths.map((e) => e).toList(),
+                  Visibility(
+                    visible: widget.submission == null ||
+                        widget.submission!.fileNames.isEmpty,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        if (filePickerResult != null) {
+                          // context.read<StudentClassCubit>().loading();
+                          List<FileName> fileNames = [];
+                          final storageService = FirebaseStorageService();
+                          if (filePickerResult != null) {
+                            fileNames = await storageService.createFolderFiles(
+                              'submissions',
+                              filePickerResult!.paths,
                             );
-                        return;
-                      }
-                      filePickerResult =
-                          await SelectFilesBottomSheet.select(context);
-                      setState(() {});
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Visibility(
-                          visible: filePickerResult == null,
-                          child: Row(
-                            children: const [
-                              Icon(Icons.add),
-                              SizedBox(width: 8),
-                            ],
+                          }
+
+                          if (!mounted) return;
+
+                          for (int i = 0; i < fileNames.length; i++) {
+                            fileNames[i] = fileNames[i].copyWith(
+                              name: filePickerResult?.names[i] ?? '',
+                            );
+                          }
+                          final submission = Submission(
+                            studentId: widget.studentId,
+                            exerciseId: widget.exercise.id!,
+                            fileNames: fileNames,
+                          );
+                          context.read<StudentClassCubit>().createSubmission(
+                                widget.classId,
+                                submission,
+                              );
+                          return;
+                        }
+                        filePickerResult =
+                            await SelectFilesBottomSheet.select(context);
+                        setState(() {});
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Visibility(
+                            visible: filePickerResult == null,
+                            child: Row(
+                              children: const [
+                                Icon(Icons.add),
+                                SizedBox(width: 8),
+                              ],
+                            ),
                           ),
-                        ),
-                        const Text('Nộp bài'),
-                      ],
+                          const Text('Nộp bài'),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: widget.submission != null &&
+                        widget.submission!.fileNames.isNotEmpty,
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('Đã nộp'),
                     ),
                   ),
                 ],

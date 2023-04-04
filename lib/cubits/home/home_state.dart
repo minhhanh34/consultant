@@ -1,3 +1,4 @@
+import 'package:consultant/models/parent_model.dart';
 
 import '../../models/consultant_model.dart';
 
@@ -9,5 +10,6 @@ class HomeLoading extends HomeState {}
 
 class HomeConsultants extends HomeState {
   final List<Consultant> consultants;
-  HomeConsultants(this.consultants);
+  final Parent parent;
+  HomeConsultants(this.consultants, this.parent);
 }

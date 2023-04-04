@@ -76,4 +76,6 @@ class Message extends Equatable {
       recall: json['recall'] as bool,
     );
   }
+
+  
 }

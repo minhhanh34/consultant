@@ -37,8 +37,7 @@ class ClassRepository implements Repository<Class> {
   @override
   Future<Class> getOne(String id) async {
     final snap = await _collection.doc(id).get();
-    snap.data()!['id'] = snap.id;
-    return Class.fromJson(snap.data()!);
+    return Class.fromJson(snap.data()!).copyWith(id: snap.id);
   }
 
   @override

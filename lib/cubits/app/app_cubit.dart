@@ -10,7 +10,7 @@ class AppCubit extends Cubit<AppState> {
 
   void home() => emit(Home());
   void messages() => emit(Messages());
-  void schedules() => emit(Schedules());
+  void posted() => emit(Posted());
   void settings() => emit(Settings());
   void searching() => emit(Searching());
 
@@ -19,7 +19,7 @@ class AppCubit extends Cubit<AppState> {
     if (value == 0) home();
     if (value == 1) searching();
     if (value == 2) messages();
-    if (value == 3) schedules();
+    if (value == 3) posted();
     if (value == 4) settings();
   }
 

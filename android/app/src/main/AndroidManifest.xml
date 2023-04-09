@@ -22,10 +22,6 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
 
-    
-
-
-
 
         
         <activity

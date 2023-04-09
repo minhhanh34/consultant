@@ -45,7 +45,8 @@ class Parent extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, phone, email, avtPath, address];
+  List<Object?> get props =>
+      [id, name, phone, email, avtPath, address, ];
 
   Parent copyWith({
     String? id,

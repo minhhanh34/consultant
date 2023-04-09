@@ -1,13 +1,15 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/main.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/repositories/repository_interface.dart';
 
 class ConsultantRepository implements Repository<Consultant> {
-  final _collection = FirebaseFirestore.instanceFor(app: app).collection('consultants');
-  
+  final _collection =
+      FirebaseFirestore.instanceFor(app: app).collection('consultants');
+
   CollectionReference get collection => _collection;
 
   @override
@@ -34,8 +36,13 @@ class ConsultantRepository implements Repository<Consultant> {
 
   @override
   Future<Consultant> getOne(String id) async {
-    final snap = await _collection.doc(id).get();
-    return Consultant.fromJson(snap.data()!).copyWith(id: snap.id);
+    try {
+      final snap = await _collection.doc(id).get();
+      return Consultant.fromJson(snap.data()!).copyWith(id: snap.id);
+    } catch (e) {
+      log('error', error: e);
+      return Consultant(uid: AuthCubit.uid!);
+    }
   }
 
   @override

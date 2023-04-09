@@ -1,4 +1,3 @@
-import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_state.dart';
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/models/consultant_model.dart';
@@ -19,6 +18,7 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
   final ScheduleService _scheduleService;
   final ClassService _classService;
   final ConsultantService _consultantService;
+
   List<Schedule>? _schedules;
   List<Class>? _classes;
   Schedule? _scheduleUndo;
@@ -40,10 +40,9 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
     _classes ??= await _classService.fetchClasses(id);
   }
 
-  Future<void> initialize(BuildContext context) async {
+  Future<void> initialize(BuildContext context, String userId) async {
     emit(ConsultantHomeLoading());
-
-    await fetchData(AuthCubit.currentUserId);
+    await fetchData(userId);
     emit(ConsultantHomeFetched(_consultant!, _schedules!, _classes!));
   }
 

@@ -16,11 +16,11 @@ class ClassStudentRepository implements RepositoryWithSubCollection<Student> {
   @override
   Future<Student> create(String id, Student item) async {
     try {
-      final ref = await _collection
+      await _collection
           .doc(id)
           .collection(_subCollection)
-          .add(item.toJson());
-      item = item.copyWith(id: ref.id);
+          .doc(item.id)
+          .set(item.toJson());
     } catch (error) {
       log('error', error: error);
     }

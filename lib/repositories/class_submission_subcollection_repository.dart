@@ -50,11 +50,8 @@ class ClassSubmissionRepository
   @override
   Future<List<Submission>> list(String id) async {
     try {
-      final querySnaps = await _collection
-          .doc(id)
-          .collection(_subCollection)
-          .orderBy('timeCreated', descending: true)
-          .get();
+      final querySnaps =
+          await _collection.doc(id).collection(_subCollection).get();
 
       return querySnaps.docs.map((doc) {
         return Submission.fromJson(doc.data()).copyWith(id: doc.id);

@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../cubits/filter/filter_state.dart';
 
-
 class ConsultantsFilteredScreen extends StatelessWidget {
   const ConsultantsFilteredScreen({Key? key, required this.filtered})
       : super(key: key);
@@ -31,6 +30,14 @@ class ConsultantsFilteredScreen extends StatelessWidget {
             );
           }
           if (state is FilteredConsultants) {
+            if (state.consultants.isEmpty) {
+              return Center(
+                child: Text(
+                  'Không tìm thấy gia sư nào',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              );
+            }
             return ConsultantOverview(consultants: state.consultants);
           }
           return const Center(

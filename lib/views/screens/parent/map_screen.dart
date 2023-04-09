@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/views/components/center_circular_indicator.dart';
@@ -16,7 +17,6 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final _controller = Completer<GoogleMapController>();
- 
 
   late CameraPosition _cameraPosition;
 
@@ -41,21 +41,21 @@ class _MapScreenState extends State<MapScreen> {
     final location = Location();
     bool serviceEnabled;
     PermissionStatus permissionStatus;
-
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
+    try {
       serviceEnabled = await location.serviceEnabled();
-      if (!serviceEnabled) return;
-    }
+      if (!serviceEnabled) {
+        serviceEnabled = await location.serviceEnabled();
+        if (!serviceEnabled) return;
+      }
 
-    // setState(() {});
-
-    permissionStatus = await location.requestPermission();
-    if (permissionStatus == PermissionStatus.denied) {
       permissionStatus = await location.requestPermission();
-      if (permissionStatus != PermissionStatus.granted) return;
+      if (permissionStatus == PermissionStatus.denied) {
+        permissionStatus = await location.requestPermission();
+        if (permissionStatus != PermissionStatus.granted) return;
+      }
+    } catch (e) {
+      log('error', error: e);
     }
-    // setState(() {});
   }
 
   @override
@@ -78,6 +78,14 @@ class _MapScreenState extends State<MapScreen> {
                       // circles: Set.of(circles),
                       myLocationButtonEnabled: true,
                       myLocationEnabled: true,
+                      buildingsEnabled: true,
+                      mapToolbarEnabled: true,
+                      // onTap: (pos) {
+                      //   _controller.future.then((controller) {
+                      //     controller.showMarkerInfoWindow(MarkerId('a'));
+                      //   });
+                      // },
+                      // liteModeEnabled: true,
                     ),
                     Container(
                       margin: const EdgeInsets.all(8),

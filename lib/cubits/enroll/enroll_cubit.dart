@@ -12,6 +12,7 @@ class EnrollCubit extends Cubit<EnrollState> {
   void sendMessage(String message) => emit(EnrollMessage(message));
 
   void enroll(String id, Student student) async {
+    final oldState = state;
     emit(EnrollLoading());
     if (id.isEmpty) {
       message = 'không được bỏ trống';
@@ -27,5 +28,11 @@ class EnrollCubit extends Cubit<EnrollState> {
       return;
     }
     emit(EnrollSuccess(id, student.id!));
+    emit(oldState);
+  }
+
+  void dispose() {
+    message = '';
+    emit(EnrollInitial());
   }
 }

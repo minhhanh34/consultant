@@ -18,7 +18,15 @@ class StudentService {
         .copyWith(id: snap.docs.first.id);
   }
 
+  Future<Student> getStudentById(String id) async {
+    return await _repository.getOne(id);
+  }
+
   Future<bool> updateStudent(Student student) async {
     return await _repository.update(student.id!, student);
+  }
+
+  Future<bool> delete(String id) async {
+    return await _repository.delete(id);
   }
 }

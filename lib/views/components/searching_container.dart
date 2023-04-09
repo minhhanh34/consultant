@@ -24,7 +24,7 @@ class _SearchingContainerState extends State<SearchingContainer>
     super.initState();
     _controller = TextEditingController();
     _controller.addListener(() {
-      context.read<SearchingCubit>().filter(_controller.text);
+      context.read<SearchingCubit>().filterByName(_controller.text);
       if (_controller.text.isNotEmpty) {
         isSearching = true;
       } else {
@@ -41,7 +41,6 @@ class _SearchingContainerState extends State<SearchingContainer>
   void dispose() {
     _controller.dispose();
     _animationController.dispose();
-
     super.dispose();
   }
 
@@ -85,7 +84,7 @@ class _SearchingContainerState extends State<SearchingContainer>
                             ? InkWell(
                                 onTap: () => context
                                     .read<SearchingCubit>()
-                                    .filter(_controller.text = ''),
+                                    .filterByName(_controller.text = ''),
                                 child: const Icon(Icons.close),
                               )
                             : const Icon(Icons.search),
@@ -107,7 +106,7 @@ class _SearchingContainerState extends State<SearchingContainer>
                         ),
                         const Spacer(),
                         Visibility(
-                          visible: isFiltering,
+                          visible: state.isFiltering,
                           child: TextButton(
                             onPressed: () {
                               isFiltering = false;

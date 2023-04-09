@@ -1,12 +1,14 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_app/consultant_app_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_app/consultant_app_state.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:consultant/views/components/messages_container.dart';
 import 'package:consultant/views/screens/consultant/consultant_home_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'consultant_post_container.dart';
-import 'consultant_settings.dart';
+import 'consultant_settings_container.dart';
 
 class ConsultantHomeScreen extends StatefulWidget {
   const ConsultantHomeScreen({super.key});
@@ -22,6 +24,10 @@ class _ConsultantHomeScreenState extends State<ConsultantHomeScreen> {
       body: BlocBuilder<ConsultantAppCubit, ConsultantAppState>(
         builder: (context, state) {
           if (state is ConsultantHome) {
+            final id = AuthCubit.currentUserId;
+            if (id != null) {
+              context.read<ConsultantHomeCubit>().initialize(context, id);
+            }
             return const ConsultantHomeContainer();
           }
           if (state is ConsultantPost) {
@@ -30,7 +36,7 @@ class _ConsultantHomeScreenState extends State<ConsultantHomeScreen> {
           if (state is ConsultantSettings) {
             return const ConsultantSettingsContainer();
           }
-          if(state is ConsultantMessage) {
+          if (state is ConsultantMessage) {
             return const MessagesContainer();
           }
           return const SizedBox();

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-
+import 'dart:developer' as dev;
 import 'package:consultant/main.dart';
 import 'package:consultant/models/exercise_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -23,8 +23,11 @@ class FirebaseStorageService {
       if (path != null) {
         String randomName = getRandomString(20);
         storageNames.add(randomName);
-        final uploadTask =
-            await ref.child(folderName).child(randomName).putFile(File(path));
+        final uploadTask = await ref
+            .child(folderName)
+            .child(randomName)
+            .putFile(File(path))
+            .catchError((e) => dev.log('error', error: e));
         refs.add(uploadTask.ref);
       }
     }
@@ -49,8 +52,12 @@ class FirebaseStorageService {
   Future<void> downloadFileAttach(String url) async {}
 
   Future<void> deleteFiles(List<String> storageNames) async {
-    for (var name in storageNames) {
-      await ref.child('exercises').child(name).delete();
+    try {
+      for (var name in storageNames) {
+        await ref.child('exercises').child(name).delete();
+      }
+    } catch (e) {
+      dev.log('error', error: e);
     }
   }
 }

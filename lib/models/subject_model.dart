@@ -1,34 +1,35 @@
 import 'package:equatable/equatable.dart';
 
-class Subject extends Equatable {
+import '../utils/week_day_mixin.dart';
+
+class Subject extends Equatable with WeekDayMixin {
   final String name;
   final int grade;
   final double price;
   final int duration;
   final String time;
-  final List<String> dates;
+  final List<int> weekDays;
 
   const Subject({
     required this.name,
     required this.grade,
-    required this.dates,
+    required this.weekDays,
     required this.duration,
     required this.price,
     required this.time,
   });
 
-  Subject copyWith({
-    String? name,
-    int? grade,
-    double? price,
-    int? duration,
-    String? time,
-    List<String>? dates,
-  }) {
+  Subject copyWith(
+      {String? name,
+      int? grade,
+      double? price,
+      int? duration,
+      String? time,
+      List<int>? weekDays}) {
     return Subject(
       name: name ?? this.name,
       grade: grade ?? this.grade,
-      dates: dates ?? this.dates,
+      weekDays: weekDays ?? this.weekDays,
       duration: duration ?? this.duration,
       price: price ?? this.price,
       time: time ?? this.time,
@@ -42,7 +43,7 @@ class Subject extends Equatable {
       'price': price,
       'duration': duration,
       'time': time,
-      'dates': dates.map((date) => date.toString()).toList(),
+      'weekDays': weekDays,
     };
   }
 
@@ -50,7 +51,7 @@ class Subject extends Equatable {
     return Subject(
       name: json['name'],
       grade: json['grade'],
-      dates: (json['dates'] as List).map((date) => date as String).toList(),
+      weekDays: (json['weekDays'] as List).map((date) => date as int).toList(),
       duration: json['duration'],
       price: (json['price'] as num).toDouble(),
       time: json['time'],
@@ -58,10 +59,10 @@ class Subject extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, grade, price, duration, time, dates];
+  List<Object?> get props => [name, grade, price, duration, time, weekDays];
 
   String dateToString() {
-    final str = dates.toString();
+    final str = weekDays.map((day) => convertWeekDay(day)).toString();
     return str.substring(1, str.length - 1);
   }
 }

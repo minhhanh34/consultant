@@ -1,11 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
 import '../../../cubits/consultant_cubits/consultant_home/consultant_home_state.dart';
 import '../../components/center_circular_indicator.dart';
 import 'class_tile.dart';
-import '../../components/schedule_card.dart';
 import 'class_addition_bottom_sheet.dart';
 
 class ConsultantHomeContainer extends StatefulWidget {
@@ -36,13 +37,12 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<ConsultantHomeCubit>();
     return SafeArea(
       child: BlocBuilder<ConsultantHomeCubit, ConsultantHomeState>(
         builder: (context, state) {
-          if (state is ConsultantHomeInitial) {
-            cubit.initialize(context);
-          }
+          // if (state is ConsultantHomeInitial) {
+          //   cubit.initialize(context);
+          // }
           if (state is ConsultantHomeFetched) {
             return Column(
               children: [
@@ -79,26 +79,100 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
                   child: TabBarView(
                     controller: _controller,
                     children: [
-                      Builder(builder: (context) {
-                        if (state.schedules.isEmpty) {
-                          return const Center(
-                            child: Text('Chưa có thời khóa biểu'),
+                      Builder(
+                        builder: (context) {
+                          if (state.classes.isEmpty) {
+                            return Center(
+                              child: Text(
+                                'Chưa có thời khóa biểu',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            );
+                          }
+                          final now = DateTime.now();
+                          final upcomingClass = state.classes
+                              .where((sclass) =>
+                                  sclass.subject.weekDays.contains(now.weekday))
+                              .toList();
+                          final screenSize = MediaQuery.of(context).size;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Visibility(
+                                visible: upcomingClass.isNotEmpty,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    'Hôm nay',
+                                    style: Theme.of(context).textTheme.titleLarge,
+                                  ),
+                                ),
+                              ),
+                              ...upcomingClass.map(
+                                (sclass) {
+                                  return ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 32.0,
+                                    ),
+                                    minLeadingWidth: 24,
+                                    leading: const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 16.0),
+                                      child: Icon(
+                                        FontAwesomeIcons.circle,
+                                        size: 16,
+                                      ),
+                                    ),
+                                    title: Text(sclass.name),
+                                    subtitle: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          CupertinoIcons.timer,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(sclass.subject.time),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  'Tất cả',
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                              ),
+                              Expanded(
+                                child: ListView.separated(
+                                  separatorBuilder: (context, index) => Divider(
+                                    indent: screenSize.width * .05,
+                                    color: Colors.grey,
+                                    thickness: 1,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  itemCount: state.classes.length,
+                                  itemBuilder: (context, index) {
+                                    final sclass = state.classes[index];
+                                    return ListTile(
+                                      title: Text(
+                                        sclass.name,
+                                      ),
+                                      subtitle:
+                                          Text(sclass.subject.dateToString()),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           );
-                        }
-                        return ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: state.schedules.length,
-                          itemBuilder: (context, index) => ScheduleCard(
-                            cancelLabel: 'Từ chối',
-                            confirmLabel: 'Chấp nhận',
-                            schedule: state.schedules[index],
-                            cancel: () async => cubit.denySchedule(
-                              state.schedules[index],
-                            ),
-                            undo: () => cubit.undoScheduleDeny(),
-                          ),
-                        );
-                      }),
+                        },
+                      ),
                       Column(
                         children: [
                           ListTile(
@@ -120,16 +194,27 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
                             ),
                           ),
                           Expanded(
-                            child: ListView.builder(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              itemCount: state.classes.length,
-                              itemBuilder: (context, index) {
-                                return ClassTile(
-                                  consultantClass: state.classes[index],
+                            child: Builder(builder: (context) {
+                              if (state.classes.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    'Chưa có lớp học nào',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
                                 );
-                              },
-                            ),
+                              }
+                              return ListView.builder(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: state.classes.length,
+                                itemBuilder: (context, index) {
+                                  return ClassTile(
+                                    consultantClass: state.classes[index],
+                                  );
+                                },
+                              );
+                            }),
                           ),
                         ],
                       )

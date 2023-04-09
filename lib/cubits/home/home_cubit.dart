@@ -33,6 +33,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   void dispose() {
     _popularConsultants = null;
+    _parent = null;
     emit(HomeInitial());
   }
 }

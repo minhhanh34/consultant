@@ -32,37 +32,37 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
 
   List<Map> dayCheckBoxs = [
     {
-      'name': 'Thứ hai',
+      'weekDays': 0,
       'title': 'T2',
       'value': false,
     },
     {
-      'name': 'Thứ ba',
+      'weekDays': 1,
       'title': 'T3',
       'value': false,
     },
     {
-      'name': 'Thứ tư',
+      'weekDays': 2,
       'title': 'T4',
       'value': false,
     },
     {
-      'name': 'Thứ năm',
+      'weekDays': 3,
       'title': 'T5',
       'value': false,
     },
     {
-      'name': 'Thứ sáu',
+      'weekDays': 4,
       'title': 'T6',
       'value': false,
     },
     {
-      'name': 'Thứ bảy',
+      'weekDays': 5,
       'title': 'T7',
       'value': false,
     },
     {
-      'name': 'Chủ nhật',
+      'weekDays': 6,
       'title': 'CN',
       'value': false,
     },
@@ -297,7 +297,10 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 16,
+                  ),
                   child: ElevatedButton(
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all(
@@ -323,7 +326,7 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                                 subject: Subject(
                                   name: _subjectNameController.text,
                                   grade: int.parse(_gradeController.text),
-                                  dates: dates(),
+                                  weekDays: weekDays(),
                                   duration: int.parse(_durationController.text),
                                   price: double.parse(_priceController.text),
                                   time: time?.format(context) ?? '8:00',
@@ -349,11 +352,11 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
     );
   }
 
-  List<String> dates() {
-    List<String> results = [];
+  List<int> weekDays() {
+    List<int> results = <int>[];
     for (var day in dayCheckBoxs) {
       if (day['value']) {
-        results.add(day['name']);
+        results.add(day['weekDays']);
       }
     }
     return results;

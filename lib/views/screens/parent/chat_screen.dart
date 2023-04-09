@@ -28,7 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final message = Message(
       time: DateTime.now(),
       content: content,
-      senderId: AuthCubit.currentUserId,
+      senderId: AuthCubit.currentUserId!,
       receiverId: widget.partnerId,
       seen: false,
     );

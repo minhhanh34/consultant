@@ -4,6 +4,7 @@ import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/models/chat_room_model.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/services/consultant_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../services/message_service.dart';
@@ -14,8 +15,8 @@ class MessageCubit extends Cubit<MessageState> {
       : super(MessageInitial());
   final MessageService _service;
   final ConsultantService _consultantService;
+
   List<ChatRoom>? _rooms;
-  // List<Consultant>? _consultants;
 
   void initialize() => emit(MessageInitial());
 
@@ -37,13 +38,17 @@ class MessageCubit extends Cubit<MessageState> {
     return await _service.createRoom(room);
   }
 
-  Future<ChatRoom> checkRoom(ChatRoom room) async {
-    return await _service.checkRoom(room);
+  Future<ChatRoom> checkRoom(BuildContext context, ChatRoom room) async {
+    return await _service.checkRoom(context, room);
   }
 
   void refresh() async {
     _rooms = null;
-    await fetchRooms(AuthCubit.currentUserId);
+    await fetchRooms(AuthCubit.currentUserId!);
+  }
+
+  void addRoomCached(ChatRoom room) {
+    _rooms?.add(room);
   }
 
   void dispose() {

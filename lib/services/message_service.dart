@@ -1,5 +1,8 @@
+import 'package:consultant/cubits/messages/messages_cubit.dart';
 import 'package:consultant/models/chat_room_model.dart';
 import 'package:consultant/repositories/message_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MessageService {
   final MessageRepository _repository;
@@ -27,7 +30,8 @@ class MessageService {
     return await _repository.create(room);
   }
 
-  Future<ChatRoom> checkRoom(ChatRoom room) async {
+  Future<ChatRoom> checkRoom(BuildContext context, ChatRoom room) async {
+    final messageCubit = context.read<MessageCubit>();
     final rooms = await _repository.list();
     String roomFirstSecond = '${room.firstPersonId}${room.secondPersonId}';
     final filteredRooms = rooms.where((roomElement) {
@@ -40,7 +44,7 @@ class MessageService {
     }).toList();
     if (filteredRooms.isEmpty) {
       final newRoom = await createRoom(room);
-    //TODO add new room to message cubit
+      messageCubit.addRoomCached(room);
       return newRoom;
     }
     final firstFilteredRoom = filteredRooms.first;

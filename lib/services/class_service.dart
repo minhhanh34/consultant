@@ -80,6 +80,10 @@ class ClassService {
     return finalExercises;
   }
 
+  Future<List<Submission>> listSubmissions(String classId) async {
+    return await _classSubmissionRepository.list(classId);
+  }
+
   Future<DownloadState> checkExist(Directory? dir, FileName fileName) async {
     bool isExist = await File('${dir!.path}/${fileName.name}').exists();
     if (isExist) return DownloadState.downloaded;
@@ -118,7 +122,9 @@ class ClassService {
   }
 
   Future<bool> deleteStudent(String id, String studentId) async {
-    return await _classStudentRepository.delete(id, studentId);
+    return await _classStudentRepository
+        .delete(id, studentId)
+        .catchError((e) => false);
   }
 
   Future deleteExerciseCollection(String classId) async {
@@ -146,14 +152,20 @@ class ClassService {
 
   Future<List<Submission>> fetchSubmissions(
       String classId, String excerciseId) async {
-    final snaps = await _classSubmissionRepository.collection
-        .doc(classId)
-        .collection(_classExerciseRepository.subCollection)
-        .where('exerciseId', isEqualTo: excerciseId)
-        .get();
-    return snaps.docs
-        .map((doc) => Submission.fromJson(doc.data()).copyWith(id: doc.id))
-        .toList();
+    try {
+      final snaps = await _classSubmissionRepository.collection
+          .doc(classId)
+          .collection(_classExerciseRepository.subCollection)
+          .where('exerciseId', isEqualTo: excerciseId)
+          .get();
+      // print(snaps.docs.first.data());
+      return snaps.docs
+          .map((doc) => Submission.fromJson(doc.data()).copyWith(id: doc.id))
+          .toList();
+    } catch (e) {
+      log('error', error: e);
+      return [];
+    }
   }
 
   Future<List<Submission>> fetchStudentSubmissions(
@@ -173,11 +185,13 @@ class ClassService {
     String submissionId,
     Submission submission,
   ) async {
-    return await _classSubmissionRepository.update(
-      classId,
-      submissionId,
-      submission,
-    );
+    return await _classSubmissionRepository
+        .update(
+          classId,
+          submissionId,
+          submission,
+        )
+        .catchError((e) => false);
   }
 
   Future<Submission> createSubmission(

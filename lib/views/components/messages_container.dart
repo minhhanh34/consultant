@@ -54,11 +54,10 @@ class MessagesContainer extends StatelessWidget {
             delegate: SliverChildListDelegate([
               BlocBuilder<MessageCubit, MessageState>(
                 builder: (context, state) {
-                  print(state);
                   if (state is MessageInitial) {
                     context
                         .read<MessageCubit>()
-                        .fetchRooms(AuthCubit.currentUserId);
+                        .fetchRooms(AuthCubit.currentUserId!);
                   }
                   if (state is MessageRooms) {
                     if (state.rooms.isEmpty) {

@@ -12,7 +12,6 @@ import 'package:consultant/models/consultant_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -48,8 +47,9 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
 
   void openChatRoom(BuildContext context) async {
     final room = await context.read<MessageCubit>().checkRoom(
+          context,
           ChatRoom(
-            firstPersonId: AuthCubit.currentUserId,
+            firstPersonId: AuthCubit.currentUserId!,
             secondPersonId: widget.consultant.id!,
           ),
         );
@@ -124,12 +124,6 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
             return CustomScrollView(
               slivers: [
                 SliverAppBar(
-                  actions: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(FontAwesomeIcons.heart),
-                    ),
-                  ],
                   collapsedHeight: 130,
                   elevation: 0,
                   expandedHeight: 240,

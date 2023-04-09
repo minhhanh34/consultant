@@ -17,7 +17,10 @@ class ConsultantService {
   }
 
   Future<List<Consultant>> getPopularConsultants() async {
-    final docSnaps = await _repository.collection.limit(4).get();
+    final docSnaps = await _repository.collection
+        .orderBy('rate', descending: true)
+        .limit(4)
+        .get();
     return docSnaps.docs.map((docSnap) {
       return Consultant.fromJson(docSnap.data() as Map<String, dynamic>)
           .copyWith(id: docSnap.id);

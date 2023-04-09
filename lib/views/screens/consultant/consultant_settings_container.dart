@@ -17,9 +17,11 @@ class ConsultantSettingsContainer extends StatelessWidget {
     return BlocBuilder<ConsultantSettingsCubit, ConsultantSettingsState>(
       builder: (context, state) {
         if (state is ConsultantSettingsInitial) {
-          context
-              .read<ConsultantSettingsCubit>()
-              .fetchData('RsuE11mvohH5PtwAokg6');
+          if (AuthCubit.currentUserId != null) {
+            context
+                .read<ConsultantSettingsCubit>()
+                .fetchData(AuthCubit.currentUserId!);
+          }
         }
         if (state is ConsultantSettingsFetched) {
           return BlocListener<AuthCubit, AuthState>(

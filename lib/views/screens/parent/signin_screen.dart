@@ -164,7 +164,7 @@ class _LogInScreenState extends State<LogInScreen> {
                               password: _pwdController.text,
                             );
                         if (!mounted) return;
-                        if (context.read<AuthCubit>().userCredential == null) {
+                        if (AuthCubit.uid == null) {
                           setState(() {
                             invalid = true;
                           });

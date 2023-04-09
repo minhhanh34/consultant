@@ -59,7 +59,6 @@ class Class extends Equatable {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'id': id,
       'consultantId': consultantId,
       'consultantName': consultantName,
       'subject': subject.toJson(),

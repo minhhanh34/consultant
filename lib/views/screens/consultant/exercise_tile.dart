@@ -8,16 +8,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../models/submission_model.dart';
+
 class ExerciseTile extends StatefulWidget {
   const ExerciseTile({
     super.key,
     required this.classId,
     required this.exercise,
+    required this.submissions,
     this.state = DownloadState.unDownload,
   });
   final Exercise exercise;
   final String classId;
   final DownloadState state;
+  final List<Submission> submissions;
   @override
   State<ExerciseTile> createState() => _ExerciseTileState();
 }
@@ -131,6 +135,10 @@ class _ExerciseTileState extends State<ExerciseTile> {
                   ),
               ],
             ),
+            Visibility(
+              visible: widget.exercise.submissionEnabled,
+              child: buildSubmissionsCounterButton(),
+            ),
           ],
         ),
       ),
@@ -152,5 +160,22 @@ class _ExerciseTileState extends State<ExerciseTile> {
       );
     }
     return const Icon(Icons.download);
+  }
+
+  buildSubmissionsCounterButton() {
+    return InkWell(
+      onTap: () {
+        context.push(
+          '/ConsultantClassSubmissions',
+          extra: {'classId': widget.classId, 'submissions': widget.submissions},
+        );
+      },
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Chip(
+          label: Text('Đã nộp (${widget.submissions.length})'),
+        ),
+      ),
+    );
   }
 }

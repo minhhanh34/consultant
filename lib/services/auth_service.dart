@@ -84,6 +84,7 @@ class AuthService {
         email: email,
         password: password,
       );
+      
     } catch (e) {
       log('error', error: e);
       return null;

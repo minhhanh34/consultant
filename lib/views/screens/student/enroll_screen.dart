@@ -1,4 +1,5 @@
 import 'package:consultant/cubits/enroll/enroll_state.dart';
+import 'package:consultant/cubits/student_home/student_home_cubit.dart';
 import 'package:consultant/models/student_model.dart';
 import 'package:consultant/views/components/center_circular_indicator.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,7 @@ class _EnrollScreenState extends State<EnrollScreen> {
           BlocConsumer<EnrollCubit, EnrollState>(
             listener: (context, state) {
               if (state is EnrollSuccess) {
+                context.read<StudentHomeCubit>().refresh();
                 context.push(
                   '/StudentClass',
                   extra: {

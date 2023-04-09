@@ -29,12 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             if (state is Home) {
-              final authCubit = context.read<AuthCubit>();
-              final uid = authCubit.userCredential?.user?.uid;
+              final uid = AuthCubit.uid;
               if (uid != null) {
-                context
-                    .read<HomeCubit>()
-                    .onInitialize(authCubit.userCredential!.user!.uid);
+                context.read<HomeCubit>().onInitialize(uid);
               }
               return const HomeContainer();
             }

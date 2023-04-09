@@ -35,7 +35,11 @@ class ClassCubit extends Cubit<ClassState> {
   Future<void> createExercise(String id, Exercise exercise) async {
     final newExc = await _service.createExercise(id, exercise);
     _exercises?.insert(0, newExc);
-    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+    emit(ClassDetailFethed(
+      exercises: _exercises!,
+      students: _students!,
+      submissions: _submissions!,
+    ));
   }
 
   // void fetchExercises(String id) async {
@@ -49,17 +53,28 @@ class ClassCubit extends Cubit<ClassState> {
   void deleteExcercise(String classId, Exercise exercise) async {
     await _service.deleteExcercise(classId, exercise);
     _exercises?.remove(exercise);
-    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+    emit(ClassDetailFethed(
+        exercises: _exercises!,
+        students: _students!,
+        submissions: _submissions!));
   }
 
   void onLoading() => emit(ClassLoading());
 
   Future<void> downloadFileAttach(FileName fileName) async {
     changeStateForFileName(fileName, DownloadState.downloading);
-    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+    emit(ClassDetailFethed(
+      exercises: _exercises!,
+      students: _students!,
+      submissions: _submissions!,
+    ));
     await downloader.download(fileName);
     changeStateForFileName(fileName, DownloadState.downloaded);
-    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+    emit(ClassDetailFethed(
+      exercises: _exercises!,
+      students: _students!,
+      submissions: _submissions!,
+    ));
   }
 
   void changeStateForFileName(FileName fileName, DownloadState state) {
@@ -93,14 +108,23 @@ class ClassCubit extends Cubit<ClassState> {
     emit(ClassLoading());
     _exercises = await _service.fetchExercise(classId);
     _students = await _service.fetchStudents(classId);
-    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+    _submissions = await _service.listSubmissions(classId);
+    emit(ClassDetailFethed(
+      exercises: _exercises!,
+      students: _students!,
+      submissions: _submissions!,
+    ));
   }
 
   Future<void> rejectStudent(String classId, String studentId) async {
-    emit(ClassLoading());
+    // emit(ClassLoading());
     await _service.deleteStudent(classId, studentId);
     _students?.removeWhere((element) => element.id == studentId);
-    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
+    // emit(ClassDetailFethed(
+    //   exercises: _exercises!,
+    //   students: _students!,
+    //   submissions: _submissions!,
+    // ));
   }
 
   Future<void> fetchSubmissions(String classId, String exercieId) async {
@@ -114,13 +138,8 @@ class ClassCubit extends Cubit<ClassState> {
     String submissionId,
     Submission submission,
   ) async {
-    emit(ClassLoading());
     await _service.updateSubmission(classId, submissionId, submission);
-    emit(ClassMarked());
-    emit(ClassDetailFethed(exercises: _exercises!, students: _students!));
   }
-
-  
 
   void dispose() {
     _classes = null;

@@ -4,6 +4,7 @@ import 'package:consultant/cubits/consultant_cubits/consultant_app/consultant_ap
 import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:consultant/cubits/consultant_cubits/consultant_settings/consultant_settings_cubit.dart';
+import 'package:consultant/cubits/enroll/enroll_cubit.dart';
 import 'package:consultant/cubits/filter/filter_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
 import 'package:consultant/cubits/messages/messages_cubit.dart';
@@ -11,13 +12,16 @@ import 'package:consultant/cubits/posts/post_cubit.dart';
 import 'package:consultant/cubits/schedules/schedules_cubit.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/cubits/settings/settings_cubit.dart';
+import 'package:consultant/cubits/student_class/student_class_cubit.dart';
+import 'package:consultant/cubits/student_home/student_home_cubit.dart';
+import 'package:consultant/main.dart';
 import 'package:consultant/services/auth_service.dart';
 import 'package:consultant/services/consultant_service.dart';
 import 'package:consultant/services/parent_service.dart';
 import 'package:consultant/services/student_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../utils/user_type_enum.dart';
 import 'auth_state.dart';
@@ -33,37 +37,60 @@ class AuthCubit extends Cubit<AuthState> {
   final ConsultantService _consultantService;
   final ParentService _parentService;
   final StudentService _studentService;
-  UserCredential? _userCredential;
-  static String _currentUserId = '';
+  static String? _userType;
+  static String? _uid;
+  static String? _currentUserId;
 
-  static String get currentUserId => _currentUserId;
+  static set setCurrentUserId(String id) => _currentUserId = id;
 
-  UserCredential? get userCredential => _userCredential;
+  static set setUid(String uid) => _uid = uid;
+
+  static set setUserType(String userType) => _userType = userType;
+
+  static String? get currentUserId => _currentUserId;
+
+  static String? get uid => _uid;
+
+  static String? get userType => _userType;
 
   Future<void> signIn({required String email, required String password}) async {
     emit(AuthLoading());
-    _userCredential = await _service.signIn(email, password);
-    if (_userCredential == null) {
+    const secureStorage = FlutterSecureStorage(
+      aOptions: AndroidOptions(
+        encryptedSharedPreferences: true,
+      ),
+    );
+    final userCredential = await _service.signIn(email, password);
+    if (userCredential == null) {
       emit(AuthInvalid());
       return;
     }
-    final uid = _userCredential!.user!.uid;
-    final userType = userCredential!.user!.displayName;
-    if (userType == 'consultant') {
-      final consultant = await _consultantService.getConsultantByUid(uid);
+
+    _uid = userCredential.user?.uid;
+    _userType = userCredential
+        .user?.displayName; // display name was stored as user type
+
+    await secureStorage.write(key: 'uid', value: uid);
+    await secureStorage.write(key: 'userType', value: userType);
+
+    if (_userType == 'consultant') {
+      final consultant = await _consultantService.getConsultantByUid(_uid!);
       _currentUserId = consultant.id!;
+      await secureStorage.write(key: 'id', value: currentUserId);
       emit(AuthSignInConsultant(consultant));
       return;
     }
-    if (userType == 'parent') {
-      final parent = await _parentService.getParentByUid(uid);
+    if (_userType == 'parent') {
+      final parent = await _parentService.getParentByUid(_uid!);
       _currentUserId = parent.id!;
+      await secureStorage.write(key: 'id', value: currentUserId);
       emit(AuthSignInParent(parent));
       return;
     }
-    if (userType == 'student') {
-      final student = await _studentService.getStudentByUid(uid);
+    if (_userType == 'student') {
+      final student = await _studentService.getStudentByUid(_uid!);
       _currentUserId = student.id!;
+      await secureStorage.write(key: 'id', value: currentUserId);
       emit(AuthSignInStudent(student));
       return;
     }
@@ -76,36 +103,56 @@ class AuthCubit extends Cubit<AuthState> {
     required String password,
   }) async {
     emit(AuthLoading());
-
     await _service.createUser(userType, email, password);
     emit(AuthSignUpSuccessed());
     emit(AuthInitial());
   }
 
   Future<void> signOut(BuildContext context) async {
+    final appCubit = context.read<AppCubit>();
+    final authCubit = context.read<AuthCubit>();
+    final chatCubit = context.read<ChatCubit>();
+    final consultantAppCubit = context.read<ConsultantAppCubit>();
+    final classCubit = context.read<ClassCubit>();
+    final consultantHomeCubit = context.read<ConsultantHomeCubit>();
+    final consultantSettingsCubit = context.read<ConsultantSettingsCubit>();
+    final enrollCubit = context.read<EnrollCubit>();
+    final filterCubit = context.read<FilterCubit>();
+    final homeCubit = context.read<HomeCubit>();
+    final messageCubit = context.read<MessageCubit>();
+    final postCubit = context.read<PostCubit>();
+    final scheduleCubit = context.read<ScheduleCubit>();
+    final searchCubit = context.read<SearchingCubit>();
+    final settingsCubit = context.read<SettingsCubit>();
+    final studentClassCubit = context.read<StudentClassCubit>();
+    final studentHomeCubit = context.read<StudentHomeCubit>();
     emit(AuthLoading());
-    _service.signOut().then((value) {
-      emit(AuthSignOuted());
-      context.read<AppCubit>().dispose();
-      context.read<AuthCubit>().dispose();
-      context.read<ChatCubit>().dispose();
-      context.read<ConsultantAppCubit>().dispose();
-      context.read<ClassCubit>().dispose();
-      context.read<ConsultantHomeCubit>().dispose();
-      context.read<ConsultantSettingsCubit>().dispose();
-      context.read<FilterCubit>().dispose();
-      context.read<HomeCubit>().dispose();
-      context.read<MessageCubit>().dispose();
-      context.read<PostCubit>().dispose();
-      context.read<ScheduleCubit>().dispose();
-      context.read<SearchingCubit>().dispose();
-      context.read<SettingsCubit>().dispose();
-    });
+    await _service.signOut();
+    await secureStorage.deleteAll();
     emit(AuthSignOuted());
+    authCubit.dispose();
+    appCubit.dispose();
+    chatCubit.dispose();
+    consultantAppCubit.dispose();
+    classCubit.dispose();
+    consultantHomeCubit.dispose();
+    consultantSettingsCubit.dispose();
+    filterCubit.dispose();
+    homeCubit.dispose();
+    messageCubit.dispose();
+    postCubit.dispose();
+    scheduleCubit.dispose();
+    searchCubit.dispose();
+    settingsCubit.dispose();
+    enrollCubit.dispose();
+    studentClassCubit.dispose();
+    studentHomeCubit.dispose();
   }
 
   void dispose() {
-    _userCredential = null;
+    _uid = null;
+    _userType = null;
+    _currentUserId = null;
     emit(AuthInitial());
   }
 }

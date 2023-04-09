@@ -3,14 +3,13 @@ import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/views/components/center_circular_indicator.dart';
 import 'package:consultant/views/screens/consultant/exercise_tile.dart';
+import 'package:consultant/views/screens/consultant/information_tab.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_filex/open_filex.dart';
 
 import '../../../cubits/consultant_cubits/consultant_class/class_state.dart';
 import 'exercise_addition_bottom_sheet.dart';
-import 'member_tab.dart';
 
 class ClassDetail extends StatefulWidget {
   const ClassDetail({Key? key, required this.classRoom}) : super(key: key);
@@ -58,7 +57,7 @@ class _ClassDetailState extends State<ClassDetail>
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'Thành viên',
+                'Thông tin',
               ),
             ),
           ],
@@ -69,47 +68,17 @@ class _ClassDetailState extends State<ClassDetail>
         children: [
           Column(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Mã lớp: ${widget.classRoom.id}',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            await Clipboard.setData(
-                              ClipboardData(text: widget.classRoom.id),
-                            );
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(context)
-                              ..hideCurrentSnackBar()
-                              ..showSnackBar(
-                                const SnackBar(content: Text('Đã sao chép!')),
-                              );
-                          },
-                          icon: const Icon(Icons.copy),
-                        )
-                      ],
+              ListTile(
+                onTap: () async {
+                  _key.currentState?.showBottomSheet(
+                    (context) => ExerciseAdditionBottomSheet(
+                      classRoom: widget.classRoom,
+                      scaffoldKey: _key,
                     ),
-                  ),
-                  ListTile(
-                    onTap: () async {
-                      _key.currentState?.showBottomSheet(
-                        (context) => ExerciseAdditionBottomSheet(
-                          classRoom: widget.classRoom,
-                          scaffoldKey: _key,
-                        ),
-                      );
-                    },
-                    leading: const Icon(Icons.add_circle),
-                    title: const Text('Thêm bài tập mới'),
-                  ),
-                ],
+                  );
+                },
+                leading: const Icon(Icons.add_circle),
+                title: const Text('Thêm bài tập mới'),
               ),
               Expanded(
                 child: BlocConsumer<ClassCubit, ClassState>(
@@ -136,20 +105,36 @@ class _ClassDetailState extends State<ClassDetail>
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 16),
                         itemCount: state.exercises.length,
-                        itemBuilder: (context, index) => ExerciseTile(
-                          classId: widget.classRoom.id!,
-                          exercise: state.exercises[index],
-                        ),
+                        itemBuilder: (context, index) {
+                          // print(state.submissions
+                          //     .where((submission) =>
+                          //         submission.exerciseId ==
+                          //         state.exercises[index].id!)
+                          //     .toList()
+                          //     .length);
+                          // print(state.submissions.length);
+                          // state.submissions.forEach((element) => print);
+                          // print(state.exercises[index].id);
+                          // print(widget.classRoom.id);
+                          return ExerciseTile(
+                            classId: widget.classRoom.id!,
+                            exercise: state.exercises[index],
+                            submissions: state.submissions
+                                .where((submission) =>
+                                    submission.exerciseId ==
+                                    state.exercises[index].id!)
+                                .toList(),
+                          );
+                        },
                       );
                     }
-
                     return const CenterCircularIndicator();
                   },
                 ),
               ),
             ],
           ),
-          MemberTab(classRoom: widget.classRoom),
+          InformationTab(classRoom: widget.classRoom),
         ],
       ),
     );

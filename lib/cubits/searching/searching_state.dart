@@ -6,7 +6,8 @@ class SearchingInitial extends SearchingState {}
 
 class SearchingConsultants extends SearchingState {
   final List<Consultant> consultants;
-  SearchingConsultants(this.consultants);
+  final bool isFiltering;
+  SearchingConsultants({required this.consultants, this.isFiltering = false});
 }
 
 class SearchingLoading extends SearchingState {}

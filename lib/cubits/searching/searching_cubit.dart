@@ -14,15 +14,19 @@ class SearchingCubit extends Cubit<SearchingState> {
   void featchAllConsultants() async {
     emit(SearchingLoading());
     _consultants ??= await _service.getConsultants();
-    emit(SearchingConsultants(_consultants!));
+    emit(
+      SearchingConsultants(consultants: _consultants!),
+    );
   }
 
-  void filter(String text) async {
+  void filterByName(String text) async {
     final filteredConsultants = _consultants!
         .where((consultant) =>
             consultant.name.toLowerCase().contains(text.toLowerCase()))
         .toList();
-    emit(SearchingConsultants(filteredConsultants));
+    emit(
+      SearchingConsultants(consultants: filteredConsultants),
+    );
   }
 
   Future<void> search({
@@ -42,7 +46,12 @@ class SearchingCubit extends Cubit<SearchingState> {
       classRange,
       location,
     );
-    emit(SearchingConsultants(consultants));
+    emit(
+      SearchingConsultants(
+        consultants: consultants,
+        isFiltering: true,
+      ),
+    );
   }
 
   void dispose() {

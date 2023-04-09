@@ -11,7 +11,7 @@ class PostCubit extends Cubit<PostState> {
   List<Post>? _posts;
   Future<void> createPost(Post post) async {
     final newPost = await _service.createPost(post);
-    _posts ??= await _service.fetchParentPosted(AuthCubit.currentUserId);
+    _posts ??= await _service.fetchParentPosted(AuthCubit.currentUserId!);
     _posts!.add(newPost);
   }
 
@@ -23,7 +23,7 @@ class PostCubit extends Cubit<PostState> {
 
   Future<void> onPosted() async {
     emit(PostLoading());
-    _posts ??= await _service.fetchParentPosted(AuthCubit.currentUserId);
+    _posts ??= await _service.fetchParentPosted(AuthCubit.currentUserId!);
     emit(PostFetched(_posts!));
   }
 

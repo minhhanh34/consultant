@@ -46,11 +46,11 @@ class _PostTileState extends State<PostTile> {
             trailing: InkWell(
               onTap: () async {
                 final room = ChatRoom(
-                  firstPersonId: AuthCubit.currentUserId,
+                  firstPersonId: AuthCubit.currentUserId!,
                   secondPersonId: widget.post.posterId,
                 );
                 final roomAfterCheck =
-                    await context.read<MessageCubit>().checkRoom(room);
+                    await context.read<MessageCubit>().checkRoom(context, room);
                 if (!mounted) return;
                 // todo
                 context.push(

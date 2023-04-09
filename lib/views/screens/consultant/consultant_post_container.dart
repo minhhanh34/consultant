@@ -22,6 +22,14 @@ class ConsultantPostContainer extends StatelessWidget {
             cubit.fetchPosts();
           }
           if (state is PostFetched) {
+            if (state.posts.isEmpty) {
+              return Center(
+                child: Text(
+                  'Hiện chưa có bài đăng',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              );
+            }
             return ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               itemCount: state.posts.length,

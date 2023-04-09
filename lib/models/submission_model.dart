@@ -8,7 +8,7 @@ class Submission extends Equatable {
   final String exerciseId;
   final String studentId;
   final List<FileName> fileNames;
-  final int? point;
+  final double? point;
   final String? id;
   const Submission({
     required this.studentId,
@@ -22,7 +22,7 @@ class Submission extends Equatable {
     String? exerciseId,
     String? studentId,
     List<FileName>? fileNames,
-    int? point,
+    double? point,
     String? id,
   }) {
     return Submission(
@@ -49,7 +49,7 @@ class Submission extends Equatable {
       exerciseId: json['exerciseId'] as String,
       fileNames:
           (json['fileNames'] as List).map((e) => FileName.fromJson(e)).toList(),
-      point: json['point'] != null ? json['point'] as int : null,
+      point: json['point'] != null ? json['point'] as double : null,
     );
   }
 

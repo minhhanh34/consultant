@@ -10,6 +10,10 @@ class SettingsService {
   }
 
   Future<Parent> fetchParent(String id) async {
-    return await _repository.getOne(id); 
+    return await _repository.getOne(id);
+  }
+
+  Future<bool> updateParentInfo(String id, Parent parent) async {
+    return await _repository.update(id, parent);
   }
 }

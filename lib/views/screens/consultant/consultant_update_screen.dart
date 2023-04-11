@@ -1,8 +1,15 @@
 import 'dart:core';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:consultant/cubits/auth/auth_cubit.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/models/address_model.dart';
+import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/models/subject_model.dart';
 import 'package:consultant/views/components/search_bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class ConsultantUpdateScreen extends StatefulWidget {
   const ConsultantUpdateScreen({super.key});
@@ -14,44 +21,7 @@ class ConsultantUpdateScreen extends StatefulWidget {
 class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
   final _key = GlobalKey<FormState>();
   final space16 = const SizedBox(height: 16.0);
-
-  List<Map> dayCheckBoxs = [
-    {
-      'weekDays': 0,
-      'title': 'T2',
-      'value': false,
-    },
-    {
-      'weekDays': 1,
-      'title': 'T3',
-      'value': false,
-    },
-    {
-      'weekDays': 2,
-      'title': 'T4',
-      'value': false,
-    },
-    {
-      'weekDays': 3,
-      'title': 'T5',
-      'value': false,
-    },
-    {
-      'weekDays': 4,
-      'title': 'T6',
-      'value': false,
-    },
-    {
-      'weekDays': 5,
-      'title': 'T7',
-      'value': false,
-    },
-    {
-      'weekDays': 6,
-      'title': 'CN',
-      'value': false,
-    },
-  ];
+  late final TextEditingController dateOfBirthTextController;
 
   final dropDownMenuItems = const [
     DropdownMenuItem(
@@ -82,6 +52,66 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
     return null;
   }
 
+  List<String> timeOnClass = [];
+  List<String> subjectNames = [];
+  List<String> grades = [];
+  List<String> durations = [];
+  List<String> prices = [];
+  List<List<Map>> weekDaysList = [];
+
+  List<Map> createNewDayCheckBoxs() {
+    return [
+      {
+        'weekDays': 0,
+        'title': 'T2',
+        'value': false,
+      },
+      {
+        'weekDays': 1,
+        'title': 'T3',
+        'value': false,
+      },
+      {
+        'weekDays': 2,
+        'title': 'T4',
+        'value': false,
+      },
+      {
+        'weekDays': 3,
+        'title': 'T5',
+        'value': false,
+      },
+      {
+        'weekDays': 4,
+        'title': 'T6',
+        'value': false,
+      },
+      {
+        'weekDays': 5,
+        'title': 'T7',
+        'value': false,
+      },
+      {
+        'weekDays': 6,
+        'title': 'CN',
+        'value': false,
+      },
+    ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    dateOfBirthTextController = TextEditingController();
+    weekDaysList.insert(0, createNewDayCheckBoxs());
+  }
+
+  @override
+  void dispose() {
+    dateOfBirthTextController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,6 +139,9 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                 TextFormField(
                   keyboardType: TextInputType.number,
                   decoration: decorationWithLabel('Số điện thoại'),
+                  onSaved: (newValue) {
+                    tel = newValue ?? tel;
+                  },
                   validator: (value) {
                     final msg = checkNullValidation(value);
                     if (msg != null) {
@@ -122,6 +155,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                 ),
                 space16,
                 TextFormField(
+                  controller: dateOfBirthTextController,
                   readOnly: true,
                   validator: (value) {
                     return checkNullValidation(value);
@@ -136,6 +170,10 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                           firstDate: DateTime(1950),
                           lastDate: DateTime.now(),
                         );
+                        if (dateOfBirth != null) {
+                          dateOfBirthTextController.text =
+                              DateFormat('dd/MM/yyyy').format(dateOfBirth!);
+                        }
                       },
                       child: const Icon(Icons.calendar_month),
                     ),
@@ -214,6 +252,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                                 if (subjectCount > 1) {
                                   setState(() {
                                     subjectCount--;
+                                    weekDaysList.removeAt(i);
                                   });
                                 }
                               },
@@ -228,42 +267,66 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       space16,
                       TextFormField(
                         decoration: decorationWithLabel('Tên môn học'),
-                        onSaved: (newValue) {},
+                        onSaved: (newValue) {
+                          if (newValue != null) {
+                            subjectNames.insert(i, newValue);
+                          }
+                        },
+                        validator: (value) {
+                          return checkNullValidation(value);
+                        },
                       ),
                       space16,
                       TextFormField(
                         keyboardType: TextInputType.number,
                         decoration: decorationWithLabel('Lớp'),
+                        onSaved: (newValue) {
+                          if (newValue != null) {
+                            grades.insert(i, newValue);
+                          }
+                        },
+                        validator: (value) {
+                          return checkNullValidation(value);
+                        },
                       ),
                       space16,
                       TextFormField(
                         keyboardType: TextInputType.number,
                         decoration:
                             decorationWithLabel('Thời lượng buổi học (phút)'),
+                        onSaved: (newValue) {
+                          if (newValue != null) {
+                            durations.insert(i, newValue);
+                          }
+                        },
+                        validator: (value) {
+                          return checkNullValidation(value);
+                        },
                       ),
                       space16,
                       TextFormField(
                         validator: (value) {
                           return checkNullValidation(value);
                         },
-                        readOnly: true,
-                        decoration: decorationWithLabel('Giờ lên lớp').copyWith(
-                          suffixIcon: InkWell(
-                            onTap: () async {
-                              showTimePicker(
-                                context: context,
-                                initialTime:
-                                    const TimeOfDay(hour: 8, minute: 0),
-                              );
-                            },
-                            child: const Icon(Icons.timer),
-                          ),
-                        ),
+                        onSaved: (newValue) {
+                          if (newValue != null) {
+                            timeOnClass.insert(i, newValue);
+                          }
+                        },
+                        decoration: decorationWithLabel('Giờ lên lớp'),
                       ),
                       space16,
                       TextFormField(
                         keyboardType: TextInputType.number,
                         decoration: decorationWithLabel('Giá'),
+                        onSaved: (newValue) {
+                          if (newValue != null) {
+                            prices.insert(i, newValue);
+                          }
+                        },
+                        validator: (value) {
+                          return checkNullValidation(value);
+                        },
                       ),
                       space16,
                       Padding(
@@ -275,21 +338,24 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       Wrap(
                         spacing: 2,
-                        children: dayCheckBoxs.map((e) {
-                          return Column(
-                            children: [
-                              Text(e['title']),
-                              Checkbox(
-                                value: e['value'],
-                                onChanged: (value) {
-                                  setState(() {
-                                    e['value'] = value ?? e['value'];
-                                  });
-                                },
-                              ),
-                            ],
-                          );
-                        }).toList(),
+                        children: [
+                          for (int j = 0; j < 7; j++)
+                            Column(
+                              children: [
+                                Text(weekDaysList[i][j]['title']),
+                                Checkbox(
+                                  value: weekDaysList[i][j]['value'],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value != null) {
+                                        weekDaysList[i][j]['value'] = value;
+                                      }
+                                    });
+                                  },
+                                ),
+                              ],
+                            )
+                        ],
                       ),
                     ],
                   ),
@@ -299,6 +365,10 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                   onTap: () {
                     setState(() {
                       subjectCount++;
+                      weekDaysList.insert(
+                        subjectCount - 1,
+                        createNewDayCheckBoxs(),
+                      );
                     });
                   },
                   minLeadingWidth: 8.0,
@@ -310,8 +380,41 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      _key.currentState?.validate();
+                      bool valid = _key.currentState?.validate() ?? false;
+                      if (!valid) return;
                       _key.currentState?.save();
+                      for (int k = 0; k < subjectCount; k++) {
+                        final subject = Subject(
+                          name: subjectNames[k],
+                          grade: int.parse(grades[k]),
+                          weekDays: weekDaysList[k]
+                              .where((element) {
+                                return element['value'] == true;
+                              })
+                              .map((e) => e['weekDays'] as int)
+                              .toList(),
+                          duration: int.parse(durations[k]),
+                          price: double.parse(prices[k]),
+                          time: timeOnClass[k],
+                        );
+                        subjects.add(subject);
+                      }
+                      final consultant = Consultant(
+                        uid: AuthCubit.uid!,
+                        address: Address(
+                          city: city,
+                          district: district,
+                          geoPoint: GeoPoint(lattitude!, longtitude!),
+                        ),
+                        birthDay: dateOfBirth,
+                        gender: gender!,
+                        name: name,
+                        phone: tel,
+                        subjects: subjects,
+                      );
+                      context.read<ConsultantHomeCubit>().updateConsultantInfo(
+                          AuthCubit.currentUserId!, consultant);
+                      context.pop();
                     },
                     child: const Text('Cập nhật'),
                   ),
@@ -334,31 +437,3 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
   }
 }
 
-class SubjectAreaField extends StatefulWidget {
-  const SubjectAreaField({super.key});
-
-  @override
-  State<SubjectAreaField> createState() => _SubjectAreaFieldState();
-}
-
-class _SubjectAreaFieldState extends State<SubjectAreaField> {
-  InputDecoration decorationWithLabel(String label) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.white,
-      labelText: label,
-      border: const OutlineInputBorder(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextFormField(
-          decoration: decorationWithLabel('Môn học'),
-        ),
-      ],
-    );
-  }
-}

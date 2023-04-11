@@ -58,6 +58,10 @@ class ConsultantService {
         .copyWith(id: snap.docs.first.id);
   }
 
+  Future<bool> update(String id, Consultant consultant) async {
+    return await _repository.update(id, consultant);
+  }
+
   Future<List<Consultant>> query(
     List<String> subjects,
     RangeValues priceRange,

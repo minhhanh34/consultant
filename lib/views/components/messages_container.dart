@@ -74,13 +74,17 @@ class MessagesContainer extends StatelessWidget {
                     final tiles = <ListTile>[];
                     for (int i = 0; i < state.rooms.length; i++) {
                       if (state.rooms[i].lastMessage != null) {
+                        final partnerId = state.rooms[i].firstPersonId !=
+                                AuthCubit.currentUserId
+                            ? state.rooms[i].firstPersonId
+                            : state.rooms[i].secondPersonId;
                         tiles.add(
                           ListTile(
                             onTap: () => context.push(
                               '/ChatRoom',
                               extra: {
                                 'room': state.rooms[i],
-                                'partnerId': state.rooms[i].secondPersonId,
+                                'partnerId': partnerId,
                               },
                             ),
                             leading: Avatar(

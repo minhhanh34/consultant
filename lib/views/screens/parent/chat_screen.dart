@@ -1,4 +1,5 @@
 import 'package:chat_bubbles/chat_bubbles.dart';
+import 'package:consultant/constants/const.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/chat/chat_cubit.dart';
 import 'package:consultant/cubits/chat/chat_state.dart';
@@ -76,7 +77,8 @@ class _ChatScreenState extends State<ChatScreen> {
               title: ListTile(
                 textColor: Colors.white,
                 contentPadding: EdgeInsets.zero,
-                leading: Avatar(imageUrl: partner.avtPath!, radius: 25),
+                leading: Avatar(
+                    imageUrl: partner.avtPath ?? defaultAvtPath, radius: 25),
                 title: Text(partner.name),
                 subtitle: Text(partner.subjectsToString()),
               ),

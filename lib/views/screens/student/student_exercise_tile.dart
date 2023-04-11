@@ -107,7 +107,7 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Bài nộp đã tải lên',
+                      'Bài nộp đã tải lên1',
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
@@ -152,6 +152,13 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                           name: widget.submission?.fileNames[i].name ?? '',
                         )
                     ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal:8.0),
+                    child: Text(
+                      DateFormat("hh:mm - dd/MM/yyyy")
+                          .format(widget.submission!.timeCreated),
+                    ),
                   ),
                 ],
               ),
@@ -203,6 +210,7 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                             );
                           }
                           final submission = Submission(
+                            timeCreated: DateTime.now(),
                             studentId: widget.studentId,
                             exerciseId: widget.exercise.id!,
                             fileNames: fileNames,

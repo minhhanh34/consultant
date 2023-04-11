@@ -7,6 +7,7 @@ import 'package:consultant/views/components/center_circular_indicator.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -84,111 +85,169 @@ class ConsultantClassSubmissionTile extends StatefulWidget {
 
 class _ConsultantClassSubmissionTileState
     extends State<ConsultantClassSubmissionTile> {
-  double? point;
+  String? comment;
   bool visible = false;
+  bool commentEditing = false;
   @override
   Widget build(BuildContext context) {
     return Visibility(
       visible: widget.tileSubmission.isNotEmpty,
       child: Card(
-        child: ListTile(
-          isThreeLine: true,
-          leading: const Avatar(
-            imageUrl: defaultAvtPath,
-            radius: 24,
-          ),
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              widget.student.name,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              minVerticalPadding: 24,
+              isThreeLine: true,
+              leading: const Avatar(
+                imageUrl: defaultAvtPath,
+                radius: 24,
+              ),
+              title: Text(
+                widget.student.name,
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat('hh:mm - dd/MM/yyyy')
+                        .format(widget.tileSubmission.first.timeCreated),
+                  ),
+                  Wrap(
+                    children: widget.tileSubmission.first.fileNames.map((file) {
+                      return InkWell(
+                        onTap: () async {
+                          final dir = await getExternalStorageDirectory();
+                          OpenFilex.open('${dir!.path}/${file.name}');
+                        },
+                        child: Chip(
+                          label: Text(file.name),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
             ),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                children: widget.tileSubmission.first.fileNames.map((file) {
-                  return InkWell(
-                    onTap: () async {
-                      final dir = await getExternalStorageDirectory();
-                      OpenFilex.open('${dir!.path}/${file.name}');
-                    },
-                    child: Chip(
-                      label: Text(file.name),
+            Visibility(
+              visible: widget.tileSubmission.first.consultantComment != null,
+              child: Builder(builder: (context) {
+                if (commentEditing) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        TextFormField(
+                          initialValue:
+                              widget.tileSubmission.first.consultantComment,
+                          maxLines: 4,
+                          onChanged: (value) {
+                            comment = value;
+                          },
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Nhận xét'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (commentEditing && comment != null) {
+                              if (comment!.isNotEmpty) {
+                                await context.read<ClassCubit>().comment(
+                                      widget.classId,
+                                      widget.tileSubmission.first.id!,
+                                      widget.tileSubmission.first
+                                          .copyWith(consultantComment: comment),
+                                    );
+                                widget.tileSubmission
+                                  ..insert(
+                                    0,
+                                    widget.tileSubmission.first
+                                        .copyWith(consultantComment: comment),
+                                  )
+                                  ..removeLast();
+                              }
+                            }
+                            setState(() {
+                              commentEditing = false;
+                            });
+                          },
+                          child: const Text('Cập nhật'),
+                        ),
+                      ],
                     ),
                   );
-                }).toList(),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                }
+                return Row(
                   children: [
-                    Visibility(
-                      visible: widget.tileSubmission.first.point != null,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Điểm: ${widget.tileSubmission.first.point}',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
+                    const SizedBox(width: 16.0),
+                    Text(
+                      widget.tileSubmission.first.consultantComment ?? '',
                     ),
-                    OutlinedButton(
-                      onPressed: () async {
-                        if (visible && point != null) {
-                          if (point! >= 0 && point! <= 10) {
-                            await context.read<ClassCubit>().mark(
-                                  widget.classId,
-                                  widget.tileSubmission.first.id!,
-                                  widget.tileSubmission.first
-                                      .copyWith(point: point),
-                                );
-                            widget.tileSubmission
-                              ..insert(
-                                0,
-                                widget.tileSubmission.first
-                                    .copyWith(point: point),
-                              )
-                              ..removeLast();
-                          }
-                        }
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () {
                         setState(() {
-                          visible = !visible;
+                          commentEditing = true;
                         });
                       },
-                      child: const Text('Đánh giá'),
+                      icon: const Icon(Icons.edit),
                     ),
+                    const SizedBox(width: 16.0),
                   ],
+                );
+              }),
+            ),
+            Visibility(
+              visible: visible,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: TextField(
+                  maxLines: 4,
+                  onChanged: (value) {
+                    comment = value;
+                  },
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(), hintText: 'Nhận xét'),
                 ),
               ),
-              Visibility(
-                visible: visible,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: SizedBox(
-                    width: 88.0,
-                    height: 40.0,
-                    child: TextField(
-                      onChanged: (value) {
-                        point = double.tryParse(value);
-                      },
-                      // onTapOutside: (event) {
-                      //   setState(() {
-                      //     visible = false;
-                      //   });
-                      // },
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(16),
-                        border: OutlineInputBorder(),
-                        suffixText: '/10',
-                      ),
-                    ),
+            ),
+            Visibility(
+              visible: widget.tileSubmission.first.consultantComment == null,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      if (visible && comment != null) {
+                        if (comment!.isNotEmpty) {
+                          await context.read<ClassCubit>().comment(
+                                widget.classId,
+                                widget.tileSubmission.first.id!,
+                                widget.tileSubmission.first
+                                    .copyWith(consultantComment: comment),
+                              );
+                          widget.tileSubmission
+                            ..insert(
+                              0,
+                              widget.tileSubmission.first
+                                  .copyWith(consultantComment: comment),
+                            )
+                            ..removeLast();
+                        }
+                      }
+                      setState(() {
+                        visible = !visible;
+                      });
+                    },
+                    child: const Text('Thêm nhận xét'),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

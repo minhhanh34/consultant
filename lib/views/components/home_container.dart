@@ -84,7 +84,7 @@ class _HomeContainerState extends State<HomeContainer>
                     ),
                   ),
                   title: Text(
-                    '${state.parent.name.isEmpty ? "" : "Xin chào "}${state.parent.name}',
+                    '${state.parent.name.isEmpty ? "" : "Chào "}${state.parent.name.split(" ").last}',
                     style: const TextStyle(
                       fontSize: 24.0,
                       color: Colors.black,
@@ -325,22 +325,9 @@ class _HomeContainerState extends State<HomeContainer>
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 8.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Phổ biến',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const Spacer(),
-                        InkWell(
-                          onTap: () => context.push('/Consultants'),
-                          child: Text(
-                            'Thêm >',
-                            style: TextStyle(
-                                color: Colors.blue[700], fontSize: 16.0),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      'Phổ biến',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                 ),

@@ -274,18 +274,29 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                   Icons.star,
                                   color: Colors.yellow,
                                 ),
-                                Text(
-                                    '${widget.consultant.rate} (${widget.consultant.raters})'),
+                                Builder(
+                                  builder: (context) {
+                                    if(widget.consultant.rate == null) {
+                                      return const Text('(Chưa có đánh giá)');
+                                    }
+                                    return Text(
+                                      '${widget.consultant.rate} (${widget.consultant.raters})',
+                                    );
+                                  }
+                                ),
                                 const Spacer(),
-                                TextButton(
-                                  onPressed: () => context.push(
-                                    '/Comments',
-                                    extra: widget.consultant.comments,
-                                  ),
-                                  child: Text(
-                                    'Xem tất cả',
-                                    style: TextStyle(
-                                        color: Colors.lightBlue.shade500),
+                                Visibility(
+                                  visible: widget.consultant.raters != null,
+                                  child: TextButton(
+                                    onPressed: () => context.push(
+                                      '/Comments',
+                                      extra: widget.consultant.comments,
+                                    ),
+                                    child: Text(
+                                      'Xem tất cả',
+                                      style: TextStyle(
+                                          color: Colors.lightBlue.shade500),
+                                    ),
                                   ),
                                 ),
                               ],

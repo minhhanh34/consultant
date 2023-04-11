@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:consultant/models/exercise_model.dart';
@@ -10,10 +11,14 @@ class Submission extends Equatable {
   final List<FileName> fileNames;
   final double? point;
   final String? id;
+  final DateTime timeCreated;
+  final String? consultantComment;
   const Submission({
     required this.studentId,
     required this.exerciseId,
     required this.fileNames,
+    required this.timeCreated,
+    this.consultantComment,
     this.point,
     this.id,
   });
@@ -24,6 +29,8 @@ class Submission extends Equatable {
     List<FileName>? fileNames,
     double? point,
     String? id,
+    DateTime? timeCreated,
+    String? consultantComment,
   }) {
     return Submission(
       exerciseId: exerciseId ?? this.exerciseId,
@@ -31,6 +38,8 @@ class Submission extends Equatable {
       fileNames: fileNames ?? this.fileNames,
       point: point ?? this.point,
       id: id ?? this.id,
+      timeCreated: timeCreated ?? this.timeCreated,
+      consultantComment:  consultantComment ?? this.consultantComment,
     );
   }
 
@@ -40,6 +49,8 @@ class Submission extends Equatable {
       'fileNames': fileNames.map((e) => e.toJson()).toList(),
       'point': point,
       'studentId': studentId,
+      'consultantComment': consultantComment,
+      'timeCreated': timeCreated
     };
   }
 
@@ -50,9 +61,11 @@ class Submission extends Equatable {
       fileNames:
           (json['fileNames'] as List).map((e) => FileName.fromJson(e)).toList(),
       point: json['point'] != null ? json['point'] as double : null,
+      timeCreated: (json['timeCreated'] as Timestamp).toDate(),
+      consultantComment: json['consultantComment'] as String?,
     );
   }
 
   @override
-  List<Object> get props => [exerciseId, fileNames, studentId];
+  List<Object> get props => [exerciseId, fileNames, studentId, timeCreated];
 }

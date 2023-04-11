@@ -8,9 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class SettingsContainer extends StatelessWidget {
+class SettingsContainer extends StatefulWidget {
   const SettingsContainer({super.key});
 
+  @override
+  State<SettingsContainer> createState() => _SettingsContainerState();
+}
+
+class _SettingsContainerState extends State<SettingsContainer> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
@@ -86,30 +91,40 @@ class SettingsContainer extends StatelessWidget {
                           const ListTile(
                             minVerticalPadding: 24.0,
                             leading: CircleAvatar(
-                              child: Icon(Icons.privacy_tip_outlined),
-                            ),
-                            title: Text('Riêng tư'),
-                            trailing: Icon(Icons.arrow_forward_ios_rounded),
-                          ),
-                          const ListTile(
-                            minVerticalPadding: 24.0,
-                            leading: CircleAvatar(
-                              child: Icon(Icons.settings_suggest_outlined),
-                            ),
-                            title: Text('Phổ biến'),
-                            trailing: Icon(Icons.arrow_forward_ios_rounded),
-                          ),
-                          const ListTile(
-                            minVerticalPadding: 24.0,
-                            leading: CircleAvatar(
                               child: Icon(Icons.info_outline),
                             ),
                             title: Text('Về chúng tôi'),
                             trailing: Icon(Icons.arrow_forward_ios_rounded),
                           ),
                           ListTile(
-                            onTap: () =>
-                                context.read<AuthCubit>().signOut(context),
+                            onTap: () async {
+                              bool isSignOut = await showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: const Text(
+                                      'Bạn có chắc muốn đăng xuất?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            GoRouter.of(context).pop(true),
+                                        child: const Text('Có'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            GoRouter.of(context).pop(false),
+                                        child: const Text('Không'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              if (!mounted) return;
+                              if (isSignOut) {
+                                context.read<AuthCubit>().signOut(context);
+                              }
+                            },
                             minVerticalPadding: 24.0,
                             leading: const CircleAvatar(
                               child: Icon(Icons.logout_outlined),

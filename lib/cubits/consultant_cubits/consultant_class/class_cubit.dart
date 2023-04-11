@@ -133,7 +133,7 @@ class ClassCubit extends Cubit<ClassState> {
     emit(ClassSubmissions(_submissions!));
   }
 
-  Future<void> mark(
+  Future<void> comment(
     String classId,
     String submissionId,
     Submission submission,

@@ -7,10 +7,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class ConsultantProfile extends StatelessWidget {
+class ConsultantProfile extends StatefulWidget {
   const ConsultantProfile({Key? key, required this.consultant})
       : super(key: key);
   final Consultant consultant;
+
+  @override
+  State<ConsultantProfile> createState() => _ConsultantProfileState();
+}
+
+class _ConsultantProfileState extends State<ConsultantProfile> {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -37,17 +43,17 @@ class ConsultantProfile extends StatelessWidget {
                   child: Column(
                     children: [
                       Avatar(
-                        imageUrl: consultant.avtPath ?? defaultAvtPath,
+                        imageUrl: widget.consultant.avtPath ?? defaultAvtPath,
                         radius: 56,
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        consultant.name,
+                        widget.consultant.name,
                         style: style,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        consultant.phone,
+                        widget.consultant.phone,
                         style: style,
                       ),
                     ],
@@ -67,35 +73,75 @@ class ConsultantProfile extends StatelessWidget {
             ),
             ListTile(
               onTap: () =>
-                  context.push('/Map', extra: consultant.address.geoPoint),
+                  context.push('/Map', extra: widget.consultant.address.geoPoint),
               leading: const Icon(Icons.location_on, color: Colors.indigo),
-              title: Text(consultant.address.city),
-              subtitle: Text(consultant.address.district),
+              title: Text(widget.consultant.address.city),
+              subtitle: Text(widget.consultant.address.district),
               trailing: const Icon(Icons.map, color: Colors.indigo),
             ),
             ListTile(
               leading: const Icon(Icons.cake, color: Colors.indigo),
               title: Text(
                 DateFormat('dd/MM/yyyy').format(
-                  consultant.birthDay ?? DateTime(1970),
+                  widget.consultant.birthDay ?? DateTime(1970),
                 ),
               ),
             ),
             ListTile(
               leading: const Icon(Icons.subject, color: Colors.indigo),
-              title: Text(consultant.subjectsToString()),
+              title: Text(widget.consultant.subjectsToString()),
             ),
             ListTile(
               leading: const Icon(Icons.star, color: Colors.indigo),
-              title: Text(consultant.rate.toString()),
+              title: Builder(builder: (context) {
+                if (widget.consultant.rate == null) {
+                  return const Text('Chưa đánh giá');
+                }
+                return Text(widget.consultant.rate.toString());
+              }),
             ),
             ListTile(
               leading: const Icon(Icons.rate_review, color: Colors.indigo),
-              title: Text('${consultant.rate} đánh giá'),
-              trailing: const Icon(Icons.arrow_forward_ios),
+              title: Builder(builder: (context) {
+                if (widget.consultant.comments.isEmpty) {
+                  return const Text('Chưa có lượt đánh giá nào');
+                }
+                return Text('${widget.consultant.raters} đánh giá');
+              }),
+              trailing: Builder(builder: (context) {
+                if (widget.consultant.comments.isEmpty) {
+                  return const SizedBox();
+                }
+                return const Icon(Icons.arrow_forward_ios);
+              }),
             ),
             ListTile(
-              onTap: () => context.read<AuthCubit>().signOut(context),
+              onTap: () async {
+                bool isSignOut = await showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      content: const Text(
+                        'Bạn có chắc muốn đăng xuất?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => GoRouter.of(context).pop(true),
+                          child: const Text('Có'),
+                        ),
+                        TextButton(
+                          onPressed: () => GoRouter.of(context).pop(false),
+                          child: const Text('Không'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (!mounted) return;
+                if (isSignOut) {
+                  context.read<AuthCubit>().signOut(context);
+                }
+              },
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text('Đăng xuất'),
             ),

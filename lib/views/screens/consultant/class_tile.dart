@@ -66,7 +66,6 @@ class ClassTile extends StatelessWidget {
         ),
         title: Text(consultantClass.name),
         subtitle: Text('Môn ${consultantClass.subject.name}'),
-        trailing: Text('Số lượng\n      ${consultantClass.studentSize}'),
       ),
     );
   }

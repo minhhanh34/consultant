@@ -88,6 +88,10 @@ class ConsultantHomeCubit extends Cubit<ConsultantHomeState> {
     emit(ConsultantHomeFetched(_consultant!, _schedules!, _classes!));
   }
 
+  Future<void> updateConsultantInfo(String id, Consultant consultant) async {
+    await _consultantService.update(id, consultant);
+  }
+
   void dispose() {
     _classes = null;
     _schedules = null;

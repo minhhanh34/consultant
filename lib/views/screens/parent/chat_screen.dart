@@ -7,6 +7,8 @@ import 'package:consultant/cubits/messages/messages_cubit.dart';
 import 'package:consultant/models/chat_room_model.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/models/message_model.dart';
+import 'package:consultant/models/parent_model.dart';
+import 'package:consultant/utils/user_type_enum.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +35,8 @@ class _ChatScreenState extends State<ChatScreen> {
       receiverId: widget.partnerId,
       seen: false,
     );
-    await context.read<ChatCubit>().createMessage(widget.room.id!, message);
+    context.read<ChatCubit>().createMessage(widget.room.id!, message);
+    context.read<MessageCubit>().refresh();
   }
 
   @override
@@ -48,16 +51,22 @@ class _ChatScreenState extends State<ChatScreen> {
     return BlocBuilder<ChatCubit, ChatState>(
       builder: (context, state) {
         if (state is ChatInitial) {
-          context
-              .read<ChatCubit>()
-              .fetchMessages(widget.room, widget.partnerId);
+          if (AuthCubit.userType?.toLowerCase() == 'consultant') {
+            context
+                .read<ChatCubit>()
+                .fetchConsultantMessages(widget.room, widget.partnerId);
+          } else if (AuthCubit.userType?.toLowerCase() == 'parent') {
+            context
+                .read<ChatCubit>()
+                .fetchParentMessages(widget.room, widget.partnerId);
+          }
         }
         if (state is ChatLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        if (state is ChatFetched) {
+        if (state is ChatParentFetched) {
           final partner = state.partner;
           return Scaffold(
             appBar: AppBar(
@@ -89,7 +98,61 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: ChatBubbles(
                     room: widget.room,
                     messages: state.messages,
-                    partner: partner,
+                    partnerAsConsultant: partner,
+                    partnerType: UserType.consultant,
+                  ),
+                ),
+                MessageBar(
+                  onSend: (value) => sendMessage(value),
+                  actions: [
+                    IconButton(
+                      splashRadius: 32,
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.camera_alt,
+                        color: Colors.black,
+                      ),
+                    )
+                  ],
+                ),
+                // MessageField(partner: partner),
+              ],
+            ),
+          );
+        }
+        if (state is ChatConsultantFetched) {
+          final partner = state.partner;
+          return Scaffold(
+            appBar: AppBar(
+              leading: InkWell(
+                onTap: () {
+                  context.read<MessageCubit>().refresh();
+                  context.pop();
+                },
+                child: const Icon(
+                  CupertinoIcons.back,
+                  color: Colors.white,
+                ),
+              ),
+              elevation: 1,
+              backgroundColor: Theme.of(context).primaryColor,
+              leadingWidth: 40.0,
+              title: ListTile(
+                textColor: Colors.white,
+                contentPadding: EdgeInsets.zero,
+                leading: Avatar(imageUrl: partner.avtPath, radius: 25),
+                title: Text(partner.name),
+                subtitle: const Text('Phụ huynh'),
+              ),
+            ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: ChatBubbles(
+                    room: widget.room,
+                    messages: state.messages,
+                    partnerAsParent: partner,
+                    partnerType: UserType.parent,
                   ),
                 ),
                 MessageBar(
@@ -123,10 +186,14 @@ class ChatBubbles extends StatefulWidget {
     super.key,
     required this.room,
     required this.messages,
-    required this.partner,
+    this.partnerAsConsultant,
+    this.partnerAsParent,
+    required this.partnerType,
   });
   final List<Message> messages;
-  final Consultant partner;
+  final Consultant? partnerAsConsultant;
+  final Parent? partnerAsParent;
+  final UserType partnerType;
   final ChatRoom room;
   @override
   State<ChatBubbles> createState() => _ChatBubblesState();
@@ -161,7 +228,7 @@ class _ChatBubblesState extends State<ChatBubbles> {
     );
     if (result) {
       chatCubit.recallMessage(
-        'vLE5iPPgCcL4FRnHj6mN',
+        AuthCubit.currentUserId!,
         widget.messages[messageIndex].id!,
         widget.messages[messageIndex].copyWith(recall: true),
       );
@@ -202,24 +269,49 @@ class _ChatBubblesState extends State<ChatBubbles> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 40.0),
           child: Builder(builder: (context) {
+            dynamic partner;
+            if (widget.partnerType == UserType.consultant) {
+              partner = widget.partnerAsConsultant;
+            } else {
+              partner = widget.partnerAsParent;
+            }
             if (widget.messages[index].recall) {
               return Opacity(
                 opacity: .5,
                 child: BubbleNormal(
-                  isSender:
-                      widget.messages[index].senderId != widget.partner.id,
+                  isSender: widget.messages[index].senderId != partner.id,
                   text: 'Tin nhắn đã được thu hồi',
                   tail: false,
                   color: Colors.grey.shade300,
                 ),
               );
             }
-            return BubbleNormal(
-              isSender: widget.messages[index].senderId != widget.partner.id,
-              text: widget.messages[index].content,
-              color: Colors.grey.shade300,
-              tail: false,
-              // sent: true,
+            bool isSender =
+                widget.messages[index].senderId == AuthCubit.currentUserId;
+            if (isSender) {
+              return BubbleNormal(
+                isSender: isSender,
+                text: widget.messages[index].content,
+                color: Colors.grey.shade300,
+                tail: false,
+              );
+            }
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(width: 8),
+                Avatar(
+                  imageUrl: partner.avtPath ?? defaultAvtPath,
+                  radius: 16.0,
+                ),
+                BubbleNormal(
+                  isSender: isSender,
+                  text: widget.messages[index].content,
+                  color: Colors.grey.shade300,
+                  tail: false,
+                ),
+              ],
             );
           }),
         ),

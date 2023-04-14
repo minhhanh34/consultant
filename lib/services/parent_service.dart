@@ -16,4 +16,8 @@ class ParentService {
     return Parent.fromJson(snap.docs.first.data() as Map<String, dynamic>)
         .copyWith(id: snap.docs.first.id);
   }
+
+  Future<Parent> get(String id) async {
+    return await _repository.getOne(id);
+  }
 }

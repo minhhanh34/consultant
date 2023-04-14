@@ -46,9 +46,11 @@ class ConsultantClassSubmissionsScreen extends StatelessWidget {
               );
             }
             return ListView.builder(
-              itemCount: snapshot.data?.length ?? 0,
+              itemCount: submissions.length,
               itemBuilder: (context, index) {
-                final student = snapshot.data![index];
+                final submission = submissions[index];
+                final students = snapshot.data!;
+                final student = students.where((st) => st.id! == submission.studentId).first;
                 final tileSubmission = submissions
                     .where((sub) => sub.studentId == student.id!)
                     .toList();

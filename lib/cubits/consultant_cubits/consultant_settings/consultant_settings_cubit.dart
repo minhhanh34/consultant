@@ -14,6 +14,12 @@ class ConsultantSettingsCubit extends Cubit<ConsultantSettingsState> {
     emit(ConsultantSettingsFetched(_consultant!));
   }
 
+  Future<void> updateConsultantInfo(String id, Consultant consultant) async {
+    await _service.update(id, consultant);
+    _consultant = null;
+    fetchData(id);
+  }
+
   void dispose() {
     _consultant = null;
     emit(ConsultantSettingsInitial());

@@ -156,11 +156,13 @@ class ConsultantApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => ChatCubit(
-              ChatService(
-                ChatRepository(),
-                MessageRepository(),
-              ),
-              consultantService),
+            ChatService(
+              ChatRepository(),
+              MessageRepository(),
+            ),
+            consultantService,
+            ParentService(ParentRepository()),
+          ),
         ),
         BlocProvider(
           create: (_) => MessageCubit(
@@ -262,7 +264,7 @@ String getInitialLocation(Map<String, String> data) {
   AuthCubit.setUserType = data['userType']!;
   if (data['userType']?.toLowerCase() == 'consultant') return '/ConsultantHome';
   if (data['userType']?.toLowerCase() == 'parent') return '/';
-  if (data['userType']?.toLowerCase() == 'Student') return '/Student';
+  if (data['userType']?.toLowerCase() == 'student') return '/Student';
   return '/Welcome';
 }
 
@@ -371,7 +373,9 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/ConsultantUpdate',
-      builder: (context, state) => const ConsultantUpdateScreen(),
+      builder: (context, state) => ConsultantUpdateScreen(
+        consultant: state.extra as Consultant?,
+      ),
     ),
     GoRoute(
       path: '/ParentUpdate',

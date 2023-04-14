@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../cubits/messages/messages_state.dart';
+import '../../models/message_model.dart';
 
 class MessagesContainer extends StatelessWidget {
   const MessagesContainer({super.key});
@@ -55,11 +56,18 @@ class MessagesContainer extends StatelessWidget {
               BlocBuilder<MessageCubit, MessageState>(
                 builder: (context, state) {
                   if (state is MessageInitial) {
-                    context
-                        .read<MessageCubit>()
-                        .fetchRooms(AuthCubit.currentUserId!);
+                    if (AuthCubit.userType?.toLowerCase() == 'consultant') {
+                      context
+                          .read<MessageCubit>()
+                          .fetchConsultantRooms(AuthCubit.currentUserId!);
+                    }
+                    if (AuthCubit.userType?.toLowerCase() == 'parent') {
+                      context
+                          .read<MessageCubit>()
+                          .fetchParentRooms(AuthCubit.currentUserId!);
+                    }
                   }
-                  if (state is MessageRooms) {
+                  if (state is MessageParentRooms) {
                     if (state.rooms.isEmpty) {
                       return SizedBox(
                         height: MediaQuery.of(context).size.height * .7,
@@ -93,7 +101,72 @@ class MessagesContainer extends StatelessWidget {
                               radius: 24.0,
                             ),
                             title: Text(state.consultants[i].name),
-                            subtitle: Text(state.rooms[i].lastMessage!.content),
+                            subtitle: Builder(
+                              builder: (context) {
+                                Message? lastMessage =
+                                    state.rooms[i].lastMessage;
+                                if (lastMessage!.senderId ==
+                                    AuthCubit.currentUserId) {
+                                  Text('Bạn: ${lastMessage.content}');
+                                }
+                                return Text(lastMessage.content);
+                              },
+                            ),
+                            trailing: Text(DateFormat('hh:mm')
+                                .format(state.rooms[i].lastMessage!.time)),
+                          ),
+                        );
+                      }
+                    }
+                    return Column(
+                      children: tiles,
+                    );
+                  }
+                  if (state is MessageConsultantRooms) {
+                    if (state.rooms.isEmpty) {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * .7,
+                        child: Center(
+                          child: Text(
+                            'Chưa có tin nhắn',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                      );
+                    }
+                    final tiles = <ListTile>[];
+                    for (int i = 0; i < state.rooms.length; i++) {
+                      if (state.rooms[i].lastMessage != null) {
+                        final partnerId = state.rooms[i].firstPersonId !=
+                                AuthCubit.currentUserId
+                            ? state.rooms[i].firstPersonId
+                            : state.rooms[i].secondPersonId;
+                        tiles.add(
+                          ListTile(
+                            onTap: () => context.push(
+                              '/ChatRoom',
+                              extra: {
+                                'room': state.rooms[i],
+                                'partnerId': partnerId,
+                              },
+                            ),
+                            leading: Avatar(
+                              imageUrl: state.parents[i].avtPath,
+                              radius: 24.0,
+                            ),
+                            title: Text(state.parents[i].name),
+                            subtitle: Builder(
+                              builder: (context) {
+                                Message? lastMessage =
+                                    state.rooms[i].lastMessage;
+                                if (lastMessage != null &&
+                                    lastMessage.senderId ==
+                                        AuthCubit.currentUserId) {
+                                  Text('Bạn: ${lastMessage.content}');
+                                }
+                                return Text(lastMessage?.content ?? '');
+                              },
+                            ),
                             trailing: Text(DateFormat('hh:mm')
                                 .format(state.rooms[i].lastMessage!.time)),
                           ),

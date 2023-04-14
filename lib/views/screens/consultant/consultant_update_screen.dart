@@ -1,19 +1,27 @@
 import 'dart:core';
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/cubits/consultant_cubits/consultant_settings/consultant_settings_cubit.dart';
 import 'package:consultant/models/address_model.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/models/subject_model.dart';
 import 'package:consultant/views/components/search_bottom_sheet.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class ConsultantUpdateScreen extends StatefulWidget {
-  const ConsultantUpdateScreen({super.key});
+import '../../../constants/const.dart';
+import '../../../models/exercise_model.dart';
+import '../../../services/firebase_storage_service.dart';
 
+class ConsultantUpdateScreen extends StatefulWidget {
+  const ConsultantUpdateScreen({super.key, this.consultant});
+  final Consultant? consultant;
   @override
   State<ConsultantUpdateScreen> createState() => _ConsultantUpdateScreenState();
 }
@@ -23,6 +31,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
   final space16 = const SizedBox(height: 16.0);
   late final TextEditingController dateOfBirthTextController;
 
+  FilePickerResult? filePickerResult;
+  bool avatarChanged = false;
   final dropDownMenuItems = const [
     DropdownMenuItem(
       value: Gender.male,
@@ -59,51 +69,75 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
   List<String> prices = [];
   List<List<Map>> weekDaysList = [];
 
-  List<Map> createNewDayCheckBoxs() {
+  List<Map> createNewDayCheckBoxs(Subject? subject) {
     return [
       {
         'weekDays': 0,
         'title': 'T2',
-        'value': false,
+        'value': subject?.weekDays.contains(0) ?? false,
       },
       {
         'weekDays': 1,
         'title': 'T3',
-        'value': false,
+        'value': subject?.weekDays.contains(1) ?? false,
       },
       {
         'weekDays': 2,
         'title': 'T4',
-        'value': false,
+        'value': subject?.weekDays.contains(2) ?? false,
       },
       {
         'weekDays': 3,
         'title': 'T5',
-        'value': false,
+        'value': subject?.weekDays.contains(3) ?? false,
       },
       {
         'weekDays': 4,
         'title': 'T6',
-        'value': false,
+        'value': subject?.weekDays.contains(4) ?? false,
       },
       {
         'weekDays': 5,
         'title': 'T7',
-        'value': false,
+        'value': subject?.weekDays.contains(5) ?? false,
       },
       {
         'weekDays': 6,
         'title': 'CN',
-        'value': false,
+        'value': subject?.weekDays.contains(6) ?? false,
       },
     ];
+  }
+
+  Gender? valueForGender() {
+    if (widget.consultant != null) {
+      if (widget.consultant!.gender.toLowerCase() == 'nam') {
+        return Gender.male;
+      } else {
+        return Gender.female;
+      }
+    }
+    return null;
   }
 
   @override
   void initState() {
     super.initState();
-    dateOfBirthTextController = TextEditingController();
-    weekDaysList.insert(0, createNewDayCheckBoxs());
+    if (widget.consultant != null && widget.consultant!.birthDay != null) {
+      dateOfBirthTextController = TextEditingController(
+        text: DateFormat('dd/MM/yyyy').format(widget.consultant!.birthDay!),
+      );
+    } else {
+      dateOfBirthTextController = TextEditingController();
+    }
+    if (widget.consultant != null && widget.consultant!.subjects.isNotEmpty) {
+      subjectCount = widget.consultant!.subjects.length;
+      widget.consultant!.subjects.asMap().forEach((index, subject) {
+        weekDaysList.insert(index, createNewDayCheckBoxs(subject));
+      });
+    } else {
+      weekDaysList.insert(0, createNewDayCheckBoxs(null));
+    }
   }
 
   @override
@@ -129,6 +163,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
+                  initialValue: widget.consultant?.name,
                   decoration: decorationWithLabel('Họ tên'),
                   validator: (value) {
                     return checkNullValidation(value);
@@ -137,6 +172,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                 ),
                 space16,
                 TextFormField(
+                  initialValue: widget.consultant?.phone,
                   keyboardType: TextInputType.number,
                   decoration: decorationWithLabel('Số điện thoại'),
                   onSaved: (newValue) {
@@ -180,7 +216,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                   ),
                 ),
                 space16,
-                DropdownButtonFormField(
+                DropdownButtonFormField<Gender>(
+                  value: valueForGender(),
                   items: dropDownMenuItems,
                   onChanged: (value) {},
                   validator: (value) {
@@ -201,6 +238,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                 ),
                 space16,
                 TextFormField(
+                  initialValue: widget.consultant?.address.city,
                   decoration: decorationWithLabel('Thành phố/tỉnh'),
                   onSaved: (newValue) {
                     city = newValue ?? city;
@@ -208,6 +246,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                 ),
                 space16,
                 TextFormField(
+                  initialValue: widget.consultant?.address.district,
                   decoration: decorationWithLabel('Quận/huyện'),
                   onSaved: (newValue) {
                     district = newValue ?? district;
@@ -215,6 +254,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                 ),
                 space16,
                 TextFormField(
+                  initialValue:
+                      '${widget.consultant?.address.geoPoint.latitude}, ${widget.consultant?.address.geoPoint.longitude}',
                   decoration:
                       decorationWithLabel('Vị trí trên bản đồ').copyWith(
                     suffixIcon: InkWell(
@@ -230,6 +271,120 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                     }
                   },
                 ),
+                space16,
+                Text(
+                  'Ảnh đại diện',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                space16,
+                InkWell(
+                  onTap: () {
+                    builder(context) => Container(
+                          margin: const EdgeInsets.all(16),
+                          height: 120.0,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () async {
+                                  List<CameraDescription> cameras =
+                                      await availableCameras();
+                                  if (!mounted) return;
+                                  context.push('/Camera', extra: cameras);
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.camera_alt, size: 32),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Máy ảnh',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  filePickerResult =
+                                      await FilePicker.platform.pickFiles();
+                                  if (!mounted) return;
+                                  GoRouter.of(context).pop();
+                                  setState(() {
+                                    avatarChanged = true;
+                                  });
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.file_upload, size: 32),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Tải lên',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                    showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      context: context,
+                      builder: builder,
+                    );
+                  },
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Builder(
+                      builder: (context) {
+                        if (widget.consultant != null &&
+                            widget.consultant?.avtPath != defaultAvtPath &&
+                            !avatarChanged) {
+                          return CachedNetworkImage(
+                            imageUrl: widget.consultant!.avtPath!,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) {
+                              return Container(
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: Colors.white,
+                                ),
+                                child: const Center(
+                                  child: Icon(Icons.image),
+                                ),
+                              );
+                            },
+                          );
+                        }
+                        if (filePickerResult?.files.isEmpty ?? true) {
+                          return const Icon(Icons.add);
+                        }
+                        return Image.file(
+                          File(filePickerResult!.files.first.path!),
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                space16,
                 for (int i = 0; i < subjectCount; i++)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,6 +421,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       space16,
                       TextFormField(
+                        initialValue: widget.consultant?.subjects[i].name,
                         decoration: decorationWithLabel('Tên môn học'),
                         onSaved: (newValue) {
                           if (newValue != null) {
@@ -278,6 +434,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       space16,
                       TextFormField(
+                        initialValue:
+                            widget.consultant?.subjects[i].grade.toString(),
                         keyboardType: TextInputType.number,
                         decoration: decorationWithLabel('Lớp'),
                         onSaved: (newValue) {
@@ -291,6 +449,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       space16,
                       TextFormField(
+                        initialValue:
+                            widget.consultant?.subjects[i].duration.toString(),
                         keyboardType: TextInputType.number,
                         decoration:
                             decorationWithLabel('Thời lượng buổi học (phút)'),
@@ -305,6 +465,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       space16,
                       TextFormField(
+                        initialValue: widget.consultant?.subjects[i].time,
                         validator: (value) {
                           return checkNullValidation(value);
                         },
@@ -317,6 +478,9 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       space16,
                       TextFormField(
+                        initialValue: widget.consultant?.subjects[i].price
+                            .toInt()
+                            .toString(),
                         keyboardType: TextInputType.number,
                         decoration: decorationWithLabel('Giá'),
                         onSaved: (newValue) {
@@ -367,7 +531,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       subjectCount++;
                       weekDaysList.insert(
                         subjectCount - 1,
-                        createNewDayCheckBoxs(),
+                        createNewDayCheckBoxs(null),
                       );
                     });
                   },
@@ -379,10 +543,21 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       bool valid = _key.currentState?.validate() ?? false;
                       if (!valid) return;
                       _key.currentState?.save();
+
+                      List<FileName>? fileNames;
+                      if (filePickerResult != null &&
+                          filePickerResult!.files.isNotEmpty) {
+                        final storage = FirebaseStorageService();
+                        fileNames = await storage.createFolderFiles(
+                          'avatars',
+                          filePickerResult!.paths,
+                        );
+                      }
+
                       for (int k = 0; k < subjectCount; k++) {
                         final subject = Subject(
                           name: subjectNames[k],
@@ -399,21 +574,42 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                         );
                         subjects.add(subject);
                       }
-                      final consultant = Consultant(
-                        uid: AuthCubit.uid!,
-                        address: Address(
-                          city: city,
-                          district: district,
-                          geoPoint: GeoPoint(lattitude!, longtitude!),
-                        ),
-                        birthDay: dateOfBirth,
-                        gender: gender!,
-                        name: name,
-                        phone: tel,
-                        subjects: subjects,
-                      );
-                      context.read<ConsultantHomeCubit>().updateConsultantInfo(
-                          AuthCubit.currentUserId!, consultant);
+                      Consultant consultant;
+                      if (widget.consultant != null) {
+                        consultant = widget.consultant!.copyWith(
+                          avtPath: getAvtPath(fileNames),
+                          address: Address(
+                            city: city,
+                            district: district,
+                            geoPoint: GeoPoint(lattitude!, longtitude!),
+                          ),
+                          birthDay: dateOfBirth,
+                          gender: gender,
+                          name: name,
+                          phone: tel,
+                          subjects: subjects,
+                        );
+                      } else {
+                        consultant = Consultant(
+                          avtPath: getAvtPath(fileNames),
+                          uid: AuthCubit.uid!,
+                          address: Address(
+                            city: city,
+                            district: district,
+                            geoPoint: GeoPoint(lattitude!, longtitude!),
+                          ),
+                          birthDay: dateOfBirth,
+                          gender: gender!,
+                          name: name,
+                          phone: tel,
+                          subjects: subjects,
+                        );
+                      }
+                      if (!mounted) return;
+                      context
+                          .read<ConsultantSettingsCubit>()
+                          .updateConsultantInfo(
+                              AuthCubit.currentUserId!, consultant);
                       context.pop();
                     },
                     child: const Text('Cập nhật'),
@@ -435,5 +631,14 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
       border: const OutlineInputBorder(),
     );
   }
-}
 
+  String getAvtPath(List<FileName>? fileNames) {
+    if (fileNames != null) {
+      return fileNames.first.url;
+    }
+    if (widget.consultant != null && widget.consultant!.avtPath != null) {
+      return widget.consultant!.avtPath!;
+    }
+    return defaultAvtPath;
+  }
+}

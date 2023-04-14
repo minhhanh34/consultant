@@ -1,29 +1,35 @@
-import 'package:consultant/cubits/messages/messages_cubit.dart';
+import 'dart:async';
+import 'package:async/async.dart';
+
 import 'package:consultant/models/chat_room_model.dart';
 import 'package:consultant/repositories/message_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MessageService {
   final MessageRepository _repository;
   MessageService(this._repository);
 
-  Future<List<ChatRoom>> getRecentlyChatRoom(String id) async {
-    final firstPartDocs = await _repository.collection
+  Stream<List<ChatRoom>> getRecentlyChatRoom(String id) {
+    final firstPartDocs = _repository.collection
         .where('firstPersonId', isEqualTo: id)
-        .get();
-    final secondPartDocs = await _repository.collection
+        .snapshots();
+    final secondPartDocs = _repository.collection
         .where('secondPersonId', isEqualTo: id)
-        .get();
-    final roomsDocs = [...firstPartDocs.docs, ...secondPartDocs.docs];
-    if (roomsDocs.isEmpty) {
-      return <ChatRoom>[];
-    }
-    final rooms = roomsDocs
-        .map((doc) => ChatRoom.fromJson(doc.data()! as Map<String, dynamic>)
-            .copyWith(id: doc.id))
-        .toList();
-    return rooms;
+        .snapshots();
+
+    return StreamZip([firstPartDocs, secondPartDocs]).map((doc) {
+      final room1 = doc[0]
+          .docs
+          .map((e) => ChatRoom.fromJson(e.data() as Map<String, dynamic>)
+              .copyWith(id: e.id))
+          .toList();
+      final room2 = doc[1]
+          .docs
+          .map((e) => ChatRoom.fromJson(e.data() as Map<String, dynamic>)
+              .copyWith(id: e.id))
+          .toList();
+      return [...room1, ...room2];
+    });
   }
 
   Future<ChatRoom> createRoom(ChatRoom room) async {
@@ -31,7 +37,7 @@ class MessageService {
   }
 
   Future<ChatRoom> checkRoom(BuildContext context, ChatRoom room) async {
-    final messageCubit = context.read<MessageCubit>();
+    // final messageCubit = context.read<MessageCubit>();
     final rooms = await _repository.list();
     String roomFirstSecond = '${room.firstPersonId}${room.secondPersonId}';
     final filteredRooms = rooms.where((roomElement) {
@@ -44,7 +50,7 @@ class MessageService {
     }).toList();
     if (filteredRooms.isEmpty) {
       final newRoom = await createRoom(room);
-      messageCubit.addRoomCached(room);
+      // messageCubit.addRoomCached(room);
       return newRoom;
     }
     final firstFilteredRoom = filteredRooms.first;

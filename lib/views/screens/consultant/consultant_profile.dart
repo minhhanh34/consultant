@@ -62,7 +62,12 @@ class _ConsultantProfileState extends State<ConsultantProfile> {
                 Positioned(
                   right: 8,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(
+                        '/ConsultantUpdate',
+                        extra: widget.consultant,
+                      );
+                    },
                     icon: const Icon(
                       Icons.edit,
                       color: Colors.white,
@@ -72,8 +77,8 @@ class _ConsultantProfileState extends State<ConsultantProfile> {
               ],
             ),
             ListTile(
-              onTap: () =>
-                  context.push('/Map', extra: widget.consultant.address.geoPoint),
+              onTap: () => context.push('/Map',
+                  extra: widget.consultant.address.geoPoint),
               leading: const Icon(Icons.location_on, color: Colors.indigo),
               title: Text(widget.consultant.address.city),
               subtitle: Text(widget.consultant.address.district),
@@ -95,7 +100,7 @@ class _ConsultantProfileState extends State<ConsultantProfile> {
               leading: const Icon(Icons.star, color: Colors.indigo),
               title: Builder(builder: (context) {
                 if (widget.consultant.rate == null) {
-                  return const Text('Chưa đánh giá');
+                  return const Text('Chưa có đánh giá');
                 }
                 return Text(widget.consultant.rate.toString());
               }),
@@ -118,6 +123,7 @@ class _ConsultantProfileState extends State<ConsultantProfile> {
             ListTile(
               onTap: () async {
                 bool isSignOut = await showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (context) {
                     return AlertDialog(

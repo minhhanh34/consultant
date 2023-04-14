@@ -172,7 +172,7 @@ class ClassService {
       String classId, String studentId) async {
     final snaps = await _classSubmissionRepository.collection
         .doc(classId)
-        .collection(_classExerciseRepository.subCollection)
+        .collection(_classSubmissionRepository.subCollection)
         .where('studentId', isEqualTo: studentId)
         .get();
     return snaps.docs

@@ -86,7 +86,9 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                     label: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(widget.exercise.fileNames![i].name),
+                        Expanded(
+                          child: Text(widget.exercise.fileNames![i].name),
+                        ),
                         buildDownloadStateIcon(
                           widget.exercise.fileNames![i].state,
                         ),
@@ -154,11 +156,16 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal:8.0),
-                    child: Text(
-                      DateFormat("hh:mm - dd/MM/yyyy")
-                          .format(widget.submission!.timeCreated),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Builder(builder: (context) {
+                      if (widget.submission == null) {
+                        return const SizedBox();
+                      }
+                      return Text(
+                        DateFormat("hh:mm - dd/MM/yyyy")
+                            .format(widget.submission!.timeCreated),
+                      );
+                    }),
                   ),
                 ],
               ),

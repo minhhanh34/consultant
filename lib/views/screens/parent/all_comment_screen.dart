@@ -12,9 +12,17 @@ class CommentsScreen extends StatelessWidget {
         title: const Text('Đánh giá'),
         elevation: 0,
       ),
-      body: ListView.builder(
-        itemCount: comments.length,
-        itemBuilder: itemBuilder,
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: comments.length,
+              itemBuilder: itemBuilder,
+            ),
+          ),
+          const Spacer(),
+          
+        ],
       ),
     );
   }

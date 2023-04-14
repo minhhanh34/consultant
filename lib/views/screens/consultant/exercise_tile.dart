@@ -121,15 +121,26 @@ class _ExerciseTileState extends State<ExerciseTile> {
                     onTap: () {
                       cubit.onFilePressed(widget.exercise.fileNames![i]);
                     },
-                    child: Chip(
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(widget.exercise.fileNames![i].name),
-                          buildDownloadStateIcon(
-                            widget.exercise.fileNames![i].state,
-                          ),
-                        ],
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * .9,
+                      ),
+                      child: Chip(
+                        clipBehavior: Clip.hardEdge,
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.exercise.fileNames![i].name,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            buildDownloadStateIcon(
+                              widget.exercise.fileNames![i].state,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

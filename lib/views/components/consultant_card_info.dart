@@ -3,7 +3,7 @@ import 'package:consultant/models/consultant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../constants/const.dart';
+import '../../constants/consts.dart';
 
 class ConsultantCardInfor extends StatefulWidget {
   const ConsultantCardInfor({

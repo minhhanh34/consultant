@@ -1,4 +1,4 @@
-import 'package:consultant/constants/const.dart';
+import 'package:consultant/constants/consts.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:flutter/material.dart';
 

@@ -1,4 +1,4 @@
-import 'package:consultant/cubits/consultant_cubits/consultant_settings/consultant_settings_state.dart';
+import 'package:consultant/cubits/consultant_settings/consultant_settings_state.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/services/consultant_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

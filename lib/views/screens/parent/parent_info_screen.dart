@@ -41,46 +41,52 @@ class ParentInfoScreen extends StatelessWidget {
             final parent = state.parent;
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16.0),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Avatar(
-                      imageUrl: parent.avtPath,
-                      radius: 36.0,
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  ListTile(
-                    minLeadingWidth: 36.0,
-                    leading: const Icon(FontAwesomeIcons.addressCard),
-                    title: Text(parent.name),
-                  ),
-                  ListTile(
-                    minLeadingWidth: 36.0,
-                    leading: const Icon(FontAwesomeIcons.phone),
-                    title: Text(parent.phone),
-                  ),
-                  ListTile(
-                    minLeadingWidth: 36.0,
-                    leading: const Icon(FontAwesomeIcons.envelope),
-                    title: Text(parent.email),
-                  ),
-                  ListTile(
-                    minLeadingWidth: 36.0,
-                    leading: const SizedBox(
-                      width: 36.0,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Icon(FontAwesomeIcons.locationDot),
+              child: RefreshIndicator(
+                onRefresh: context.read<SettingsCubit>().refresh,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16.0),
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Avatar(
+                          imageUrl: parent.avtPath,
+                          radius: 36.0,
+                        ),
                       ),
-                    ),
-                    title: Text(parent.address.city),
-                    subtitle: Text(parent.address.district),
+                      const SizedBox(height: 16.0),
+                      ListTile(
+                        minLeadingWidth: 36.0,
+                        leading: const Icon(FontAwesomeIcons.addressCard),
+                        title: Text(parent.name),
+                      ),
+                      ListTile(
+                        minLeadingWidth: 36.0,
+                        leading: const Icon(FontAwesomeIcons.phone),
+                        title: Text(parent.phone),
+                      ),
+                      ListTile(
+                        minLeadingWidth: 36.0,
+                        leading: const Icon(FontAwesomeIcons.envelope),
+                        title: Text(parent.email),
+                      ),
+                      ListTile(
+                        minLeadingWidth: 36.0,
+                        leading: const SizedBox(
+                          width: 36.0,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Icon(FontAwesomeIcons.locationDot),
+                          ),
+                        ),
+                        title: Text(parent.address.city),
+                        subtitle: Text(parent.address.district),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             );
           }

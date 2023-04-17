@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../utils/user_type_enum.dart';
+import '../../../constants/user_types.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

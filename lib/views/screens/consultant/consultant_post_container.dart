@@ -30,12 +30,15 @@ class ConsultantPostContainer extends StatelessWidget {
                 ),
               );
             }
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemCount: state.posts.length,
-              itemBuilder: (context, index) {
-                return PostTile(post: state.posts[index]);
-              },
+            return RefreshIndicator(
+              onRefresh: cubit.refresh,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                itemCount: state.posts.length,
+                itemBuilder: (context, index) {
+                  return PostTile(post: state.posts[index]);
+                },
+              ),
             );
           }
           if (state is PostLoading) {

@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:consultant/cubits/consultant_cubits/consultant_class/class_state.dart';
+import 'package:consultant/cubits/consultant_class/class_state.dart';
 import 'package:consultant/models/exercise_model.dart';
 import 'package:consultant/models/submission_model.dart';
 import 'package:consultant/services/class_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../../models/class_model.dart';
-import '../../../models/student_model.dart';
-import '../../../services/downloader_service.dart';
+import '../../models/class_model.dart';
+import '../../models/student_model.dart';
+import '../../services/downloader_service.dart';
 
 class ClassCubit extends Cubit<ClassState> {
   ClassCubit(this._service) : super(ClassInitial());

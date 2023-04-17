@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../cubits/consultant_cubits/consultant_class/class_cubit.dart';
+import '../../../cubits/consultant_class/class_cubit.dart';
 import '../../../models/exercise_model.dart';
 import '../../../services/firebase_storage_service.dart';
 

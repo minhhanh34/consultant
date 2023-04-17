@@ -1,8 +1,8 @@
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/models/exercise_model.dart';
 
-import '../../../models/student_model.dart';
-import '../../../models/submission_model.dart';
+import '../../models/student_model.dart';
+import '../../models/submission_model.dart';
 
 abstract class ClassState {}
 

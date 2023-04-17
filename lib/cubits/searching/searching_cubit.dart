@@ -1,9 +1,10 @@
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/services/consultant_service.dart';
-import 'package:consultant/views/components/search_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:consultant/cubits/searching/searching_state.dart';
+
+import '../../constants/gender_types.dart';
 
 class SearchingCubit extends Cubit<SearchingState> {
   SearchingCubit(this._service) : super(SearchingInitial());
@@ -11,7 +12,7 @@ class SearchingCubit extends Cubit<SearchingState> {
   final ConsultantService _service;
   List<Consultant>? _consultants;
 
-  void featchAllConsultants() async {
+  Future<void> featchAllConsultants() async {
     emit(SearchingLoading());
     _consultants ??= await _service.getConsultants();
     emit(
@@ -27,6 +28,11 @@ class SearchingCubit extends Cubit<SearchingState> {
     emit(
       SearchingConsultants(consultants: filteredConsultants),
     );
+  }
+
+  Future<void> refresh() async {
+    _consultants = null;
+    await featchAllConsultants();
   }
 
   Future<void> search({

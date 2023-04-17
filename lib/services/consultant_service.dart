@@ -3,8 +3,8 @@ import 'package:consultant/repositories/comment_repository.dart';
 import 'package:consultant/repositories/consultant_repository.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/gender_types.dart';
 import '../models/consultant_model.dart';
-import '../views/components/search_bottom_sheet.dart';
 
 class ConsultantService {
   final ConsultantRepository _repository;

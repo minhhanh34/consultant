@@ -10,7 +10,7 @@ import 'package:consultant/repositories/parent_repository.dart';
 import 'package:consultant/repositories/student_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../utils/user_type_enum.dart';
+import '../constants/user_types.dart';
 
 class AuthService {
   final FirebaseAuth _auth;

@@ -1,9 +1,9 @@
-import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../constants/const.dart';
+import '../../constants/consts.dart';
 import '../../models/schedule_model.dart';
 import 'circle_avatar.dart';
 

@@ -1,9 +1,9 @@
 import 'package:consultant/cubits/app/app_cubit.dart';
 import 'package:consultant/cubits/chat/chat_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_app/consultant_app_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_settings/consultant_settings_cubit.dart';
+import 'package:consultant/cubits/consultant_app/consultant_app_cubit.dart';
+import 'package:consultant/cubits/consultant_class/class_cubit.dart';
+import 'package:consultant/cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/cubits/consultant_settings/consultant_settings_cubit.dart';
 import 'package:consultant/cubits/enroll/enroll_cubit.dart';
 import 'package:consultant/cubits/filter/filter_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../utils/user_type_enum.dart';
+import '../../constants/user_types.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {

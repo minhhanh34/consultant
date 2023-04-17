@@ -1,5 +1,5 @@
-import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_class/class_state.dart';
+import 'package:consultant/cubits/consultant_class/class_cubit.dart';
+import 'package:consultant/cubits/consultant_class/class_state.dart';
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/models/student_model.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
@@ -116,48 +116,39 @@ class InformationTab extends StatelessWidget {
   }
 
   buildSubjectInfo(BuildContext context) {
+    final style = Theme.of(context).textTheme.titleMedium;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ListTile(
-          title: Text(
-            'Môn ${classRoom.subject.name}',
-          ),
+          title: const Text('Môn'),
+          trailing: Text(classRoom.subject.name, style: style),
         ),
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 48.0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Lớp: ${classRoom.subject.grade}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child:
-                    Text('Thời gian: ${classRoom.subject.duration} phút/buổi'),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Giờ bắt đầu: ${classRoom.subject.time}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Các ngày: ${classRoom.subject.dateToString()}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  'Giá: ${NumberFormat.simpleCurrency(locale: 'vi').format(classRoom.subject.price)}/buổi',
-                ),
-              ),
-            ],
-          ),
+        ListTile(
+          title: const Text('Lớp'),
+          trailing: Text('${classRoom.subject.grade}', style: style),
+        ),
+        ListTile(
+          title: const Text('Thời gian'),
+          trailing:
+              Text('${classRoom.subject.duration} phút/buổi', style: style),
+        ),
+        ListTile(
+          title: const Text('Giờ bắt đầu'),
+          trailing: Text(classRoom.subject.time, style: style),
+        ),
+        ListTile(
+          title: const Text('Các ngày'),
+          trailing: Text(classRoom.subject.dateToString(), style: style),
+        ),
+        ListTile(
+          title: const Text('Giá'),
+          trailing: Text(
+              NumberFormat.simpleCurrency(locale: 'vi')
+                  .format(classRoom.subject.price),
+              style: style),
         ),
       ],
     );
@@ -177,29 +168,3 @@ class InformationTab extends StatelessWidget {
   }
 }
 
-//  BlocBuilder<ClassCubit, ClassState>(
-//         builder: (context, state) {
-//           if (state is ClassDetailFethed) {
-//             if (state.students.isEmpty) {
-//               return const Center(
-//                 child: Text('Chưa có thành viên'),
-//               );
-//             }
-//             return ListView.separated(
-//               separatorBuilder: (context, index) => const Divider(
-//                 indent: 80.0,
-//               ),
-//               padding: const EdgeInsets.all(4),
-//               itemCount: state.students.length,
-//               itemBuilder: (context, index) {
-//                 return StudentTile(
-//                   student: state.students[index],
-//                   classRoom: classRoom,
-//                 );
-//               },
-//             );
-//           }
-//           if (state is ClassLoading) return const CenterCircularIndicator();
-//           return const SizedBox();
-//         },
-//       ),

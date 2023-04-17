@@ -1,9 +1,11 @@
-import 'package:consultant/constants/const.dart';
+import 'package:consultant/constants/consts.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
+import '../../constants/gender_types.dart';
 
 class SearchBottomSheet extends StatefulWidget {
   const SearchBottomSheet({super.key});
@@ -245,8 +247,3 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   }
 }
 
-enum Gender {
-  male,
-  female,
-  all,
-}

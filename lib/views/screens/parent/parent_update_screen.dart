@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/constants/const.dart';
+import 'package:consultant/constants/consts.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/settings/settings_cubit.dart';
 import 'package:consultant/models/address_model.dart';

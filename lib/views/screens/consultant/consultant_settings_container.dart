@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../cubits/consultant_cubits/consultant_settings/consultant_settings_cubit.dart';
-import '../../../cubits/consultant_cubits/consultant_settings/consultant_settings_state.dart';
+import '../../../cubits/consultant_settings/consultant_settings_cubit.dart';
+import '../../../cubits/consultant_settings/consultant_settings_state.dart';
 import 'consultant_profile.dart';
 
 class ConsultantSettingsContainer extends StatelessWidget {

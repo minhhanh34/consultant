@@ -1,4 +1,4 @@
-import 'package:consultant/constants/const.dart';
+import 'package:consultant/constants/consts.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/views/components/circle_avatar.dart';

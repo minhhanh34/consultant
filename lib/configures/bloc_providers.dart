@@ -1,53 +1,128 @@
-// import 'package:consultant/cubits/app/app_cubit.dart';
-// import 'package:consultant/cubits/auth/auth_cubit.dart';
-// import 'package:consultant/cubits/chat_rooms/chat_room_cubit.dart';
-// import 'package:consultant/cubits/home/home_cubit.dart';
-// import 'package:consultant/cubits/messages/messages_cubit.dart';
-// import 'package:consultant/cubits/searching/searching_cubit.dart';
-// import 'package:consultant/cubits/settings/settings_cubit.dart';
-// import 'package:consultant/main.dart';
-// import 'package:consultant/repositories/chat_room_repository.dart';
-// import 'package:consultant/repositories/comment_repository.dart';
-// import 'package:consultant/repositories/consultant_repository.dart';
-// import 'package:consultant/repositories/message_repository.dart';
-// import 'package:consultant/repositories/settings_repository.dart';
-// import 'package:consultant/services/auth_service.dart';
-// import 'package:consultant/services/chat_room_service.dart';
-// import 'package:consultant/services/consultant.dart';
-// import 'package:consultant/services/message_service.dart';
-// import 'package:consultant/services/settings_service.dart';
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+import '../utils/libs_for_main.dart';
 
-// final _consultantService = ConsultantService(
-//   ConsultantRepository(),
-//   CommentRepository(),
-// );
+final consultantService = ConsultantService(
+  ConsultantRepository(),
+  CommentRepository(),
+);
 
-// class CustomBlocProvider {
-//   List<>
-// }
+dynamic _providers = [
+  BlocProvider(create: (_) => AppCubit()),
+  BlocProvider(
+    create: (_) => AuthCubit(
+      AuthService(
+        FirebaseAuth.instance,
+        ConsultantRepository(),
+        ParentRepository(),
+        StudentRepository(),
+      ),
+      consultantService,
+      ParentService(ParentRepository()),
+      StudentService(StudentRepository()),
+    ),
+  ),
+  BlocProvider(
+    create: (_) => HomeCubit(
+      ConsultantService(
+        ConsultantRepository(),
+        CommentRepository(),
+      ),
+      ParentService(
+        ParentRepository(),
+      ),
+    ),
+  ),
+  BlocProvider(
+    create: (_) => SearchingCubit(consultantService),
+  ),
+  BlocProvider(
+    create: (_) => ChatCubit(
+      ChatService(
+        ChatRepository(),
+        MessageRepository(),
+      ),
+      consultantService,
+      ParentService(ParentRepository()),
+    ),
+  ),
+  BlocProvider(
+    create: (_) => MessageCubit(
+      MessageService(MessageRepository()),
+      consultantService,
+      ParentService(ParentRepository()),
+    ),
+  ),
+  BlocProvider(
+    create: (_) => SettingsCubit(SettingsService(SettingsRepository())),
+  ),
+  BlocProvider(
+    create: (_) => FilterCubit(consultantService),
+  ),
+  BlocProvider(
+    create: (_) => ScheduleCubit(ScheduleService(ScheduleRepository())),
+  ),
+  BlocProvider(
+    create: (_) => PostCubit(PostService(PostRepository())),
+  ),
+  BlocProvider(
+    create: (_) => EnrollCubit(
+        ClassService(
+          ClassRepository(),
+          ClassStudentRepository(),
+          ClassExerciseRepository(),
+          ClassSubmissionRepository(),
+        ),
+        StudentService(StudentRepository())),
+  ),
+  BlocProvider(
+    create: (_) => ConsultantHomeCubit(
+      consultantService,
+      ScheduleService(ScheduleRepository()),
+      ClassService(
+        ClassRepository(),
+        ClassStudentRepository(),
+        ClassExerciseRepository(),
+        ClassSubmissionRepository(),
+      ),
+    ),
+  ),
+  BlocProvider(
+    create: (_) => ClassCubit(
+      ClassService(
+        ClassRepository(),
+        ClassStudentRepository(),
+        ClassExerciseRepository(),
+        ClassSubmissionRepository(),
+      ),
+    ),
+  ),
+  BlocProvider(
+    create: (_) => ConsultantAppCubit(),
+  ),
+  BlocProvider(
+    create: (_) => ConsultantSettingsCubit(consultantService),
+  ),
+  BlocProvider(
+    create: (_) => StudentHomeCubit(
+      ClassService(
+        ClassRepository(),
+        ClassStudentRepository(),
+        ClassExerciseRepository(),
+        ClassSubmissionRepository(),
+      ),
+      StudentService(StudentRepository()),
+    ),
+  ),
+  BlocProvider(
+    create: (_) => StudentClassCubit(
+      ClassService(
+        ClassRepository(),
+        ClassStudentRepository(),
+        ClassExerciseRepository(),
+        ClassSubmissionRepository(),
+      ),
+    ),
+  ),
+];
 
-//  providers = [
-//   BlocProvider(create: (_) => AppCubit()),
-//   BlocProvider(
-//     create: (_) => HomeCubit(_consultantService),
-//   ),
-//   BlocProvider(
-//     create: (_) => SearchingCubit(_consultantService),
-//   ),
-//   BlocProvider(
-//     create: (_) => ChatRoomCubit(ChatRoomService(ChatRoomRepository())),
-//   ),
-//   BlocProvider(
-//     create: (_) => MessageCubit(MessageService(MessageRepository())),
-//   ),
-//   BlocProvider(
-//     create: (_) => SettingsCubit(SettingsService(SettingsRepository())),
-//   ),
-//   // BlocProvider(
-//   //   create: (_) => AuthCubit(AuthService(auth)),
-//   // ),
-// ];
 
-// // List<BlocProvider> get providers => _providers;
+dynamic get providers => _providers;

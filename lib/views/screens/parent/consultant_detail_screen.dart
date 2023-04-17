@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:consultant/constants/const.dart';
+import 'package:consultant/constants/consts.dart';
 import 'package:consultant/cubits/app/app_cubit.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/chat/chat_cubit.dart';

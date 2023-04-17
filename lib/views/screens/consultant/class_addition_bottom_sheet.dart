@@ -1,11 +1,11 @@
-import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../constants/const.dart';
+import '../../../constants/consts.dart';
 import '../../../models/subject_model.dart';
 
 class ClassAdditionBottomSheet extends StatefulWidget {

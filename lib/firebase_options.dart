@@ -50,6 +50,7 @@ class DefaultFirebaseOptions {
     projectId: 'consultant-d76cd',
     authDomain: 'consultant-d76cd.firebaseapp.com',
     storageBucket: 'consultant-d76cd.appspot.com',
+    measurementId: 'G-0V55FFT1QY',
   );
 
   static const FirebaseOptions android = FirebaseOptions(

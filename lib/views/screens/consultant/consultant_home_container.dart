@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
-import '../../../cubits/consultant_cubits/consultant_home/consultant_home_state.dart';
+import '../../../cubits/consultant_home/consultant_home_cubit.dart';
+import '../../../cubits/consultant_home/consultant_home_state.dart';
 import '../../components/center_circular_indicator.dart';
 import 'class_tile.dart';
 import 'class_addition_bottom_sheet.dart';
@@ -101,11 +101,12 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
                               Visibility(
                                 visible: upcomingClass.isNotEmpty,
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
                                   child: Text(
                                     'Hôm nay',
-                                    style: Theme.of(context).textTheme.titleLarge,
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge,
                                   ),
                                 ),
                               ),
@@ -148,25 +149,31 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
                                 ),
                               ),
                               Expanded(
-                                child: ListView.separated(
-                                  separatorBuilder: (context, index) => Divider(
-                                    indent: screenSize.width * .05,
-                                    color: Colors.grey,
-                                    thickness: 1,
+                                child: RefreshIndicator(
+                                  onRefresh: context
+                                      .read<ConsultantHomeCubit>()
+                                      .refresh,
+                                  child: ListView.separated(
+                                    separatorBuilder: (context, index) =>
+                                        Divider(
+                                      indent: screenSize.width * .05,
+                                      color: Colors.grey,
+                                      thickness: 1,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    itemCount: state.classes.length,
+                                    itemBuilder: (context, index) {
+                                      final sclass = state.classes[index];
+                                      return ListTile(
+                                        title: Text(
+                                          sclass.name,
+                                        ),
+                                        subtitle:
+                                            Text(sclass.subject.dateToString()),
+                                      );
+                                    },
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  itemCount: state.classes.length,
-                                  itemBuilder: (context, index) {
-                                    final sclass = state.classes[index];
-                                    return ListTile(
-                                      title: Text(
-                                        sclass.name,
-                                      ),
-                                      subtitle:
-                                          Text(sclass.subject.dateToString()),
-                                    );
-                                  },
                                 ),
                               ),
                             ],
@@ -204,15 +211,19 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
                                   ),
                                 );
                               }
-                              return ListView.builder(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                itemCount: state.classes.length,
-                                itemBuilder: (context, index) {
-                                  return ClassTile(
-                                    consultantClass: state.classes[index],
-                                  );
-                                },
+                              return RefreshIndicator(
+                                onRefresh:
+                                    context.read<ConsultantHomeCubit>().refresh,
+                                child: ListView.builder(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  itemCount: state.classes.length,
+                                  itemBuilder: (context, index) {
+                                    return ClassTile(
+                                      consultantClass: state.classes[index],
+                                    );
+                                  },
+                                ),
                               );
                             }),
                           ),

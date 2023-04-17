@@ -4,18 +4,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_settings/consultant_settings_cubit.dart';
+import 'package:consultant/cubits/consultant_settings/consultant_settings_cubit.dart';
 import 'package:consultant/models/address_model.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/models/subject_model.dart';
-import 'package:consultant/views/components/search_bottom_sheet.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../constants/const.dart';
+import '../../../constants/consts.dart';
+import '../../../constants/gender_types.dart';
 import '../../../models/exercise_model.dart';
 import '../../../services/firebase_storage_service.dart';
 

@@ -1,7 +1,7 @@
 import 'package:consultant/cubits/auth/auth_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_app/consultant_app_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_app/consultant_app_state.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/cubits/consultant_app/consultant_app_cubit.dart';
+import 'package:consultant/cubits/consultant_app/consultant_app_state.dart';
+import 'package:consultant/cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:consultant/views/components/messages_container.dart';
 import 'package:consultant/views/screens/consultant/consultant_home_container.dart';
 import 'package:flutter/material.dart';

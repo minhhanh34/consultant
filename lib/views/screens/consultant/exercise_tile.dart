@@ -1,4 +1,4 @@
-import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
+import 'package:consultant/cubits/consultant_class/class_cubit.dart';
 import 'package:consultant/models/exercise_model.dart';
 import 'package:consultant/services/downloader_service.dart';
 import 'package:consultant/services/firebase_storage_service.dart';

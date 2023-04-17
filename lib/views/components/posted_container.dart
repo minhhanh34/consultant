@@ -41,11 +41,14 @@ class PostedContainer extends StatelessWidget {
                 ),
               );
             }
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              itemCount: state.posts.length,
-              itemBuilder: (context, index) => ParentPostedTile(
-                post: state.posts[index],
+            return RefreshIndicator(
+              onRefresh: context.read<PostCubit>().refresh,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                itemCount: state.posts.length,
+                itemBuilder: (context, index) => ParentPostedTile(
+                  post: state.posts[index],
+                ),
               ),
             );
           }

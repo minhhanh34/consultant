@@ -1,5 +1,5 @@
-import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
-import 'package:consultant/cubits/consultant_cubits/consultant_home/consultant_home_cubit.dart';
+import 'package:consultant/cubits/consultant_class/class_cubit.dart';
+import 'package:consultant/cubits/consultant_home/consultant_home_cubit.dart';
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/views/components/circle_avatar.dart';
 import 'package:flutter/material.dart';

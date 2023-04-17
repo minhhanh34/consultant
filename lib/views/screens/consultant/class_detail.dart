@@ -1,4 +1,4 @@
-import 'package:consultant/cubits/consultant_cubits/consultant_class/class_cubit.dart';
+import 'package:consultant/cubits/consultant_class/class_cubit.dart';
 
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/views/components/center_circular_indicator.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_filex/open_filex.dart';
 
-import '../../../cubits/consultant_cubits/consultant_class/class_state.dart';
+import '../../../cubits/consultant_class/class_state.dart';
 import 'exercise_addition_bottom_sheet.dart';
 
 class ClassDetail extends StatefulWidget {

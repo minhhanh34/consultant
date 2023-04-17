@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/services/consultant_service.dart';
 import 'package:consultant/services/parent_service.dart';
@@ -24,11 +25,17 @@ class HomeCubit extends Cubit<HomeState> {
     return consultant;
   }
 
-  void onInitialize(String parentUid) async {
+  Future<void> onInitialize(String parentUid) async {
     emit(HomeLoading());
     await fetchPopularConsultants();
     _parent ??= await _parentService.getParentByUid(parentUid);
     emit(HomeConsultants(_popularConsultants!, _parent!));
+  }
+
+  Future<void> refresh() async {
+    _popularConsultants = null;
+    _parent = null;
+    await onInitialize(AuthCubit.uid!);
   }
 
   void dispose() {

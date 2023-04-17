@@ -80,6 +80,16 @@ class _SettingsContainerState extends State<SettingsContainer> {
                             trailing:
                                 const Icon(Icons.arrow_forward_ios_rounded),
                           ),
+                          ListTile(
+                            onTap: () => print('show students'),
+                            minVerticalPadding: 24.0,
+                            leading: const CircleAvatar(
+                              child: Icon(Icons.connect_without_contact),
+                            ),
+                            title: const Text('Học sinh (Con của tôi)'),
+                            trailing:
+                                const Icon(Icons.arrow_forward_ios_rounded),
+                          ),
                           const ListTile(
                             minVerticalPadding: 24.0,
                             leading: CircleAvatar(

@@ -1,4 +1,4 @@
-import '../../../models/consultant_model.dart';
+import '../../models/consultant_model.dart';
 
 abstract class ConsultantSettingsState {}
 

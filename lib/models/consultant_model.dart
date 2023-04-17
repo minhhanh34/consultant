@@ -5,7 +5,7 @@ import 'package:consultant/models/subject_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-import '../views/components/search_bottom_sheet.dart';
+import '../constants/gender_types.dart';
 
 class Consultant extends Equatable {
   final String? id;

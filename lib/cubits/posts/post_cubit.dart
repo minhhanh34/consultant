@@ -21,6 +21,16 @@ class PostCubit extends Cubit<PostState> {
     emit(PostFetched(_posts!));
   }
 
+  Future<void> refresh() async {
+    if (AuthCubit.userType!.toLowerCase() == 'consultant') {
+      _posts = null;
+      await fetchPosts();
+    } else {
+      _posts = null;
+      await onPosted();
+    }
+  }
+
   Future<void> onPosted() async {
     emit(PostLoading());
     _posts ??= await _service.fetchParentPosted(AuthCubit.currentUserId!);

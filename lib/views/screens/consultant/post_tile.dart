@@ -24,6 +24,7 @@ class _PostTileState extends State<PostTile> {
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
         boxShadow: const [
           BoxShadow(
             blurRadius: 2,

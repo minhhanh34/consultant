@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/settings/settings_state.dart';
 import 'package:consultant/models/parent_model.dart';
 import 'package:consultant/services/settings_service.dart';
@@ -21,6 +22,11 @@ class SettingsCubit extends Cubit<SettingsState> {
     await _service.updateParentInfo(id, parent);
     _parent = null;
     await fetchPatent(id);
+  }
+
+  Future<void> refresh() async {
+    _parent = null;
+    await fetchPatent(AuthCubit.currentUserId!);
   }
 
   void dispose() {

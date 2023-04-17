@@ -51,6 +51,16 @@ class MessageCubit extends Cubit<MessageState> {
     // }
   }
 
+  // Future<void> refresh() async {
+  //   if (state is MessageConsultantRooms) {
+  //     _roomStream = null;
+  //     fetchConsultantRooms(AuthCubit.currentUserId!);
+  //   } else {
+  //     _roomStream = null;
+  //     fetchParentRooms(AuthCubit.currentUserId!);
+  //   }
+  // }
+
   Future<void> fetchConsultantRooms(String id) async {
     emit(MessageLoading());
     _roomStream = _service.getRecentlyChatRoom(id).listen((rooms) async {
@@ -89,7 +99,7 @@ class MessageCubit extends Cubit<MessageState> {
     return await _service.checkRoom(context, room);
   }
 
-  void refresh() async {
+  Future<void> refresh() async {
     _roomStream = null;
     String id = AuthCubit.currentUserId!;
     if (AuthCubit.userType?.toLowerCase() == 'consultant') {

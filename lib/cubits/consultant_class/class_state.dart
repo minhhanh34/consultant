@@ -1,5 +1,6 @@
 import 'package:consultant/models/class_model.dart';
 import 'package:consultant/models/exercise_model.dart';
+import 'package:consultant/models/lesson.dart';
 
 import '../../models/student_model.dart';
 import '../../models/submission_model.dart';
@@ -14,10 +15,12 @@ class ClassDetailFethed extends ClassState {
   final List<Exercise> exercises;
   final List<Student> students;
   final List<Submission> submissions;
+  final List<Lesson> lessons;
   ClassDetailFethed({
     required this.exercises,
     required this.students,
     required this.submissions,
+    required this.lessons,
   });
 }
 

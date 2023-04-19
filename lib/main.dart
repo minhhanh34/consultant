@@ -3,26 +3,16 @@ import 'package:consultant/configures/router.dart';
 import 'package:flutter/material.dart';
 import './utils/libs_for_main.dart';
 
-late final FirebaseApp _app;
-late final List<CameraDescription> _cameras;
-late FlutterSecureStorage _secureStorage;
-FlutterSecureStorage get secureStorage => _secureStorage;
-FirebaseApp get app => _app;
-List<CameraDescription> get cameras => _cameras;
-late final String _initialLocation;
-
 void main() async {
   final flutterBinding = WidgetsFlutterBinding.ensureInitialized();
-
-  _app = await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   final data = await initialize(flutterBinding);
-
-  _initialLocation = getInitialLocation(data);
-
-  runApp(const ConsultantApp());
+  final String initialLocation = getInitialLocation(data);
+  runApp(
+    ConsultantApp(initialLocation: initialLocation),
+  );
 }
 
 Future<Map<String, String>> initialize(WidgetsBinding flutterBinding) async {
@@ -32,16 +22,17 @@ Future<Map<String, String>> initialize(WidgetsBinding flutterBinding) async {
     badge: true,
     sound: true,
   );
-  _secureStorage = const FlutterSecureStorage(
+  const secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(
       encryptedSharedPreferences: true,
     ),
   );
-  return await _secureStorage.readAll();
+  return await secureStorage.readAll();
 }
 
 class ConsultantApp extends StatelessWidget {
-  const ConsultantApp({super.key});
+  const ConsultantApp({super.key, required this.initialLocation});
+  final String initialLocation;
   @override
   Widget build(BuildContext context) {
     FlutterNativeSplash.remove();
@@ -51,7 +42,10 @@ class ConsultantApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.indigo,
         ),
-        routerConfig: _router,
+        routerConfig: GoRouter(
+          initialLocation: initialLocation,
+          routes: routes,
+        ),
         debugShowCheckedModeBanner: false,
         title: 'Material App',
       ),
@@ -71,8 +65,3 @@ String getInitialLocation(Map<String, String> data) {
   if (data['userType']?.toLowerCase() == 'student') return '/Student';
   return '/Welcome';
 }
-
-final _router = GoRouter(
-  initialLocation: _initialLocation,
-  routes: routes,
-);

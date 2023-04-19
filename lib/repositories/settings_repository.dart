@@ -1,13 +1,12 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/main.dart';
 
 import '../models/parent_model.dart';
 import 'repository_interface.dart';
 
 class SettingsRepository implements Repository<Parent> {
-  final _collection = FirebaseFirestore.instanceFor(app: app).collection('parents');
+  final _collection = FirebaseFirestore.instance.collection('parents');
 
   @override
   Future<Parent> create(Parent item) async {

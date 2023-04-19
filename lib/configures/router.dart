@@ -1,4 +1,6 @@
+
 import '../utils/libs_for_main.dart';
+import '../screens/parent/children_screen.dart';
 
 final dynamic _routes = <RouteBase>[
   GoRoute(
@@ -111,6 +113,11 @@ final dynamic _routes = <RouteBase>[
     path: '/ParentUpdate',
     builder: (context, state) =>
         ParentUpdateScreen(parent: state.extra as Parent?),
+  ),
+  GoRoute(
+    path: '/RelationShip',
+    builder: (context, state) =>
+        ChildrensScreen(children: state.extra as List<Student>),
   ),
 ];
 

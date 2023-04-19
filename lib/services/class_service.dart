@@ -7,11 +7,13 @@ import 'package:consultant/repositories/class_exercise_subcollection_repository.
 import 'package:consultant/repositories/class_repository.dart';
 import 'package:consultant/repositories/class_student_subcollection_repository.dart';
 import 'package:consultant/repositories/class_submission_subcollection_repository.dart';
+import 'package:consultant/repositories/lesson_repository.dart';
 import 'package:consultant/services/downloader_service.dart';
 import 'package:consultant/services/firebase_storage_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/class_model.dart';
+import '../models/lesson.dart';
 import '../models/submission_model.dart';
 
 class ClassService {
@@ -19,11 +21,13 @@ class ClassService {
   final ClassStudentRepository _classStudentRepository;
   final ClassExerciseRepository _classExerciseRepository;
   final ClassSubmissionRepository _classSubmissionRepository;
+  final LessonRepository _lessonRepository;
   ClassService(
     this._repository,
     this._classStudentRepository,
     this._classExerciseRepository,
     this._classSubmissionRepository,
+    this._lessonRepository,
   );
   Future<Class> create(Class item) async {
     return await _repository.create(item);
@@ -207,5 +211,19 @@ class ClassService {
       classes.add(await _repository.getOne(classId));
     }
     return classes;
+  }
+
+  Future<Lesson> createLesson(Lesson lesson) async {
+    return await _lessonRepository.create(lesson);
+  }
+
+  Future<List<Lesson>> fetchLessons(String classId) async {
+    final snaps = await _lessonRepository.collection
+        .where('classId', isEqualTo: classId)
+        .get();
+    return snaps.docs
+        .map((doc) => Lesson.fromJson(doc.data() as Map<String, dynamic>)
+            .copyWith(id: doc.id))
+        .toList();
   }
 }

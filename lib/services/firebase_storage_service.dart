@@ -1,12 +1,11 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:developer' as dev;
-import 'package:consultant/main.dart';
 import 'package:consultant/models/exercise_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseStorageService {
-  final ref = FirebaseStorage.instanceFor(app: app).ref();
+  final ref = FirebaseStorage.instance.ref();
   final _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   final Random _rnd = Random();

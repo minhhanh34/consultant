@@ -1,8 +1,18 @@
+import 'package:consultant/repositories/lesson_repository.dart';
+
 import '../utils/libs_for_main.dart';
 
 final consultantService = ConsultantService(
   ConsultantRepository(),
   CommentRepository(),
+);
+
+final classService = ClassService(
+  ClassRepository(),
+  ClassStudentRepository(),
+  ClassExerciseRepository(),
+  ClassSubmissionRepository(),
+  LessonRepository(),
 );
 
 dynamic _providers = [
@@ -52,7 +62,10 @@ dynamic _providers = [
     ),
   ),
   BlocProvider(
-    create: (_) => SettingsCubit(SettingsService(SettingsRepository())),
+    create: (_) => SettingsCubit(
+      SettingsService(SettingsRepository()),
+      StudentService(StudentRepository()),
+    ),
   ),
   BlocProvider(
     create: (_) => FilterCubit(consultantService),
@@ -65,34 +78,20 @@ dynamic _providers = [
   ),
   BlocProvider(
     create: (_) => EnrollCubit(
-        ClassService(
-          ClassRepository(),
-          ClassStudentRepository(),
-          ClassExerciseRepository(),
-          ClassSubmissionRepository(),
-        ),
-        StudentService(StudentRepository())),
+      classService,
+      StudentService(StudentRepository()),
+    ),
   ),
   BlocProvider(
     create: (_) => ConsultantHomeCubit(
       consultantService,
       ScheduleService(ScheduleRepository()),
-      ClassService(
-        ClassRepository(),
-        ClassStudentRepository(),
-        ClassExerciseRepository(),
-        ClassSubmissionRepository(),
-      ),
+      classService,
     ),
   ),
   BlocProvider(
     create: (_) => ClassCubit(
-      ClassService(
-        ClassRepository(),
-        ClassStudentRepository(),
-        ClassExerciseRepository(),
-        ClassSubmissionRepository(),
-      ),
+      classService,
     ),
   ),
   BlocProvider(
@@ -103,26 +102,15 @@ dynamic _providers = [
   ),
   BlocProvider(
     create: (_) => StudentHomeCubit(
-      ClassService(
-        ClassRepository(),
-        ClassStudentRepository(),
-        ClassExerciseRepository(),
-        ClassSubmissionRepository(),
-      ),
+      classService,
       StudentService(StudentRepository()),
     ),
   ),
   BlocProvider(
     create: (_) => StudentClassCubit(
-      ClassService(
-        ClassRepository(),
-        ClassStudentRepository(),
-        ClassExerciseRepository(),
-        ClassSubmissionRepository(),
-      ),
+      classService,
     ),
   ),
 ];
-
 
 dynamic get providers => _providers;

@@ -2,13 +2,12 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
-import 'package:consultant/main.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/repositories/repository_interface.dart';
 
 class ConsultantRepository implements Repository<Consultant> {
   final _collection =
-      FirebaseFirestore.instanceFor(app: app).collection('consultants');
+      FirebaseFirestore.instance.collection('consultants');
 
   CollectionReference get collection => _collection;
 

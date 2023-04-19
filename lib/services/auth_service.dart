@@ -24,22 +24,28 @@ class AuthService {
     this._studentRepository,
   );
 
-  Future<UserCredential?> createUser(
-    UserType userType,
-    String email,
-    String password,
-  ) async {
+  Future<UserCredential?> createUser({
+    required UserType userType,
+    required String email,
+    required String password,
+    String? parentIdForStudentUser,
+  }) async {
     try {
-      final userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserCredential userCredential;
       if (userType == UserType.consultant) {
+        userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
         await _consultantRepository.create(
           Consultant(uid: userCredential.user!.uid),
         );
         await userCredential.user?.updateDisplayName('consultant');
       } else if (userType == UserType.parent) {
+        userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
         await _parentRepository.create(
           Parent(
             uid: userCredential.user!.uid,
@@ -55,21 +61,37 @@ class AuthService {
         );
         await userCredential.user?.updateDisplayName('parent');
       } else {
-        await _studentRepository.create(
-          Student(
-            uid: userCredential.user!.uid,
-            name: '',
-            birthDay: DateTime(1970),
-            address: const Address(
-              city: '',
-              district: '',
-              geoPoint: GeoPoint(0, 0),
-            ),
-            grade: 0,
-            gender: '',
-          ),
-        );
-        await userCredential.user?.updateDisplayName('student');
+        if (parentIdForStudentUser != null) {
+          final parentSnapshot = await _parentRepository.collection
+              .doc(parentIdForStudentUser)
+              .get();
+          if (parentSnapshot.exists) {
+            userCredential = await _auth.createUserWithEmailAndPassword(
+              email: email,
+              password: password,
+            );
+            await _studentRepository.create(
+              Student(
+                uid: userCredential.user!.uid,
+                name: '',
+                birthDay: DateTime(1970),
+                address: const Address(
+                  city: '',
+                  district: '',
+                  geoPoint: GeoPoint(0, 0),
+                ),
+                grade: 0,
+                gender: '',
+                parentId: parentIdForStudentUser,
+              ),
+            );
+            await userCredential.user?.updateDisplayName('student');
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
       }
       return userCredential;
     } catch (e) {
@@ -84,7 +106,6 @@ class AuthService {
         email: email,
         password: password,
       );
-      
     } catch (e) {
       log('error', error: e);
       return null;

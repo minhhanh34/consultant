@@ -1,14 +1,12 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/main.dart';
 
 import '../models/message_model.dart';
 import 'repository_with_subcollection.dart';
 
 class ChatRepository implements RepositoryWithSubCollection<Message> {
-  final _collection =
-      FirebaseFirestore.instanceFor(app: app).collection('chatrooms');
+  final _collection = FirebaseFirestore.instance.collection('chatrooms');
   final _subCollection = 'messages';
 
   CollectionReference get collection => _collection;

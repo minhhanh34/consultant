@@ -1,14 +1,13 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/main.dart';
 
 import '../models/chat_room_model.dart';
 import 'repository_interface.dart';
 
 class MessageRepository extends Repository<ChatRoom> {
   final _collection =
-      FirebaseFirestore.instanceFor(app: app).collection('chatrooms');
+      FirebaseFirestore.instance.collection('chatrooms');
 
   CollectionReference get collection => _collection;
 

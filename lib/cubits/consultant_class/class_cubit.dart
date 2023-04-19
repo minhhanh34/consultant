@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/class_model.dart';
+import '../../models/lesson.dart';
 import '../../models/student_model.dart';
 import '../../services/downloader_service.dart';
 
@@ -19,6 +20,7 @@ class ClassCubit extends Cubit<ClassState> {
   List<Exercise>? _exercises;
   List<Student>? _students;
   List<Submission>? _submissions;
+  List<Lesson>? _lessons;
 
   // void fetchClasses(String id) async {
   //   _classes ??= await _service.fetchClasses(id);
@@ -39,6 +41,7 @@ class ClassCubit extends Cubit<ClassState> {
       exercises: _exercises!,
       students: _students!,
       submissions: _submissions!,
+      lessons: _lessons!,
     ));
   }
 
@@ -54,9 +57,11 @@ class ClassCubit extends Cubit<ClassState> {
     await _service.deleteExcercise(classId, exercise);
     _exercises?.remove(exercise);
     emit(ClassDetailFethed(
-        exercises: _exercises!,
-        students: _students!,
-        submissions: _submissions!));
+      exercises: _exercises!,
+      students: _students!,
+      submissions: _submissions!,
+      lessons: _lessons!,
+    ));
   }
 
   void onLoading() => emit(ClassLoading());
@@ -67,6 +72,7 @@ class ClassCubit extends Cubit<ClassState> {
       exercises: _exercises!,
       students: _students!,
       submissions: _submissions!,
+      lessons: _lessons!,
     ));
     await downloader.download(fileName);
     changeStateForFileName(fileName, DownloadState.downloaded);
@@ -74,6 +80,7 @@ class ClassCubit extends Cubit<ClassState> {
       exercises: _exercises!,
       students: _students!,
       submissions: _submissions!,
+      lessons: _lessons!,
     ));
   }
 
@@ -109,10 +116,12 @@ class ClassCubit extends Cubit<ClassState> {
     _exercises = await _service.fetchExercise(classId);
     _students = await _service.fetchStudents(classId);
     _submissions = await _service.listSubmissions(classId);
+    _lessons = await _service.fetchLessons(classId);
     emit(ClassDetailFethed(
       exercises: _exercises!,
       students: _students!,
       submissions: _submissions!,
+      lessons: _lessons!,
     ));
   }
 
@@ -141,11 +150,24 @@ class ClassCubit extends Cubit<ClassState> {
     await _service.updateSubmission(classId, submissionId, submission);
   }
 
+  Future<void> createLesson(Lesson lesson) async {
+    emit(ClassLoading());
+    final newLesson = await _service.createLesson(lesson);
+    _lessons?.add(newLesson);
+    emit(ClassDetailFethed(
+      exercises: _exercises!,
+      students: _students!,
+      submissions: _submissions!,
+      lessons: _lessons!,
+    ));
+  }
+
   void dispose() {
     _classes = null;
     _exercises = null;
     _students = null;
     _submissions = null;
+    _lessons = null;
     emit(ClassInitial());
   }
 }

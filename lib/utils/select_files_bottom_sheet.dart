@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 class SelectFilesBottomSheet {
   static Future<FilePickerResult?> select(BuildContext context) async {
     FilePickerResult? filePickerResult;
-
     await showModalBottomSheet(
       backgroundColor: Colors.transparent,
       shape: RoundedRectangleBorder(

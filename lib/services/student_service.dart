@@ -1,3 +1,5 @@
+
+
 import 'package:consultant/repositories/student_repository.dart';
 
 import '../models/student_model.dart';
@@ -24,6 +26,15 @@ class StudentService {
 
   Future<bool> updateStudent(Student student) async {
     return await _repository.update(student.id!, student);
+  }
+
+  Future<List<Student>> query(String query, {Object? isEqualTo}) async {
+    final snaps =
+        await _repository.collection.where(query, isEqualTo: isEqualTo).get();
+    return snaps.docs.map((doc) {
+      return Student.fromJson(doc.data() as Map<String, dynamic>)
+          .copyWith(id: doc.id);
+    }).toList();
   }
 
   Future<bool> delete(String id) async {

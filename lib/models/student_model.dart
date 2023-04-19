@@ -11,8 +11,10 @@ class Student extends Equatable {
   final int grade;
   final String gender;
   final List<String> classIds;
+  final String parentId;
   const Student({
     this.id,
+    required this.parentId,
     required this.uid,
     required this.name,
     required this.birthDay,
@@ -31,6 +33,7 @@ class Student extends Equatable {
       grade: json['grade'],
       gender: json['gender'] as String,
       classIds: (json['classIds'] as List).map((e) => e as String).toList(),
+      parentId: json['parentId'] as String,
     );
   }
 
@@ -43,6 +46,7 @@ class Student extends Equatable {
       'grade': grade,
       'gender': gender,
       'classIds': classIds,
+      'parentId': parentId,
     };
   }
 
@@ -55,6 +59,7 @@ class Student extends Equatable {
     String? gender,
     String? uid,
     List<String>? classIds,
+    String? parentId,
   }) {
     return Student(
       uid: uid ?? this.uid,
@@ -65,10 +70,11 @@ class Student extends Equatable {
       grade: grade ?? this.grade,
       gender: gender ?? this.gender,
       classIds: classIds ?? this.classIds,
+      parentId: parentId ?? this.parentId,
     );
   }
 
   @override
   List<Object?> get props =>
-      [name, birthDay, address, grade, gender, uid, classIds];
+      [name, birthDay, address, grade, gender, uid, classIds, parentId];
 }

@@ -14,7 +14,6 @@ import 'package:consultant/cubits/searching/searching_cubit.dart';
 import 'package:consultant/cubits/settings/settings_cubit.dart';
 import 'package:consultant/cubits/student_class/student_class_cubit.dart';
 import 'package:consultant/cubits/student_home/student_home_cubit.dart';
-import 'package:consultant/main.dart';
 import 'package:consultant/services/auth_service.dart';
 import 'package:consultant/services/consultant_service.dart';
 import 'package:consultant/services/parent_service.dart';
@@ -101,14 +100,27 @@ class AuthCubit extends Cubit<AuthState> {
     required UserType userType,
     required String email,
     required String password,
+    String? parentId,
   }) async {
     emit(AuthLoading());
-    await _service.createUser(userType, email, password);
+    final result = await _service.createUser(
+      userType: userType,
+      email: email,
+      password: password,
+      parentIdForStudentUser: parentId,
+    );
+    if (result == null) {
+      emit(AuthMessage('Mã số phụ huynh không tồn tại'));
+      return;
+    }
     emit(AuthSignUpSuccessed());
     emit(AuthInitial());
   }
 
   Future<void> signOut(BuildContext context) async {
+    const secureStorage = FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    );
     final appCubit = context.read<AppCubit>();
     final authCubit = context.read<AuthCubit>();
     final chatCubit = context.read<ChatCubit>();

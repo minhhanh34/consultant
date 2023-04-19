@@ -1,14 +1,12 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/main.dart';
 
 import '../models/student_model.dart';
 import 'repository_with_subcollection.dart';
 
 class ClassStudentRepository implements RepositoryWithSubCollection<Student> {
-  final _collection =
-      FirebaseFirestore.instanceFor(app: app).collection('classes');
+  final _collection = FirebaseFirestore.instance.collection('classes');
   final _subCollection = 'students';
 
   CollectionReference get collection => _collection;

@@ -1,13 +1,12 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/main.dart';
 import 'package:consultant/repositories/repository_with_subcollection.dart';
 
 import '../models/comment_model.dart';
 
 class CommentRepository implements RepositoryWithSubCollection<Comment> {
-  final _collection = FirebaseFirestore.instanceFor(app: app).collection('consultants');
+  final _collection = FirebaseFirestore.instance.collection('consultants');
   final _subCollection = 'comments';
   @override
   Future<Comment> create(String id, Comment item) async {

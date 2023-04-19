@@ -31,3 +31,8 @@ class AuthSignInStudent extends AuthState {
   final Student student;
   AuthSignInStudent(this.student);
 }
+
+class AuthMessage extends AuthState {
+  final String message;
+  AuthMessage(this.message);
+}

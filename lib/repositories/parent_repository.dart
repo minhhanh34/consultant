@@ -1,14 +1,13 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consultant/main.dart';
 import 'package:consultant/repositories/repository_interface.dart';
 
 import '../models/parent_model.dart';
 
 class ParentRepository implements Repository<Parent> {
   final _collection =
-      FirebaseFirestore.instanceFor(app: app).collection('parents');
+      FirebaseFirestore.instance.collection('parents');
 
   CollectionReference get collection => _collection;
 

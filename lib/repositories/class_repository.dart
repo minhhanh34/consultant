@@ -2,13 +2,11 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../main.dart';
 import '../models/class_model.dart';
 import 'repository_interface.dart';
 
 class ClassRepository implements Repository<Class> {
-  final _collection =
-      FirebaseFirestore.instanceFor(app: app).collection('classes');
+  final _collection = FirebaseFirestore.instance.collection('classes');
 
   CollectionReference get collection => _collection;
 

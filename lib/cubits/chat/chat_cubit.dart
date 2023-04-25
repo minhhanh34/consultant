@@ -41,7 +41,7 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   // void initialize() => emit(ChatInitial());
-  // TODO fix recall (rooms stream)
+  // TODO fix recall (rooms stream, may be later)
   Future<bool> recallMessage(
     String roomId,
     String messageId,

@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +34,7 @@ class _ConsultantClassSubmissionTileState
   bool commentEditing = false;
   @override
   Widget build(BuildContext context) {
+    final userType = AuthCubit.userType?.toLowerCase();
     return Visibility(
       visible: widget.tileSubmission.isNotEmpty,
       child: Card(
@@ -156,7 +158,8 @@ class _ConsultantClassSubmissionTileState
               ),
             ),
             Visibility(
-              visible: widget.tileSubmission.first.consultantComment == null,
+              visible: widget.tileSubmission.first.consultantComment == null &&
+                  userType == 'consultant',
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Padding(

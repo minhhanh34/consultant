@@ -1,21 +1,41 @@
 import 'package:consultant/models/comment_model.dart';
-import 'package:consultant/repositories/comment_repository.dart';
-import 'package:consultant/repositories/consultant_repository.dart';
+import 'package:consultant/repositories/repository_interface.dart';
+import 'package:consultant/repositories/repository_with_subcollection.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/gender_types.dart';
 import '../models/consultant_model.dart';
 
-class ConsultantService {
-  final ConsultantRepository _repository;
-  final CommentRepository _commentRepository;
+abstract class ConsultantService {
+  Future<List<Consultant>> getConsultants();
+  Future<List<Consultant>> getPopularConsultants();
+  Future<List<Comment>> getComments(String id);
+  Future<List<Consultant>> applyFilter(List<String> filter);
+  Future<Consultant> get(String id);
+  Future<Consultant> getConsultantByUid(String uid);
+  Future<bool> update(String id, Consultant consultant);
+  Future<List<Consultant>> query(
+    List<String> subjects,
+    RangeValues priceRange,
+    Gender gender,
+    RangeValues rateRange,
+    RangeValues classRange,
+    String location,
+  );
+}
 
-  ConsultantService(this._repository, this._commentRepository);
+class ConsultantServiceIml extends ConsultantService{
+  final Repository<Consultant> _repository;
+  final RepositoryWithSubCollection<Comment> _commentRepository;
 
+  ConsultantServiceIml(this._repository, this._commentRepository);
+
+  @override
   Future<List<Consultant>> getConsultants() async {
     return await _repository.list();
   }
 
+  @override
   Future<List<Consultant>> getPopularConsultants() async {
     final docSnaps = await _repository.collection
         .orderBy('rate', descending: true)
@@ -27,11 +47,13 @@ class ConsultantService {
     }).toList();
   }
 
+  @override
   Future<List<Comment>> getComments(String id) async {
     final cmts = await _commentRepository.list(id);
     return cmts;
   }
 
+  @override
   Future<List<Consultant>> applyFilter(List<String> filter) async {
     filter = filter.map((element) => element.toLowerCase()).toList();
     final consultants = await _repository.list();
@@ -47,10 +69,12 @@ class ConsultantService {
     return filteredConsultants;
   }
 
+  @override
   Future<Consultant> get(String id) async {
-    return await _repository.getOne(id);
+    return await _repository.getOne(id) as Consultant;
   }
 
+  @override
   Future<Consultant> getConsultantByUid(String uid) async {
     final snap =
         await _repository.collection.where('uid', isEqualTo: uid).get();
@@ -58,10 +82,12 @@ class ConsultantService {
         .copyWith(id: snap.docs.first.id);
   }
 
+  @override
   Future<bool> update(String id, Consultant consultant) async {
     return await _repository.update(id, consultant);
   }
 
+  @override
   Future<List<Consultant>> query(
     List<String> subjects,
     RangeValues priceRange,

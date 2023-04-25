@@ -47,5 +47,4 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     _undoIndex = -1;
     emit(ScheduleInitial());
   }
-
 }

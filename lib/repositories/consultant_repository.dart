@@ -9,6 +9,7 @@ class ConsultantRepository implements Repository<Consultant> {
   final _collection =
       FirebaseFirestore.instance.collection('consultants');
 
+  @override
   CollectionReference get collection => _collection;
 
   @override

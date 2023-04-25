@@ -46,7 +46,7 @@ export 'package:consultant/screens/consultant/class_detail.dart';
 export 'package:consultant/screens/consultant/consultant_class_submissions_screen.dart';
 export 'package:consultant/screens/consultant/consultant_home_screen.dart';
 export 'package:consultant/screens/student/enroll_screen.dart';
-export 'package:consultant/screens/student/student_class_overview.dart';
+export 'package:consultant/screens/student/student_class_home_sreeen.dart';
 export 'package:consultant/screens/student/student_class_screen.dart';
 export 'package:firebase_auth/firebase_auth.dart';
 export 'package:firebase_core/firebase_core.dart';

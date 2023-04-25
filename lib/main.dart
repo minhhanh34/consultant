@@ -5,14 +5,10 @@ import './utils/libs_for_main.dart';
 
 void main() async {
   final flutterBinding = WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final data = await initialize(flutterBinding);
   final String initialLocation = getInitialLocation(data);
-  runApp(
-    ConsultantApp(initialLocation: initialLocation),
-  );
+  runApp(ConsultantApp(initialLocation: initialLocation));
 }
 
 Future<Map<String, String>> initialize(WidgetsBinding flutterBinding) async {

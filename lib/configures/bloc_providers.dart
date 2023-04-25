@@ -1,13 +1,14 @@
+import 'package:consultant/cubits/parent_class/parent_class_cubit.dart';
 import 'package:consultant/repositories/lesson_repository.dart';
 
 import '../utils/libs_for_main.dart';
 
-final consultantService = ConsultantService(
+final consultantService = ConsultantServiceIml(
   ConsultantRepository(),
   CommentRepository(),
 );
 
-final classService = ClassService(
+final classService = ClassServiceIml(
   ClassRepository(),
   ClassStudentRepository(),
   ClassExerciseRepository(),
@@ -19,24 +20,24 @@ dynamic _providers = [
   BlocProvider(create: (_) => AppCubit()),
   BlocProvider(
     create: (_) => AuthCubit(
-      AuthService(
+      AuthServiceIml(
         FirebaseAuth.instance,
         ConsultantRepository(),
         ParentRepository(),
         StudentRepository(),
       ),
       consultantService,
-      ParentService(ParentRepository()),
-      StudentService(StudentRepository()),
+      ParentServiceIml(ParentRepository()),
+      StudentServiceIml(StudentRepository()),
     ),
   ),
   BlocProvider(
     create: (_) => HomeCubit(
-      ConsultantService(
+      ConsultantServiceIml(
         ConsultantRepository(),
         CommentRepository(),
       ),
-      ParentService(
+      ParentServiceIml(
         ParentRepository(),
       ),
     ),
@@ -46,46 +47,46 @@ dynamic _providers = [
   ),
   BlocProvider(
     create: (_) => ChatCubit(
-      ChatService(
+      ChatServiceIml(
         ChatRepository(),
         MessageRepository(),
       ),
       consultantService,
-      ParentService(ParentRepository()),
+      ParentServiceIml(ParentRepository()),
     ),
   ),
   BlocProvider(
     create: (_) => MessageCubit(
-      MessageService(MessageRepository()),
+      MessageServiceIml(MessageRepository()),
       consultantService,
-      ParentService(ParentRepository()),
+      ParentServiceIml(ParentRepository()),
     ),
   ),
   BlocProvider(
     create: (_) => SettingsCubit(
-      SettingsService(SettingsRepository()),
-      StudentService(StudentRepository()),
+      SettingsServiceIml(SettingsRepository(), ClassRepository()),
+      StudentServiceIml(StudentRepository()),
     ),
   ),
   BlocProvider(
     create: (_) => FilterCubit(consultantService),
   ),
   BlocProvider(
-    create: (_) => ScheduleCubit(ScheduleService(ScheduleRepository())),
+    create: (_) => ScheduleCubit(ScheduleServiceIml(ScheduleRepository())),
   ),
   BlocProvider(
-    create: (_) => PostCubit(PostService(PostRepository())),
+    create: (_) => PostCubit(PostServiceIml(PostRepository())),
   ),
   BlocProvider(
     create: (_) => EnrollCubit(
       classService,
-      StudentService(StudentRepository()),
+      StudentServiceIml(StudentRepository()),
     ),
   ),
   BlocProvider(
     create: (_) => ConsultantHomeCubit(
       consultantService,
-      ScheduleService(ScheduleRepository()),
+      ScheduleServiceIml(ScheduleRepository()),
       classService,
     ),
   ),
@@ -103,11 +104,16 @@ dynamic _providers = [
   BlocProvider(
     create: (_) => StudentHomeCubit(
       classService,
-      StudentService(StudentRepository()),
+      StudentServiceIml(StudentRepository()),
     ),
   ),
   BlocProvider(
     create: (_) => StudentClassCubit(
+      classService,
+    ),
+  ),
+  BlocProvider(
+    create: (_) => ParentClassCubit(
       classService,
     ),
   ),

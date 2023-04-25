@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'filter_state.dart';
 
-
-
 class FilterCubit extends Cubit<FilterState> {
   FilterCubit(this._service) : super(FilterInitial());
 

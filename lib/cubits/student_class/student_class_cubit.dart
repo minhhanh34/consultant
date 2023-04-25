@@ -14,7 +14,7 @@ class StudentClassCubit extends Cubit<StudentClassState> {
   final ClassService _service;
   List<Exercise>? _exercises;
   List<Submission>? _submissions;
-  final downloader = DownloaderService.instance;
+  final DownloaderService downloader = DownloaderServiceIml.instance;
 
   Future<void> fetchExercises(String classId, String studentId) async {
     emit(StudentClassLoading());

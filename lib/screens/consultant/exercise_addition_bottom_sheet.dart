@@ -82,6 +82,7 @@ class _ExerciseAdditionBottomSheetState
                   controller: _textController,
                   maxLines: 3,
                   decoration: InputDecoration(
+                    hintText: 'Nội dung',
                     filled: true,
                     fillColor: Colors.white,
                     border: const OutlineInputBorder(),
@@ -253,11 +254,12 @@ class _ExerciseAdditionBottomSheetState
                         ElevatedButton(
                           onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
+
                             widget.scaffoldKey.currentState?.setState(() {
                               loading = true;
                             });
                             List<FileName> fileNames = [];
-                            final storageService = FirebaseStorageService();
+                            final storageService = FirebaseStorageServiceIml();
                             if (filePickerResult != null) {
                               fileNames =
                                   await storageService.createFolderFiles(
@@ -272,6 +274,11 @@ class _ExerciseAdditionBottomSheetState
                               fileNames[i] = fileNames[i].copyWith(
                                 name: filePickerResult?.names[i] ?? '',
                               );
+                            }
+                            if (_textController.text.isEmpty &&
+                                filePickerResult == null) {
+                              widget.scaffoldKey.currentContext?.pop();
+                              return;
                             }
                             await context.read<ClassCubit>().createExercise(
                                   widget.classRoom.id!,

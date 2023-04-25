@@ -4,14 +4,19 @@ import 'package:consultant/models/exercise_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
-class DownloaderService {
-  static final DownloaderService _instance =
-      DownloaderService._privateContructor();
+abstract class DownloaderService {
+  Future<File?> download(FileName fileName);
+}
 
-  DownloaderService._privateContructor();
+class DownloaderServiceIml extends DownloaderService {
+  static final DownloaderService _instance =
+      DownloaderServiceIml._privateContructor();
+
+  DownloaderServiceIml._privateContructor();
 
   static DownloaderService get instance => _instance;
 
+  @override
   Future<File?> download(FileName fileName) async {
     final dir = await getExternalStorageDirectory();
     final response = await http.get(Uri.parse(fileName.url));

@@ -17,6 +17,8 @@ class Lesson extends Equatable {
   final String? commentOfParent;
   final String? subjectName;
   final String classId;
+  final bool isCompleted;
+  final String content;
   const Lesson({
     this.id,
     required this.begin,
@@ -30,6 +32,8 @@ class Lesson extends Equatable {
     this.commentOfParent,
     this.subjectName,
     required this.classId,
+    required this.isCompleted,
+    required this.content,
   });
 
   Lesson copyWith({
@@ -45,6 +49,8 @@ class Lesson extends Equatable {
     String? commentOfParent,
     String? subjectName,
     String? classId,
+    bool? isCompleted,
+    String? content,
   }) {
     return Lesson(
       id: id ?? this.id,
@@ -59,6 +65,8 @@ class Lesson extends Equatable {
       commentOfParent: commentOfParent ?? this.commentOfParent,
       subjectName: subjectName ?? this.subjectName,
       classId: classId ?? this.classId,
+      isCompleted: isCompleted ?? this.isCompleted,
+      content: content ?? this.content,
     );
   }
 
@@ -73,13 +81,17 @@ class Lesson extends Equatable {
       parentId,
       studentIds,
       classId,
+      isCompleted,
+      content,
     ];
   }
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
+      'isCompleted': isCompleted,
       'begin': begin,
       'end': end,
+      'content': content,
       'dayOfWeek': dayOfWeek,
       'duration': duration,
       'consultantId': consultantId,
@@ -94,6 +106,7 @@ class Lesson extends Equatable {
 
   factory Lesson.fromJson(Map<String, dynamic> json) {
     return Lesson(
+      isCompleted: json['isCompleted'] as bool,
       begin: (json['begin'] as Timestamp).toDate(),
       end: (json['end'] as Timestamp).toDate(),
       dayOfWeek: json['dayOfWeek'] as int,
@@ -105,6 +118,7 @@ class Lesson extends Equatable {
       commentOfConsultant: json['commentOfConsultant'] as String?,
       commentOfParent: json['commentOfParent'] as String?,
       subjectName: json['subjectName'] as String?,
+      content: json['content'] as String,
       classId: json['classId'] as String,
     );
   }

@@ -10,14 +10,14 @@ class StudentHomeClasses extends StatelessWidget {
     required this.classes,
     required this.student,
   });
-  final List<Class> classes;
+  final List<Class?> classes;
   final Student student;
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: classes.length,
       itemBuilder: (context, index) {
-        return StudentClassTile(classes[index], student);
+        return StudentClassTile(classes[index]!, student);
       },
     );
   }

@@ -7,7 +7,8 @@ import 'repository_interface.dart';
 
 class SettingsRepository implements Repository<Parent> {
   final _collection = FirebaseFirestore.instance.collection('parents');
-
+  @override
+  CollectionReference get collection => _collection;
   @override
   Future<Parent> create(Parent item) async {
     try {

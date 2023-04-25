@@ -15,7 +15,7 @@ import '../../services/downloader_service.dart';
 class ClassCubit extends Cubit<ClassState> {
   ClassCubit(this._service) : super(ClassInitial());
   final ClassService _service;
-  final downloader = DownloaderService.instance;
+  final DownloaderService downloader = DownloaderServiceIml.instance;
   List<Class>? _classes;
   List<Exercise>? _exercises;
   List<Student>? _students;
@@ -45,12 +45,6 @@ class ClassCubit extends Cubit<ClassState> {
     ));
   }
 
-  // void fetchExercises(String id) async {
-  //   emit(ClassLoading());
-  //   _exercises = await _service.fetchExercise(id);
-  //   emit(ClassExerciseFetched(_exercises!));
-  // }
-
   void goToClass() => emit(ClassInitial());
 
   void deleteExcercise(String classId, Exercise exercise) async {
@@ -62,6 +56,17 @@ class ClassCubit extends Cubit<ClassState> {
       submissions: _submissions!,
       lessons: _lessons!,
     ));
+  }
+
+  Future<void> refreshExercises(String classId) async {
+    emit(ClassLoading());
+    _exercises = null;
+    _exercises = await _service.fetchExercise(classId);
+    emit(ClassDetailFethed(
+        exercises: _exercises!,
+        students: _students!,
+        submissions: _submissions!,
+        lessons: _lessons!));
   }
 
   void onLoading() => emit(ClassLoading());
@@ -111,7 +116,7 @@ class ClassCubit extends Cubit<ClassState> {
     return await File(path).exists();
   }
 
-  void fetchDetailClass(String classId) async {
+  Future<void> fetchDetailClass(String classId) async {
     emit(ClassLoading());
     _exercises = await _service.fetchExercise(classId);
     _students = await _service.fetchStudents(classId);
@@ -153,13 +158,53 @@ class ClassCubit extends Cubit<ClassState> {
   Future<void> createLesson(Lesson lesson) async {
     emit(ClassLoading());
     final newLesson = await _service.createLesson(lesson);
-    _lessons?.add(newLesson);
+    int firstArrIndex = 0;
+    _lessons?.insert(firstArrIndex, newLesson);
     emit(ClassDetailFethed(
       exercises: _exercises!,
       students: _students!,
       submissions: _submissions!,
       lessons: _lessons!,
     ));
+  }
+
+  Future<void> deleteLesson(String id) async {
+    bool result = await _service.deleteLesson(id);
+    if (result) {
+      _lessons?.removeWhere((lesson) => lesson.id == id);
+      emit(ClassDetailFethed(
+        exercises: _exercises!,
+        lessons: _lessons!,
+        students: _students!,
+        submissions: _submissions!,
+      ));
+    }
+  }
+
+  Future<void> updateLesson(String id, Lesson newLesson) async {
+    bool result = await _service.updateLesson(id, newLesson);
+    if (result) {
+      final index = _lessons?.indexWhere((lesson) => lesson.id! == id);
+      if (index != null) {
+        _lessons?[index] = newLesson;
+      }
+    }
+    emit(ClassDetailFethed(
+        exercises: _exercises!,
+        students: _students!,
+        submissions: _submissions!,
+        lessons: _lessons!));
+  }
+
+  Future<void> refreshLessosn(String classId) async {
+    emit(ClassLoading());
+    _lessons = null;
+    _lessons = await _service.fetchLessons(classId);
+    emit(ClassDetailFethed(
+        exercises: _exercises!,
+        students: _students!,
+        submissions: _submissions!,
+        lessons: _lessons!));
   }
 
   void dispose() {

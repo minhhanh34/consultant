@@ -9,9 +9,14 @@ class ClassSubmissionRepository
     implements RepositoryWithSubCollection<Submission> {
   final _collection = FirebaseFirestore.instance.collection('classes');
   final _subCollection = 'submissions';
-
+  @override
   CollectionReference get collection => _collection;
   String get subCollection => _subCollection;
+
+  @override
+  String get subCollectionName => _subCollection;
+
+
   @override
   Future<Submission> create(String id, Submission item) async {
     try {

@@ -1,4 +1,4 @@
-
+import '../screens/parent/parent_class_screen.dart';
 import '../utils/libs_for_main.dart';
 import '../screens/parent/children_screen.dart';
 
@@ -66,12 +66,12 @@ final dynamic _routes = <RouteBase>[
     path: '/ClassDetail',
     builder: (context, state) => ClassDetail(classRoom: state.extra as Class),
   ),
-  GoRoute(
-    path: '/Camera',
-    builder: (context, state) => CameraScreen(
-      cameras: state.extra as List<CameraDescription>,
-    ),
-  ),
+  // GoRoute(
+  //   path: '/Camera',
+  //   builder: (context, state) => CameraScreen(
+  //     cameras: state.extra as List<CameraDescription>,
+  //   ),
+  // ),
   GoRoute(
     path: '/Enroll',
     builder: (context, state) => EnrollScreen(
@@ -118,6 +118,12 @@ final dynamic _routes = <RouteBase>[
     path: '/RelationShip',
     builder: (context, state) =>
         ChildrensScreen(children: state.extra as List<Student>),
+  ),
+  GoRoute(
+    path: '/ParentClass',
+    builder: (context, state) => ParentClassScreen(
+      classId: state.extra as String,
+    ),
   ),
 ];
 

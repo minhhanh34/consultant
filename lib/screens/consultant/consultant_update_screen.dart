@@ -551,7 +551,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       List<FileName>? fileNames;
                       if (filePickerResult != null &&
                           filePickerResult!.files.isNotEmpty) {
-                        final storage = FirebaseStorageService();
+                        final storage = FirebaseStorageServiceIml();
                         fileNames = await storage.createFolderFiles(
                           'avatars',
                           filePickerResult!.paths,

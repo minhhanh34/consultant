@@ -1,7 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/constants/consts.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
@@ -14,6 +15,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ParentUpdateScreen extends StatefulWidget {
   const ParentUpdateScreen({super.key, this.parent});
@@ -118,7 +120,7 @@ class _ParentUpdateScreenState extends State<ParentUpdateScreen> {
                 height16,
                 InkWell(
                   onTap: () {
-                    builder(context) => Container(
+                    builder(BuildContext context) => Container(
                           margin: const EdgeInsets.all(16),
                           height: 120.0,
                           decoration: BoxDecoration(
@@ -130,10 +132,25 @@ class _ParentUpdateScreenState extends State<ParentUpdateScreen> {
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  List<CameraDescription> cameras =
-                                      await availableCameras();
-                                  if (!mounted) return;
-                                  context.push('/Camera', extra: cameras);
+                                  final imagePicker = ImagePicker();
+                                  final xFile = await imagePicker.pickImage(
+                                    source: ImageSource.camera,
+                                    preferredCameraDevice: CameraDevice.rear,
+                                    imageQuality: 9,
+                                  );
+                                  if (xFile != null) {
+                                    Uint8List bytes = await xFile.readAsBytes();
+                                    final platformFile = PlatformFile(
+                                      path: xFile.path,
+                                      name: xFile.name,
+                                      size: bytes.elementSizeInBytes,
+                                    );
+                                    filePickerResult?.files.add(platformFile);
+                                    filePickerResult?.paths.add(xFile.path);
+                                    setState(() {
+                                      avatarChanged = true;
+                                    });
+                                  }
                                 },
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -151,13 +168,18 @@ class _ParentUpdateScreenState extends State<ParentUpdateScreen> {
                               ),
                               InkWell(
                                 onTap: () async {
-                                  filePickerResult =
-                                      await FilePicker.platform.pickFiles();
-                                  if (!mounted) return;
-                                  GoRouter.of(context).pop();
-                                  setState(() {
-                                    avatarChanged = true;
-                                  });
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  try {
+                                    filePickerResult =
+                                        await FilePicker.platform.pickFiles();
+                                    if (!mounted) return;
+                                    GoRouter.of(context).pop();
+                                    setState(() {
+                                      avatarChanged = true;
+                                    });
+                                  } catch (e) {
+                                    log('error', error: e);
+                                  }
                                 },
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -235,7 +257,7 @@ class _ParentUpdateScreenState extends State<ParentUpdateScreen> {
                       List<FileName>? fileNames;
                       if (filePickerResult != null &&
                           filePickerResult!.files.isNotEmpty) {
-                        final storage = FirebaseStorageService();
+                        final storage = FirebaseStorageServiceIml();
                         fileNames = await storage.createFolderFiles(
                           'avatars',
                           filePickerResult!.paths,

@@ -1,14 +1,21 @@
 import 'package:consultant/models/chat_room_model.dart';
-import 'package:consultant/repositories/chat_repository.dart';
-import 'package:consultant/repositories/message_repository.dart';
+import 'package:consultant/repositories/repository_interface.dart';
+import 'package:consultant/repositories/repository_with_subcollection.dart';
 
 import '../models/message_model.dart';
 
-class ChatService {
-  final ChatRepository _repository;
-  final MessageRepository _messageRepository;
-  ChatService(this._repository, this._messageRepository);
+abstract class ChatService {
+  Future<Message> createMessage(String id, Message message);
+  Stream<List<Message>> fetchMessages(ChatRoom room);
+  Future<bool> recallMessage(String roomId, String messageId, Message message);
+}
 
+class ChatServiceIml extends ChatService {
+  final RepositoryWithSubCollection<Message> _repository;
+  final Repository<ChatRoom> _messageRepository;
+  ChatServiceIml(this._repository, this._messageRepository);
+
+  @override
   Future<Message> createMessage(String id, Message message) async {
     final snap = await _messageRepository.collection.doc(id).get();
     if (snap.exists) {
@@ -30,10 +37,11 @@ class ChatService {
     }
   }
 
+  @override
   Stream<List<Message>> fetchMessages(ChatRoom room) async* {
     final stream = _repository.collection
         .doc(room.id)
-        .collection(_repository.subCollection)
+        .collection(_repository.subCollectionName)
         .orderBy('time', descending: true)
         .snapshots();
 
@@ -44,6 +52,7 @@ class ChatService {
     }
   }
 
+  @override
   Future<bool> recallMessage(
     String roomId,
     String messageId,

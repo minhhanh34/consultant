@@ -9,6 +9,7 @@ class MessageRepository extends Repository<ChatRoom> {
   final _collection =
       FirebaseFirestore.instance.collection('chatrooms');
 
+  @override
   CollectionReference get collection => _collection;
 
   @override

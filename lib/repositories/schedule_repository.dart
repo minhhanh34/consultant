@@ -9,6 +9,7 @@ class ScheduleRepository extends Repository<Schedule> {
   final _collection =
       FirebaseFirestore.instance.collection('schedules');
 
+  @override
   CollectionReference get collection => _collection;
 
   @override

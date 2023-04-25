@@ -9,8 +9,13 @@ class ClassStudentRepository implements RepositoryWithSubCollection<Student> {
   final _collection = FirebaseFirestore.instance.collection('classes');
   final _subCollection = 'students';
 
+  @override
   CollectionReference get collection => _collection;
   String get subCollection => _subCollection;
+
+  @override
+  String get subCollectionName => _subCollection;
+
   @override
   Future<Student> create(String id, Student item) async {
     try {

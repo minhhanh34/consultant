@@ -69,6 +69,7 @@ class _ClassDetailState extends State<ClassDetail>
         ),
       ),
       body: TabBarView(
+        physics: const NeverScrollableScrollPhysics(),
         controller: _controller,
         children: [
           /// lesson tap
@@ -130,22 +131,27 @@ class _ClassDetailState extends State<ClassDetail>
                           child: Text('Chưa có bài tập'),
                         );
                       }
-                      return ListView.separated(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 16),
-                        itemCount: state.exercises.length,
-                        itemBuilder: (context, index) {
-                          return ExerciseTile(
-                            classId: widget.classRoom.id!,
-                            exercise: state.exercises[index],
-                            submissions: state.submissions
-                                .where((submission) =>
-                                    submission.exerciseId ==
-                                    state.exercises[index].id!)
-                                .toList(),
-                          );
-                        },
+                      return RefreshIndicator(
+                        onRefresh: () async => context
+                            .read<ClassCubit>()
+                            .refreshExercises(widget.classRoom.id!),
+                        child: ListView.separated(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 16),
+                          itemCount: state.exercises.length,
+                          itemBuilder: (context, index) {
+                            return ExerciseTile(
+                              classId: widget.classRoom.id!,
+                              exercise: state.exercises[index],
+                              submissions: state.submissions
+                                  .where((submission) =>
+                                      submission.exerciseId ==
+                                      state.exercises[index].id!)
+                                  .toList(),
+                            );
+                          },
+                        ),
                       );
                     }
                     return const CenterCircularIndicator();

@@ -28,7 +28,8 @@ class LessonContainer extends StatefulWidget {
 class _LessonContainerState extends State<LessonContainer> {
   TimeOfDay? begin;
   TimeOfDay? end;
-
+  String lessonContent = '';
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -40,6 +41,8 @@ class _LessonContainerState extends State<LessonContainer> {
         ),
         Expanded(
           child: LessonOverView(
+            onRefresh: () async =>
+                context.read<ClassCubit>().refreshLessosn(widget.classId),
             lessons: widget.lessons,
           ),
         ),
@@ -59,105 +62,128 @@ class _LessonContainerState extends State<LessonContainer> {
           height: size.height,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Thêm buổi học',
-                    textAlign: TextAlign.center,
-                    style: textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Thêm buổi học',
+                      textAlign: TextAlign.center,
+                      style: textTheme.titleLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Thời gian bắt đầu: ',
-                        style: textTheme.titleMedium,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được bỏ trống';
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'Nội dung buổi học',
                       ),
-                      Text(
-                        begin?.format(context) ?? '',
-                        style: textTheme.titleMedium,
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () async {
-                          begin = await pickTime(context);
-                          bottomSheetController.setState!(() {});
-                        },
-                        icon: const Icon(Icons.calendar_month),
-                      ),
-                    ],
+                      onChanged: (value) => lessonContent = value,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Thời gian kết thúc: ',
-                        style: textTheme.titleMedium,
-                      ),
-                      Text(
-                        end?.format(context) ?? '',
-                        style: textTheme.titleMedium,
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () async {
-                          end = await pickTime(context);
-                          bottomSheetController.setState!(() {});
-                        },
-                        icon: const Icon(Icons.calendar_month),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Thời gian bắt đầu: ',
+                          style: textTheme.titleMedium,
+                        ),
+                        Text(
+                          begin?.format(context) ?? '',
+                          style: textTheme.titleMedium,
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () async {
+                            begin = await pickTime(context);
+                            bottomSheetController.setState!(() {});
+                          },
+                          icon: const Icon(Icons.calendar_month),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (begin == null || end == null) {
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            const SnackBar(
-                              content: Text('Không được bỏ trống thời gian'),
-                            ),
-                          );
-                      }
-                      DateTime lessonBegin = DateTime.now().copyWith(
-                        hour: begin?.hour,
-                        minute: begin?.minute,
-                      );
-                      DateTime lessonEnd = DateTime.now().copyWith(
-                        hour: end?.hour,
-                        minute: end?.minute,
-                      );
-                      int duration = ((lessonEnd.microsecondsSinceEpoch -
-                              lessonBegin.microsecondsSinceEpoch) ~/
-                          pow(10, -6));
-                      final lesson = Lesson(
-                        begin: lessonBegin,
-                        end: lessonEnd,
-                        dayOfWeek: lessonBegin.weekday,
-                        duration: duration,
-                        consultantId: AuthCubit.currentUserId!,
-                        parentId: widget.parentId,
-                        studentIds: widget.studentIds,
-                        classId: widget.classId,
-                        subjectName: widget.subjectName,
-                      );
-                      context.read<ClassCubit>().createLesson(lesson);
-                      context.pop();
-                    },
-                    child: const Text('Thêm'),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Thời gian kết thúc: ',
+                          style: textTheme.titleMedium,
+                        ),
+                        Text(
+                          end?.format(context) ?? '',
+                          style: textTheme.titleMedium,
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () async {
+                            end = await pickTime(context);
+                            bottomSheetController.setState!(() {});
+                          },
+                          icon: const Icon(Icons.calendar_month),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        bool? result = _formKey.currentState?.validate();
+                        if (result == false) return;
+                        if (begin == null || end == null) {
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(
+                              const SnackBar(
+                                content: Text('Không được bỏ trống thời gian'),
+                              ),
+                            );
+                          return;
+                        }
+                        DateTime lessonBegin = DateTime.now().copyWith(
+                          hour: begin?.hour,
+                          minute: begin?.minute,
+                        );
+                        DateTime lessonEnd = DateTime.now().copyWith(
+                          hour: end?.hour,
+                          minute: end?.minute,
+                        );
+                        int duration = ((lessonEnd.microsecondsSinceEpoch -
+                                lessonBegin.microsecondsSinceEpoch) ~/
+                            pow(10, -6));
+                        final lesson = Lesson(
+                          content: lessonContent,
+                          isCompleted: false,
+                          begin: lessonBegin,
+                          end: lessonEnd,
+                          dayOfWeek: lessonBegin.weekday,
+                          duration: duration,
+                          consultantId: AuthCubit.currentUserId!,
+                          parentId: widget.parentId,
+                          studentIds: widget.studentIds,
+                          classId: widget.classId,
+                          subjectName: widget.subjectName,
+                        );
+                        context.read<ClassCubit>().createLesson(lesson);
+                        context.pop();
+                      },
+                      child: const Text('Thêm'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

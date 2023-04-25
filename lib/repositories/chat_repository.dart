@@ -9,8 +9,13 @@ class ChatRepository implements RepositoryWithSubCollection<Message> {
   final _collection = FirebaseFirestore.instance.collection('chatrooms');
   final _subCollection = 'messages';
 
+  @override
   CollectionReference get collection => _collection;
   String get subCollection => _subCollection;
+
+  @override
+  String get subCollectionName => _subCollection;
+
   @override
   Future<Message> create(String id, Message item) async {
     try {

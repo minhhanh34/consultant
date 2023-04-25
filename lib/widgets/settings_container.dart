@@ -89,9 +89,42 @@ class _SettingsContainerState extends State<SettingsContainer> {
                                     extra: state.children),
                                 minVerticalPadding: 24.0,
                                 leading: const CircleAvatar(
-                                  child: Icon(Icons.connect_without_contact),
+                                  child: Icon(
+                                      Icons.connect_without_contact_outlined),
                                 ),
                                 title: const Text('Liên hệ (với học sinh)'),
+                                trailing:
+                                    const Icon(Icons.arrow_forward_ios_rounded),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return ListView.builder(
+                                        itemCount: state.classes.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            onTap: () {
+                                              context.pop();
+                                              context.push(
+                                                '/ParentClass',
+                                                extra: state.classes[index].id!,
+                                              );
+                                            },
+                                            title:
+                                                Text(state.classes[index].name),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                                minVerticalPadding: 24.0,
+                                leading: const CircleAvatar(
+                                  child: Icon(Icons.class_outlined),
+                                ),
+                                title: const Text('Lớp học'),
                                 trailing:
                                     const Icon(Icons.arrow_forward_ios_rounded),
                               ),

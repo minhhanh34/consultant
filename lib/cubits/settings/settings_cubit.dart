@@ -5,6 +5,7 @@ import 'package:consultant/services/settings_service.dart';
 import 'package:consultant/services/student_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../models/class_model.dart';
 import '../../models/student_model.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
@@ -12,6 +13,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   final SettingsService _service;
   final StudentService _studentService;
   Parent? _parent;
+  List<Class>? _classes;
   List<Student>? _children;
   Future<Parent> create(Parent parent) async {
     return await _service.create(parent);
@@ -22,7 +24,8 @@ class SettingsCubit extends Cubit<SettingsState> {
     _parent ??= await _service.fetchParent(id);
     _children ??= await _studentService.query('parentId',
         isEqualTo: AuthCubit.currentUserId);
-    emit(SettingsParentFetched(_parent!, _children!));
+    _classes ??= await _service.fetchClassesForParent(AuthCubit.currentUserId!);
+    emit(SettingsParentFetched(_parent!, _children!, _classes!));
   }
 
   Future<void> updateParentInfo(String id, Parent parent) async {
@@ -37,12 +40,14 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> refresh() async {
     _parent = null;
+    _classes = null;
     _children = null;
     await fetchPatent(AuthCubit.currentUserId!);
   }
 
   void dispose() {
     _children = null;
+    _classes = null;
     _parent = null;
     emit(SettingsInitial());
   }

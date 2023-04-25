@@ -9,6 +9,7 @@ class PostRepository implements Repository<Post> {
   final _collection =
       FirebaseFirestore.instance.collection('posts');
   
+  @override
   CollectionReference get collection => _collection;
 
   @override

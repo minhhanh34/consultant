@@ -1,4 +1,6 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/consultant_class/class_cubit.dart';
+import 'package:consultant/cubits/parent_class/parent_class_cubit.dart';
 import 'package:consultant/models/exercise_model.dart';
 import 'package:consultant/services/downloader_service.dart';
 import 'package:consultant/services/firebase_storage_service.dart';
@@ -30,11 +32,15 @@ class _ExerciseTileState extends State<ExerciseTile> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ClassCubit>();
+    final userType = AuthCubit.userType?.toLowerCase();
     return Dismissible(
       key: UniqueKey(),
+      direction: userType == 'consultant'
+          ? DismissDirection.horizontal
+          : DismissDirection.none,
       onDismissed: (direction) async {
         if (widget.exercise.fileNames != null) {
-          final storageRef = FirebaseStorageService();
+          final storageRef = FirebaseStorageServiceIml();
           storageRef.deleteFiles(
             widget.exercise.fileNames!.map((e) => e.storageName).toList(),
           );
@@ -44,10 +50,13 @@ class _ExerciseTileState extends State<ExerciseTile> {
             .deleteExcercise(widget.classId, widget.exercise);
       },
       background: Container(
-        padding: const EdgeInsets.only(right: 16),
-        color: Colors.red,
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: const Align(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.center,
           child: Icon(
             Icons.delete,
             color: Colors.white,
@@ -119,7 +128,14 @@ class _ExerciseTileState extends State<ExerciseTile> {
                     i++)
                   InkWell(
                     onTap: () {
-                      cubit.onFilePressed(widget.exercise.fileNames![i]);
+                      final fileName = widget.exercise.fileNames![i];
+                      if (userType == 'parent') {
+                        context
+                            .read<ParentClassCubit>()
+                            .onFilePressed(fileName);
+                        return;
+                      }
+                      cubit.onFilePressed(fileName);
                     },
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
@@ -130,11 +146,9 @@ class _ExerciseTileState extends State<ExerciseTile> {
                         label: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Expanded(
-                              child: Text(
-                                widget.exercise.fileNames![i].name,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            Text(
+                              widget.exercise.fileNames![i].name,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             buildDownloadStateIcon(
                               widget.exercise.fileNames![i].state,
@@ -174,15 +188,18 @@ class _ExerciseTileState extends State<ExerciseTile> {
   }
 
   buildSubmissionsCounterButton() {
-    return InkWell(
-      onTap: () {
-        context.push(
-          '/ConsultantClassSubmissions',
-          extra: {'classId': widget.classId, 'submissions': widget.submissions},
-        );
-      },
-      child: Align(
-        alignment: Alignment.centerRight,
+    return Align(
+      alignment: Alignment.centerRight,
+      child: InkWell(
+        onTap: () {
+          context.push(
+            '/ConsultantClassSubmissions',
+            extra: {
+              'classId': widget.classId,
+              'submissions': widget.submissions
+            },
+          );
+        },
         child: Chip(
           label: Text('Đã nộp (${widget.submissions.length})'),
         ),

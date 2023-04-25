@@ -8,6 +8,7 @@ import 'package:consultant/cubits/enroll/enroll_cubit.dart';
 import 'package:consultant/cubits/filter/filter_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
 import 'package:consultant/cubits/messages/messages_cubit.dart';
+import 'package:consultant/cubits/parent_class/parent_class_cubit.dart';
 import 'package:consultant/cubits/posts/post_cubit.dart';
 import 'package:consultant/cubits/schedules/schedules_cubit.dart';
 import 'package:consultant/cubits/searching/searching_cubit.dart';
@@ -138,6 +139,7 @@ class AuthCubit extends Cubit<AuthState> {
     final settingsCubit = context.read<SettingsCubit>();
     final studentClassCubit = context.read<StudentClassCubit>();
     final studentHomeCubit = context.read<StudentHomeCubit>();
+    final parentClassCubit = context.read<ParentClassCubit>();
     emit(AuthLoading());
     await _service.signOut();
     await secureStorage.deleteAll();
@@ -159,6 +161,7 @@ class AuthCubit extends Cubit<AuthState> {
     enrollCubit.dispose();
     studentClassCubit.dispose();
     studentHomeCubit.dispose();
+    parentClassCubit.dispose();
   }
 
   void dispose() {

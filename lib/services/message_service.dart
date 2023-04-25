@@ -2,13 +2,20 @@ import 'dart:async';
 import 'package:async/async.dart';
 
 import 'package:consultant/models/chat_room_model.dart';
-import 'package:consultant/repositories/message_repository.dart';
+import 'package:consultant/repositories/repository_interface.dart';
 import 'package:flutter/material.dart';
 
-class MessageService {
-  final MessageRepository _repository;
-  MessageService(this._repository);
+abstract class MessageService {
+  Stream<List<ChatRoom>> getRecentlyChatRoom(String id);
+  Future<ChatRoom> createRoom(ChatRoom room);
+  Future<ChatRoom> checkRoom(BuildContext context, ChatRoom room);
+}
 
+class MessageServiceIml extends MessageService{
+  final Repository<ChatRoom> _repository;
+  MessageServiceIml(this._repository);
+
+  @override
   Stream<List<ChatRoom>> getRecentlyChatRoom(String id) {
     final firstPartDocs = _repository.collection
         .where('firstPersonId', isEqualTo: id)
@@ -32,10 +39,12 @@ class MessageService {
     });
   }
 
+  @override
   Future<ChatRoom> createRoom(ChatRoom room) async {
     return await _repository.create(room);
   }
 
+  @override
   Future<ChatRoom> checkRoom(BuildContext context, ChatRoom room) async {
     // final messageCubit = context.read<MessageCubit>();
     final rooms = await _repository.list();

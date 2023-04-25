@@ -6,12 +6,16 @@ import '../models/exercise_model.dart';
 import 'repository_with_subcollection.dart';
 
 class ClassExerciseRepository implements RepositoryWithSubCollection<Exercise> {
-  final _collection =
-      FirebaseFirestore.instance.collection('classes');
+  final _collection = FirebaseFirestore.instance.collection('classes');
   final _subCollection = 'exercises';
 
+  @override
   CollectionReference get collection => _collection;
   String get subCollection => _subCollection;
+
+  @override
+  String get subCollectionName => _subCollection;
+
   @override
   Future<Exercise> create(String id, Exercise item) async {
     try {

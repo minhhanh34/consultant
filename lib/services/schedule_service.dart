@@ -1,11 +1,20 @@
-import 'package:consultant/repositories/schedule_repository.dart';
 
 import '../models/schedule_model.dart';
+import '../repositories/repository_interface.dart';
 
-class ScheduleService {
-  ScheduleService(this._repository);
-  final ScheduleRepository _repository;
+abstract class ScheduleService {
+  Future<List<Schedule>> fetchParentSchedules(String id);
+  Future<List<Schedule>> fetchConsultantSchedules(String id);
+  Future<Schedule> createSchedule(Schedule schedule);
+  Future<Schedule> deleteSchedule(Schedule schedule);
+  Future<bool> update(Schedule schedule);
+}
 
+class ScheduleServiceIml extends ScheduleService {
+  ScheduleServiceIml(this._repository);
+  final Repository<Schedule> _repository;
+
+  @override
   Future<List<Schedule>> fetchParentSchedules(String id) async {
     final scheduleDocs =
         await _repository.collection.where('parentId', isEqualTo: id).get();
@@ -15,6 +24,7 @@ class ScheduleService {
     }).toList();
   }
 
+  @override
   Future<List<Schedule>> fetchConsultantSchedules(String id) async {
     final scheduleDocs =
         await _repository.collection.where('consultantId', isEqualTo: id).get();
@@ -24,15 +34,18 @@ class ScheduleService {
     }).toList();
   }
 
+  @override
   Future<Schedule> createSchedule(Schedule schedule) async {
     return await _repository.create(schedule);
   }
 
+  @override
   Future<Schedule> deleteSchedule(Schedule schedule) async {
     await _repository.delete(schedule.id!);
     return schedule;
   }
 
+  @override
   Future<bool> update(Schedule schedule) async {
     return await _repository.update(schedule.id!, schedule);
   }

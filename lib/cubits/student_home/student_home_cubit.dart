@@ -12,16 +12,15 @@ class StudentHomeCubit extends Cubit<StudentHomeState> {
       : super(StudentHomeInitial());
   final ClassService _service;
   final StudentService _studentService;
-  List<Class>? _classes;
+  List<Class?>? _classes;
   Student? _student;
-
   Student? get student => _student;
 
   Future<void> fetchClassesForStudent(String id) async {
     emit(StudentHomeLoading());
     _student ??= await _studentService.getStudentByUid(AuthCubit.uid!);
     _classes ??= await _service.fetchClassesForStudent(_student!);
-    emit(StudentHomeClassFetched(_classes!));
+    emit(StudentHomeClassFetched(_classes!, _student!));
   }
 
   Future<void> refresh() async {

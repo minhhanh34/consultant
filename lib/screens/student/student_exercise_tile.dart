@@ -86,8 +86,9 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                     label: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(
-                          child: Text(widget.exercise.fileNames![i].name),
+                        Text(
+                          widget.exercise.fileNames![i].name,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         buildDownloadStateIcon(
                           widget.exercise.fileNames![i].state,
@@ -201,7 +202,7 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                         if (filePickerResult != null) {
                           // context.read<StudentClassCubit>().loading();
                           List<FileName> fileNames = [];
-                          final storageService = FirebaseStorageService();
+                          final storageService = FirebaseStorageServiceIml();
                           if (filePickerResult != null) {
                             fileNames = await storageService.createFolderFiles(
                               'submissions',

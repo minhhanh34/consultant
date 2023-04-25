@@ -4,12 +4,23 @@ import 'dart:developer' as dev;
 import 'package:consultant/models/exercise_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class FirebaseStorageService {
+abstract class FirebaseFirestoreService {
+  Future<List<FileName>> createFolderFiles(
+    String folderName,
+    List<String?> paths,
+  );
+  String getRandomString(int length);
+  Future<void> downloadFileAttach(String url);
+  Future<void> deleteFiles(List<String> storageNames);
+}
+
+class FirebaseStorageServiceIml extends FirebaseFirestoreService {
   final ref = FirebaseStorage.instance.ref();
   final _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   final Random _rnd = Random();
 
+  @override
   Future<List<FileName>> createFolderFiles(
     String folderName,
     List<String?> paths,
@@ -39,6 +50,7 @@ class FirebaseStorageService {
     return fileNames;
   }
 
+  @override
   String getRandomString(int length) => String.fromCharCodes(
         Iterable.generate(
           length,
@@ -48,8 +60,10 @@ class FirebaseStorageService {
         ),
       );
 
+  @override
   Future<void> downloadFileAttach(String url) async {}
 
+  @override
   Future<void> deleteFiles(List<String> storageNames) async {
     try {
       for (var name in storageNames) {

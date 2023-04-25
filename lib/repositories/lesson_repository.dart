@@ -9,6 +9,7 @@ class LessonRepository implements Repository<Lesson> {
   final _collection =
       FirebaseFirestore.instance.collection('lessons');
 
+  @override
   CollectionReference get collection => _collection;
 
   @override

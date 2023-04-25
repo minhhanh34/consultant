@@ -8,6 +8,7 @@ import 'repository_interface.dart';
 class ClassRepository implements Repository<Class> {
   final _collection = FirebaseFirestore.instance.collection('classes');
 
+  @override
   CollectionReference get collection => _collection;
 
   @override

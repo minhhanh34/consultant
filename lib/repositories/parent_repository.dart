@@ -9,6 +9,7 @@ class ParentRepository implements Repository<Parent> {
   final _collection =
       FirebaseFirestore.instance.collection('parents');
 
+  @override
   CollectionReference get collection => _collection;
 
   @override

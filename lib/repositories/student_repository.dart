@@ -8,6 +8,7 @@ import '../models/student_model.dart';
 class StudentRepository implements Repository<Student> {
   final _collection =
       FirebaseFirestore.instance.collection('students');
+  @override
   CollectionReference get collection => _collection;
   @override
   Future<Student> create(Student item) async {

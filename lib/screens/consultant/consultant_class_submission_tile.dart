@@ -17,11 +17,13 @@ class ConsultantClassSubmissionTile extends StatefulWidget {
     required this.tileSubmission,
     required this.student,
     required this.classId,
+    this.parentMode = false,
   });
 
   final List<Submission> tileSubmission;
   final Student student;
   final String classId;
+  final bool? parentMode;
   @override
   State<ConsultantClassSubmissionTile> createState() =>
       _ConsultantClassSubmissionTileState();
@@ -123,23 +125,30 @@ class _ConsultantClassSubmissionTileState
                     ),
                   );
                 }
-                return Row(
-                  children: [
-                    const SizedBox(width: 16.0),
-                    Text(
-                      widget.tileSubmission.first.consultantComment ?? '',
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          commentEditing = true;
-                        });
-                      },
-                      icon: const Icon(Icons.edit),
-                    ),
-                    const SizedBox(width: 16.0),
-                  ],
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16.0),
+                      Text(
+                        widget.tileSubmission.first.consultantComment ?? '',
+                      ),
+                      const Spacer(),
+                      Visibility(
+                        visible: widget.parentMode == false ||
+                            widget.parentMode == null,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              commentEditing = true;
+                            });
+                          },
+                          icon: const Icon(Icons.edit),
+                        ),
+                      ),
+                      const SizedBox(width: 16.0),
+                    ],
+                  ),
                 );
               }),
             ),

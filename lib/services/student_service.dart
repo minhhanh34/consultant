@@ -1,12 +1,12 @@
 import 'package:consultant/repositories/repository_interface.dart';
+import 'package:consultant/utils/libs_for_main.dart';
 
-import '../models/student_model.dart';
 
 abstract class StudentService {
   Future<List<Student>> getStudents();
   Future<Student> getStudentByUid(String uid);
   Future<Student> getStudentById(String id);
-  Future<bool> updateStudent(Student student);
+  Future<bool> updateStudent(String id, Student student);
   Future<List<Student>> query(String query, {Object? isEqualTo});
   Future<bool> delete(String id);
 }
@@ -35,8 +35,15 @@ class StudentServiceIml extends StudentService {
   }
 
   @override
-  Future<bool> updateStudent(Student student) async {
-    return await _repository.update(student.id!, student);
+  Future<bool> updateStudent(String id, Student student) async {
+    bool result = await _repository.update(id, student);
+    if (result) {
+      AuthCubit.setInfoUpdated = true;
+      await AuthCubit.userCredential?.user?.updatePhotoURL('old');
+      const secureStorage = FlutterSecureStorage();
+      secureStorage.write(key: 'infoUpdated', value: 'true');
+    }
+    return result;
   }
 
   @override

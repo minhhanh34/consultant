@@ -15,12 +15,14 @@ class LessonContainer extends StatefulWidget {
     required this.classId,
     required this.studentIds,
     required this.subjectName,
+    required this.price,
   });
   final List<Lesson> lessons;
   final String parentId;
   final List<String> studentIds;
   final String classId;
   final String subjectName;
+  final double price;
   @override
   State<LessonContainer> createState() => _LessonContainerState();
 }
@@ -164,6 +166,7 @@ class _LessonContainerState extends State<LessonContainer> {
                                 lessonBegin.microsecondsSinceEpoch) ~/
                             pow(10, -6));
                         final lesson = Lesson(
+                          price: widget.price,
                           content: lessonContent,
                           isCompleted: false,
                           begin: lessonBegin,

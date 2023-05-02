@@ -20,53 +20,57 @@ class ConsultantHomeScreen extends StatefulWidget {
 class _ConsultantHomeScreenState extends State<ConsultantHomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<ConsultantAppCubit, ConsultantAppState>(
-        builder: (context, state) {
-          if (state is ConsultantHome) {
-            final id = AuthCubit.currentUserId;
-            if (id != null) {
-              context.read<ConsultantHomeCubit>().initialize(context, id);
-            }
-            return const ConsultantHomeContainer();
-          }
-          if (state is ConsultantPost) {
-            return const ConsultantPostContainer();
-          }
-          if (state is ConsultantSettings) {
-            return const ConsultantSettingsContainer();
-          }
-          if (state is ConsultantMessage) {
-            return const MessagesContainer();
-          }
-          return const SizedBox();
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey.shade700,
-        selectedItemColor: Colors.indigo,
-        onTap: (value) => context.read<ConsultantAppCubit>().handle(value),
-        currentIndex: context.select<ConsultantAppCubit, int>(
-            (cubit) => cubit.bottomAppBarIndex),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Trang chủ',
+    return Builder(
+      builder: (context) {
+        return Scaffold(
+          body: BlocBuilder<ConsultantAppCubit, ConsultantAppState>(
+            builder: (context, state) {
+              if (state is ConsultantHome) {
+                final id = AuthCubit.currentUserId;
+                if (id != null) {
+                  context.read<ConsultantHomeCubit>().initialize(context, id);
+                }
+                return const ConsultantHomeContainer();
+              }
+              if (state is ConsultantPost) {
+                return const ConsultantPostContainer();
+              }
+              if (state is ConsultantSettings) {
+                return const ConsultantSettingsContainer();
+              }
+              if (state is ConsultantMessage) {
+                return const MessagesContainer();
+              }
+              return const SizedBox();
+            },
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.newspaper),
-            label: 'Bài đăng',
+          bottomNavigationBar: BottomNavigationBar(
+            unselectedItemColor: Colors.grey.shade700,
+            selectedItemColor: Colors.indigo,
+            onTap: (value) => context.read<ConsultantAppCubit>().handle(value),
+            currentIndex: context.select<ConsultantAppCubit, int>(
+                (cubit) => cubit.bottomAppBarIndex),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Trang chủ',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.newspaper),
+                label: 'Bài đăng',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.chat_bubble),
+                label: 'Tin nhắn',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Cài đặt',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble),
-            label: 'Tin nhắn',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Cài đặt',
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 }

@@ -181,6 +181,33 @@ class _LogInScreenState extends State<LogInScreen> {
                           if (state is AuthSignInStudent) {
                             context.go('/Student', extra: state.student);
                           }
+                          if (state is AuthUpdateConsultant) {
+                            context.go(
+                              '/ConsultantUpdate',
+                              extra: {
+                                'consultant': null,
+                                'isFirstUpdate': true,
+                              },
+                            );
+                          }
+                          if (state is AuthUpdateParent) {
+                            context.go(
+                              '/ParentUpdate',
+                              extra: {
+                                'parent': state.parent,
+                                'isFirstUpdate': true,
+                              },
+                            );
+                          }
+                          if (state is AuthUpdateStudent) {
+                            context.go(
+                              '/StudentUpdate',
+                              extra: {
+                                'student': state.student,
+                                'isFirstUpdate': true,
+                              },
+                            );
+                          }
                         },
                         builder: (context, state) {
                           if (state is AuthLoading) {

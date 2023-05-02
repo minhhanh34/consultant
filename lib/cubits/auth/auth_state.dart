@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:consultant/models/consultant_model.dart';
 
 import '../../models/parent_model.dart';
@@ -35,4 +36,19 @@ class AuthSignInStudent extends AuthState {
 class AuthMessage extends AuthState {
   final String message;
   AuthMessage(this.message);
+}
+
+class AuthUpdateConsultant extends AuthState {
+  final Consultant consultant;
+  AuthUpdateConsultant(this.consultant);
+}
+
+class AuthUpdateParent extends AuthState {
+  final Parent parent;
+  AuthUpdateParent(this.parent);
+}
+
+class AuthUpdateStudent extends AuthState {
+  final Student student;
+  AuthUpdateStudent(this.student);
 }

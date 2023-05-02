@@ -21,7 +21,7 @@ class EnrollCubit extends Cubit<EnrollState> {
     }
     bool isSuccess = await _service.enroll(id, student);
     student.classIds.add(id);
-    await _studentService.updateStudent(student);
+    await _studentService.updateStudent(student.id!, student);
     if (!isSuccess) {
       message = 'Mã lớp học không chính xác';
       emit(EnrollMessage(message));

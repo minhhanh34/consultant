@@ -19,6 +19,7 @@ import 'package:consultant/services/auth_service.dart';
 import 'package:consultant/services/consultant_service.dart';
 import 'package:consultant/services/parent_service.dart';
 import 'package:consultant/services/student_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -37,9 +38,13 @@ class AuthCubit extends Cubit<AuthState> {
   final ConsultantService _consultantService;
   final ParentService _parentService;
   final StudentService _studentService;
+  static UserCredential? _userCredential;
   static String? _userType;
   static String? _uid;
   static String? _currentUserId;
+  static bool? _infoUpdated;
+
+  static set setInfoUpdated(bool isUpdated) => _infoUpdated = isUpdated;
 
   static set setCurrentUserId(String id) => _currentUserId = id;
 
@@ -53,6 +58,10 @@ class AuthCubit extends Cubit<AuthState> {
 
   static String? get userType => _userType;
 
+  static bool? get infoUpdated => _infoUpdated;
+
+  static UserCredential? get userCredential => _userCredential;
+
   Future<void> signIn({required String email, required String password}) async {
     emit(AuthLoading());
     const secureStorage = FlutterSecureStorage(
@@ -60,23 +69,33 @@ class AuthCubit extends Cubit<AuthState> {
         encryptedSharedPreferences: true,
       ),
     );
-    final userCredential = await _service.signIn(email, password);
+    _userCredential = await _service.signIn(email, password);
     if (userCredential == null) {
       emit(AuthInvalid());
       return;
     }
 
-    _uid = userCredential.user?.uid;
+    _uid = userCredential?.user?.uid;
     _userType = userCredential
-        .user?.displayName; // display name was stored as user type
-
+        ?.user?.displayName; // display name was stored as user type
+    // photo url was stored as info update
+    if (userCredential?.user?.photoURL == 'new') {
+      _infoUpdated = false;
+    } else {
+      _infoUpdated = true;
+    }
     await secureStorage.write(key: 'uid', value: uid);
     await secureStorage.write(key: 'userType', value: userType);
-
+    await secureStorage.write(
+        key: 'infoUpdated', value: infoUpdated.toString());
     if (_userType == 'consultant') {
       final consultant = await _consultantService.getConsultantByUid(_uid!);
       _currentUserId = consultant.id!;
       await secureStorage.write(key: 'id', value: currentUserId);
+      if (_infoUpdated == false || _infoUpdated == null) {
+        emit(AuthUpdateConsultant(consultant));
+        return;
+      }
       emit(AuthSignInConsultant(consultant));
       return;
     }
@@ -84,6 +103,10 @@ class AuthCubit extends Cubit<AuthState> {
       final parent = await _parentService.getParentByUid(_uid!);
       _currentUserId = parent.id!;
       await secureStorage.write(key: 'id', value: currentUserId);
+      if (_infoUpdated == false || _infoUpdated == null) {
+        emit(AuthUpdateParent(parent));
+        return;
+      }
       emit(AuthSignInParent(parent));
       return;
     }
@@ -91,6 +114,10 @@ class AuthCubit extends Cubit<AuthState> {
       final student = await _studentService.getStudentByUid(_uid!);
       _currentUserId = student.id!;
       await secureStorage.write(key: 'id', value: currentUserId);
+      if (_infoUpdated == false || _infoUpdated == null) {
+        emit(AuthUpdateStudent(student));
+        return;
+      }
       emit(AuthSignInStudent(student));
       return;
     }
@@ -111,7 +138,7 @@ class AuthCubit extends Cubit<AuthState> {
       parentIdForStudentUser: parentId,
     );
     if (result == null) {
-      emit(AuthMessage('Mã số phụ huynh không tồn tại'));
+      emit(AuthMessage('Đăng ký không thành công'));
       return;
     }
     emit(AuthSignUpSuccessed());
@@ -168,6 +195,8 @@ class AuthCubit extends Cubit<AuthState> {
     _uid = null;
     _userType = null;
     _currentUserId = null;
+    _userCredential = null;
+    _infoUpdated = null;
     emit(AuthInitial());
   }
 }

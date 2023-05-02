@@ -1,8 +1,6 @@
-import 'package:consultant/models/parent_model.dart';
+import 'package:consultant/utils/libs_for_main.dart';
 
-import '../models/class_model.dart';
 import '../repositories/repository_interface.dart';
-
 
 abstract class SettingsService {
   Future<Parent> create(Parent parent);
@@ -28,7 +26,14 @@ class SettingsServiceIml extends SettingsService {
 
   @override
   Future<bool> updateParentInfo(String id, Parent parent) async {
-    return await _repository.update(id, parent);
+    bool result = await _repository.update(id, parent);
+    if (result) {
+      AuthCubit.setInfoUpdated = true;
+      await AuthCubit.userCredential?.user?.updatePhotoURL('old');
+      const secureStorage = FlutterSecureStorage();
+      await secureStorage.write(key: 'infoUpdated', value: 'true');
+    }
+    return result;
   }
 
   @override

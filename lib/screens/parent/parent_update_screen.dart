@@ -18,8 +18,13 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ParentUpdateScreen extends StatefulWidget {
-  const ParentUpdateScreen({super.key, this.parent});
+  const ParentUpdateScreen({
+    super.key,
+    this.parent,
+    this.isFirstUpdate = false,
+  });
   final Parent? parent;
+  final bool isFirstUpdate;
   @override
   State<ParentUpdateScreen> createState() => _ParentUpdateScreenState();
 }
@@ -280,11 +285,16 @@ class _ParentUpdateScreenState extends State<ParentUpdateScreen> {
                         avtPath: getAvtPath(fileNames),
                       );
                       if (!mounted) return;
-                      context.read<SettingsCubit>().updateParentInfo(
+                      await context.read<SettingsCubit>().updateParentInfo(
                             AuthCubit.currentUserId!,
                             parent,
                           );
-                      context.pop();
+                      if (!mounted) return;
+                      if (widget.isFirstUpdate) {
+                        context.go('/');
+                      } else {
+                        context.pop();
+                      }
                     },
                     child: const Text('Cập nhật'),
                   ),

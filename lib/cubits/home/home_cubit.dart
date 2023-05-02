@@ -1,10 +1,5 @@
-import 'package:consultant/cubits/auth/auth_cubit.dart';
-import 'package:consultant/models/consultant_model.dart';
-import 'package:consultant/services/consultant_service.dart';
-import 'package:consultant/services/parent_service.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:consultant/utils/libs_for_main.dart';
 
-import '../../models/parent_model.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -37,6 +32,8 @@ class HomeCubit extends Cubit<HomeState> {
     _parent = null;
     await onInitialize(AuthCubit.uid!);
   }
+
+  
 
   void dispose() {
     _popularConsultants = null;

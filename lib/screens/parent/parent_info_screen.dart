@@ -25,7 +25,10 @@ class ParentInfoScreen extends StatelessWidget {
               if (state is SettingsParentFetched) {
                 final parent = state.parent;
                 return IconButton(
-                  onPressed: () => context.push('/ParentUpdate', extra: parent),
+                  onPressed: () => context.push('/ParentUpdate', extra: {
+                    'parent': parent,
+                    'isFirstUpdate': false,
+                  }),
                   icon: const Icon(Icons.edit),
                 );
               }

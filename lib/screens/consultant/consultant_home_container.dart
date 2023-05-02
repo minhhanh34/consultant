@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:consultant/utils/libs_for_main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../cubits/consultant_home/consultant_home_cubit.dart';
 import '../../cubits/consultant_home/consultant_home_state.dart';
 import '../../widgets/center_circular_indicator.dart';
 import 'class_tile.dart';
@@ -44,6 +42,16 @@ class _ConsultantHomeContainerState extends State<ConsultantHomeContainer>
           //   cubit.initialize(context);
           // }
           if (state is ConsultantHomeFetched) {
+            if (AuthCubit.infoUpdated == false) {
+              context.go(
+                '/ConsultantUpdate',
+                extra: {
+                  'consultant': state.consultant,
+                  'isFirstUpdate': true,
+                },
+              );
+              return const SizedBox();
+            }
             return Column(
               children: [
                 Padding(

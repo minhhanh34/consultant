@@ -1,10 +1,9 @@
-import 'package:consultant/models/comment_model.dart';
 import 'package:consultant/repositories/repository_interface.dart';
 import 'package:consultant/repositories/repository_with_subcollection.dart';
+import 'package:consultant/utils/libs_for_main.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/gender_types.dart';
-import '../models/consultant_model.dart';
 
 abstract class ConsultantService {
   Future<List<Consultant>> getConsultants();
@@ -24,7 +23,7 @@ abstract class ConsultantService {
   );
 }
 
-class ConsultantServiceIml extends ConsultantService{
+class ConsultantServiceIml extends ConsultantService {
   final Repository<Consultant> _repository;
   final RepositoryWithSubCollection<Comment> _commentRepository;
 
@@ -84,7 +83,17 @@ class ConsultantServiceIml extends ConsultantService{
 
   @override
   Future<bool> update(String id, Consultant consultant) async {
-    return await _repository.update(id, consultant);
+    bool result = await _repository.update(id, consultant);
+    if (result) {
+      const secureStorage = FlutterSecureStorage(
+          aOptions: AndroidOptions(
+        encryptedSharedPreferences: true,
+      ));
+      await secureStorage.write(key: 'infoUpdated', value: 'true');
+      await AuthCubit.userCredential?.user?.updatePhotoURL('old');
+      AuthCubit.setInfoUpdated = true;
+    }
+    return result;
   }
 
   @override

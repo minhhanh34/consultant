@@ -1,4 +1,9 @@
+import 'package:consultant/screens/student/drawer.dart';
+import 'package:consultant/screens/student/update_information.dart';
+
+import '../screens/consultant/analytics_screen.dart';
 import '../screens/parent/parent_class_screen.dart';
+import '../screens/student/student_settings_screen.dart';
 import '../utils/libs_for_main.dart';
 import '../screens/parent/children_screen.dart';
 
@@ -66,12 +71,24 @@ final dynamic _routes = <RouteBase>[
     path: '/ClassDetail',
     builder: (context, state) => ClassDetail(classRoom: state.extra as Class),
   ),
-  // GoRoute(
-  //   path: '/Camera',
-  //   builder: (context, state) => CameraScreen(
-  //     cameras: state.extra as List<CameraDescription>,
-  //   ),
-  // ),
+  GoRoute(
+    path: '/StudentUpdate',
+    builder: (context, state) {
+      Student student = (state.extra as Map)['student'];
+      bool isFirstUpdate = (state.extra as Map)['isFirstUpdate'];
+      return StudentUpdateInformation(
+        student: student,
+        isFirstUpdate: isFirstUpdate,
+      );
+    },
+  ),
+  GoRoute(
+    path: '/StudentSettings',
+    builder: (context, state) => StudentSettingsScreen(
+      student: (state.extra as Map)['student'] as Student,
+      drawer: (state.extra as Map)['drawer'] as StudentDrawer,
+    ),
+  ),
   GoRoute(
     path: '/Enroll',
     builder: (context, state) => EnrollScreen(
@@ -94,6 +111,7 @@ final dynamic _routes = <RouteBase>[
     builder: (context, state) => ConsultantClassSubmissionsScreen(
       submissions: (state.extra as Map)['submissions'] as List<Submission>,
       classId: (state.extra as Map)['classId'] as String,
+      parentMode: (state.extra as Map)['parentMode'] as bool?,
     ),
   ),
   GoRoute(
@@ -105,15 +123,27 @@ final dynamic _routes = <RouteBase>[
   ),
   GoRoute(
     path: '/ConsultantUpdate',
-    builder: (context, state) => ConsultantUpdateScreen(
-      consultant: state.extra as Consultant?,
-    ),
+    builder: (context, state) {
+      final Consultant? consultant =
+          (state.extra as Map<String, dynamic>)['consultant'];
+      final bool? isFirstUpdate =
+          (state.extra as Map<String, dynamic>)['isFirstUpdate'];
+      return ConsultantUpdateScreen(
+        consultant: consultant,
+        isFirstUpdate: isFirstUpdate ?? false,
+      );
+    },
   ),
   GoRoute(
-    path: '/ParentUpdate',
-    builder: (context, state) =>
-        ParentUpdateScreen(parent: state.extra as Parent?),
-  ),
+      path: '/ParentUpdate',
+      builder: (context, state) {
+        Parent? parent = (state.extra as Map)['parent'];
+        bool isFirstUpdate = (state.extra as Map)['isFirstUpdate'];
+        return ParentUpdateScreen(
+          parent: parent,
+          isFirstUpdate: isFirstUpdate,
+        );
+      }),
   GoRoute(
     path: '/RelationShip',
     builder: (context, state) =>
@@ -123,6 +153,12 @@ final dynamic _routes = <RouteBase>[
     path: '/ParentClass',
     builder: (context, state) => ParentClassScreen(
       classId: state.extra as String,
+    ),
+  ),
+  GoRoute(
+    path: '/ConsultantAnalytics',
+    builder: (context, state) => ConsultantAnalyticsScreen(
+      consultant: state.extra as Consultant,
     ),
   ),
 ];

@@ -1,5 +1,7 @@
+import 'package:consultant/cubits/analytics/analytics_cubit.dart';
 import 'package:consultant/cubits/parent_class/parent_class_cubit.dart';
 import 'package:consultant/repositories/lesson_repository.dart';
+import 'package:consultant/services/lesson_service.dart';
 
 import '../utils/libs_for_main.dart';
 
@@ -27,7 +29,7 @@ dynamic _providers = [
         StudentRepository(),
       ),
       consultantService,
-      ParentServiceIml(ParentRepository()),
+      ParentServiceIml(ParentRepository(), CommentRepository()),
       StudentServiceIml(StudentRepository()),
     ),
   ),
@@ -39,6 +41,7 @@ dynamic _providers = [
       ),
       ParentServiceIml(
         ParentRepository(),
+        CommentRepository(),
       ),
     ),
   ),
@@ -52,14 +55,17 @@ dynamic _providers = [
         MessageRepository(),
       ),
       consultantService,
-      ParentServiceIml(ParentRepository()),
+      ParentServiceIml(
+        ParentRepository(),
+        CommentRepository(),
+      ),
     ),
   ),
   BlocProvider(
     create: (_) => MessageCubit(
       MessageServiceIml(MessageRepository()),
       consultantService,
-      ParentServiceIml(ParentRepository()),
+      ParentServiceIml(ParentRepository(), CommentRepository()),
     ),
   ),
   BlocProvider(
@@ -115,6 +121,13 @@ dynamic _providers = [
   BlocProvider(
     create: (_) => ParentClassCubit(
       classService,
+      ParentServiceIml(ParentRepository(), CommentRepository()),
+    ),
+  ),
+  BlocProvider(
+    create: (_) => AnalyticsCubit(
+      consultantService,
+      LessonServiceIml(LessonRepository()),
     ),
   ),
 ];

@@ -18,12 +18,14 @@ class ExerciseTile extends StatefulWidget {
     required this.classId,
     required this.exercise,
     required this.submissions,
+    this.parentMode = false,
     this.state = DownloadState.unDownload,
   });
   final Exercise exercise;
   final String classId;
   final DownloadState state;
   final List<Submission> submissions;
+  final bool? parentMode;
   @override
   State<ExerciseTile> createState() => _ExerciseTileState();
 }
@@ -196,7 +198,8 @@ class _ExerciseTileState extends State<ExerciseTile> {
             '/ConsultantClassSubmissions',
             extra: {
               'classId': widget.classId,
-              'submissions': widget.submissions
+              'submissions': widget.submissions,
+              'parentMode': widget.parentMode,
             },
           );
         },

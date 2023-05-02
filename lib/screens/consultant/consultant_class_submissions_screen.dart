@@ -12,9 +12,11 @@ class ConsultantClassSubmissionsScreen extends StatelessWidget {
     super.key,
     required this.submissions,
     required this.classId,
+    this.parentMode = false,
   });
   final List<Submission> submissions;
   final String classId;
+  final bool? parentMode;
   Future<List<Student>> fetchStudent(
     BuildContext context,
     String classId,
@@ -46,11 +48,14 @@ class ConsultantClassSubmissionsScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final submission = submissions[index];
                 final students = snapshot.data!;
-                final student = students.where((st) => st.id! == submission.studentId).first;
+                final student = students
+                    .where((st) => st.id! == submission.studentId)
+                    .first;
                 final tileSubmission = submissions
                     .where((sub) => sub.studentId == student.id!)
                     .toList();
                 return ConsultantClassSubmissionTile(
+                  parentMode: parentMode,
                   classId: classId,
                   tileSubmission: tileSubmission,
                   student: student,
@@ -64,4 +69,3 @@ class ConsultantClassSubmissionsScreen extends StatelessWidget {
     );
   }
 }
-

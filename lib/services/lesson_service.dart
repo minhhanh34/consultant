@@ -7,9 +7,10 @@ abstract class LessonService {
   Future<Lesson> createLesson(Lesson lesson);
   Future<bool> deleteLesson(String id);
   Future<bool> updateLesson(String id, Lesson newLesson);
+  Future<List<Lesson>> list(String consultantId);
 }
 
-class LessonServiceIml extends LessonService{
+class LessonServiceIml extends LessonService {
   final Repository<Lesson> _repository;
   LessonServiceIml(this._repository);
 
@@ -38,5 +39,16 @@ class LessonServiceIml extends LessonService{
   @override
   Future<bool> updateLesson(String id, Lesson newLesson) async {
     return await _repository.update(id, newLesson);
+  }
+
+  @override
+  Future<List<Lesson>> list(String consultantId) async {
+    final snaps = await _repository.collection
+        .where('consultantId', isEqualTo: consultantId)
+        .get();
+    return snaps.docs.map((doc) {
+      Map<String, dynamic> json = doc.data() as Map<String, dynamic>;
+      return Lesson.fromJson(json).copyWith(id: doc.id);
+    }).toList();
   }
 }

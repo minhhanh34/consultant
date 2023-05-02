@@ -32,9 +32,22 @@ class StudentHomeCubit extends Cubit<StudentHomeState> {
     return await _service.fetchStudents(classId);
   }
 
-  Future<void> updateStudent(Student student) async {
-    await _studentService.updateStudent(student);
+  Future<void> updateStudent(String id, Student student) async {
+    await _studentService.updateStudent(id, student);
   }
+
+  Future<void> onSettingTap() async {
+    _student ??= await _studentService.getStudentByUid(AuthCubit.uid!);
+    emit(StudentSettings(_student!));
+  }
+
+  Future<void> onClassTap() async {
+    emit(StudentHome());
+    emit(StudentHomeClassFetched(_classes!, _student!));
+    // fetchClassStudents(AuthCubit.currentUserId!);
+  }
+
+  void onUpdate() => emit(StudentHomeUpdate(_student!));
 
   void dispose() {
     _student = null;

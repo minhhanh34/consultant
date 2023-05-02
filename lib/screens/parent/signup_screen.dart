@@ -215,7 +215,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 8.0),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         FocusManager.instance.primaryFocus?.unfocus();
                         invalid = false;
                         bool isValid = _key.currentState?.validate() ?? false;
@@ -228,7 +228,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           return;
                         }
                         final authCubit = context.read<AuthCubit>();
-                        authCubit.createUser(
+                        await authCubit.createUser(
                           userType: userType,
                           email: _emailController.text,
                           password: _pwdController.text,

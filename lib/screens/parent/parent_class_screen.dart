@@ -2,11 +2,11 @@ import 'package:consultant/cubits/parent_class/parent_class_cubit.dart';
 import 'package:consultant/cubits/parent_class/parent_class_state.dart';
 import 'package:consultant/screens/consultant/exercise_tile.dart';
 import 'package:consultant/screens/consultant/lesson_overview.dart';
+import 'package:consultant/screens/parent/rating_consultant.dart';
 import 'package:consultant/widgets/center_circular_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_filex/open_filex.dart';
-
 
 class ParentClassScreen extends StatefulWidget {
   const ParentClassScreen({super.key, required this.classId});
@@ -23,6 +23,10 @@ class _ParentClassScreenState extends State<ParentClassScreen> {
     },
     {
       'label': 'Bài tập',
+      'value': false,
+    },
+    {
+      'label': 'Đánh giá giáo viên',
       'value': false,
     }
   ];
@@ -89,29 +93,37 @@ class _ParentClassScreenState extends State<ParentClassScreen> {
                                     .fetchClass(widget.classId),
                               );
                             }
-                            if (state.excercises.isEmpty) {
-                              return Center(
-                                child: Text(
-                                  'Chưa có bài tập',
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                            int second = 1;
+                            if (labels.elementAt(second)['value'] == true) {
+                              if (state.excercises.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    'Chưa có bài tập',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                );
+                              }
+                              return RefreshIndicator(
+                                onRefresh: () => context
+                                    .read<ParentClassCubit>()
+                                    .fetchClass(widget.classId),
+                                child: ListView.builder(
+                                  itemCount: state.excercises.length,
+                                  itemBuilder: (context, index) {
+                                    return ExerciseTile(
+                                      parentMode: true,
+                                      classId: widget.classId,
+                                      exercise: state.excercises[index],
+                                      submissions: state.submissions,
+                                    );
+                                  },
                                 ),
                               );
                             }
-                            return RefreshIndicator(
-                              onRefresh: () => context
-                                  .read<ParentClassCubit>()
-                                  .fetchClass(widget.classId),
-                              child: ListView.builder(
-                                itemCount: state.excercises.length,
-                                itemBuilder: (context, index) {
-                                  return ExerciseTile(
-                                    classId: widget.classId,
-                                    exercise: state.excercises[index],
-                                    submissions: state.submissions,
-                                  );
-                                },
-                              ),
+                            return RatingConsultant(
+                              classId: widget.classId,
+                              comment: state.comment,
                             );
                           },
                         );

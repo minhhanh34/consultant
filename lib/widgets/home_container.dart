@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/home/home_cubit.dart';
 import 'package:consultant/cubits/posts/post_cubit.dart';
 import 'package:consultant/models/post_model.dart';
@@ -60,6 +61,13 @@ class _HomeContainerState extends State<HomeContainer>
           );
         }
         if (state is HomeConsultants) {
+          if (AuthCubit.infoUpdated == false) {
+            context.go('/ParentUpdate', extra: {
+              'parent': state.parent,
+              'isFirstUpdate': true,
+            });
+            // return const SizedBox();
+          }
           _animationController.forward();
           return Scaffold(
             body: RefreshIndicator(
@@ -133,7 +141,8 @@ class _HomeContainerState extends State<HomeContainer>
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge
-                                          ?.copyWith(fontWeight: FontWeight.bold),
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   // const SizedBox(height: 16.0),
@@ -147,7 +156,8 @@ class _HomeContainerState extends State<HomeContainer>
                                         border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(16.0),
-                                          borderSide: const BorderSide(width: 0),
+                                          borderSide:
+                                              const BorderSide(width: 0),
                                         ),
                                         fillColor: Theme.of(context).hoverColor,
                                         filled: true,
@@ -175,7 +185,7 @@ class _HomeContainerState extends State<HomeContainer>
                                           _bottomSheetController.setState!(() {
                                             loading = true;
                                           });
-            
+
                                           await context
                                               .read<PostCubit>()
                                               .createPost(
@@ -264,8 +274,8 @@ class _HomeContainerState extends State<HomeContainer>
                                   '/ConsultantsFiltered',
                                   extra: [physical],
                                 ),
-                                icon:
-                                    const FaIcon(FontAwesomeIcons.scaleBalanced),
+                                icon: const FaIcon(
+                                    FontAwesomeIcons.scaleBalanced),
                                 label: physical,
                               ),
                               SubjectColumn(
@@ -347,7 +357,8 @@ class _HomeContainerState extends State<HomeContainer>
                         );
                       },
                     ),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 16.0,
                       mainAxisSpacing: 16,

@@ -173,6 +173,9 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                 delegate: SliverChildListDelegate(
                   <Widget>[
                     Container(
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height - 240,
+                      ),
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       decoration: const BoxDecoration(

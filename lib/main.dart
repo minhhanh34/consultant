@@ -56,6 +56,12 @@ String getInitialLocation(Map<String, String> data) {
   AuthCubit.setCurrentUserId = data['id']!;
   AuthCubit.setUid = data['uid']!;
   AuthCubit.setUserType = data['userType']!;
+  if (data['infoUpdated'] == 'true') {
+    AuthCubit.setInfoUpdated = true;
+  } else {
+    AuthCubit.setInfoUpdated = false;
+  }
+
   if (data['userType']?.toLowerCase() == 'consultant') return '/ConsultantHome';
   if (data['userType']?.toLowerCase() == 'parent') return '/';
   if (data['userType']?.toLowerCase() == 'student') return '/Student';

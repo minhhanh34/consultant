@@ -12,3 +12,15 @@ class StudentHomeClassFetched extends StudentHomeState {
   final Student student;
   StudentHomeClassFetched(this.classes, this.student);
 }
+
+class StudentSettings extends StudentHomeState {
+  final Student student;
+  StudentSettings(this.student);
+}
+
+class StudentHome extends StudentHomeState {}
+
+class StudentHomeUpdate extends StudentHomeState {
+  final Student student;
+  StudentHomeUpdate(this.student);
+}

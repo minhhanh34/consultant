@@ -85,6 +85,7 @@ class _ClassDetailState extends State<ClassDetail>
               }
               if (state is ClassDetailFethed) {
                 return LessonContainer(
+                  price: widget.classRoom.subject.price,
                   lessons: state.lessons,
                   parentId: widget.classRoom.parentId,
                   classId: widget.classRoom.id!,

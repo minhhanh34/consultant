@@ -1,11 +1,9 @@
-import 'package:consultant/cubits/auth/auth_cubit.dart';
+import 'package:consultant/utils/libs_for_main.dart';
 import 'package:consultant/widgets/center_circular_indicator.dart';
 import 'package:consultant/screens/student/student_exercise_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_filex/open_filex.dart';
 
-import '../../cubits/student_class/student_class_cubit.dart';
 import '../../cubits/student_class/student_class_state.dart';
 
 class StudentClassScreen extends StatelessWidget {
@@ -31,7 +29,9 @@ class StudentClassScreen extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is StudentClassInitlal) {
-            context.read<StudentClassCubit>().fetchExercises(id, AuthCubit.currentUserId!);
+            context
+                .read<StudentClassCubit>()
+                .fetchExercises(id, AuthCubit.currentUserId!);
           }
           if (state is StudentClassLoading) {
             return const CenterCircularIndicator();

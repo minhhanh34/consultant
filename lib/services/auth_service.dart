@@ -33,6 +33,9 @@ class AuthServiceIml extends AuthService {
     this._studentRepository,
   );
 
+  // store display name as usertype
+  // store photo url as newUser
+
   @override
   Future<UserCredential?> createUser({
     required UserType userType,
@@ -103,8 +106,7 @@ class AuthServiceIml extends AuthService {
           return null;
         }
       }
-      await userCredential.additionalUserInfo?.profile
-          ?.update('infoUpdated', (value) => false);
+      await userCredential.user?.updatePhotoURL('new');
       return userCredential;
     } catch (e) {
       log('error', error: e);

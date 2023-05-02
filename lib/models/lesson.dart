@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +18,7 @@ class Lesson extends Equatable {
   final String classId;
   final bool isCompleted;
   final String content;
+  final double price;
   const Lesson({
     this.id,
     required this.begin,
@@ -34,6 +34,7 @@ class Lesson extends Equatable {
     required this.classId,
     required this.isCompleted,
     required this.content,
+    required this.price,
   });
 
   Lesson copyWith({
@@ -51,6 +52,7 @@ class Lesson extends Equatable {
     String? classId,
     bool? isCompleted,
     String? content,
+    double? price,
   }) {
     return Lesson(
       id: id ?? this.id,
@@ -67,6 +69,7 @@ class Lesson extends Equatable {
       classId: classId ?? this.classId,
       isCompleted: isCompleted ?? this.isCompleted,
       content: content ?? this.content,
+      price: price ?? this.price,
     );
   }
 
@@ -83,6 +86,7 @@ class Lesson extends Equatable {
       classId,
       isCompleted,
       content,
+      price,
     ];
   }
 
@@ -101,6 +105,7 @@ class Lesson extends Equatable {
       'commentOfParent': commentOfParent,
       'subjectName': subjectName,
       'classId': classId,
+      'price': price,
     };
   }
 
@@ -120,6 +125,7 @@ class Lesson extends Equatable {
       subjectName: json['subjectName'] as String?,
       content: json['content'] as String,
       classId: json['classId'] as String,
+      price: json['price'] as double,
     );
   }
 }

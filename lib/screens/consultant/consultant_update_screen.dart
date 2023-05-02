@@ -20,8 +20,13 @@ import '../../models/exercise_model.dart';
 import '../../services/firebase_storage_service.dart';
 
 class ConsultantUpdateScreen extends StatefulWidget {
-  const ConsultantUpdateScreen({super.key, this.consultant});
+  const ConsultantUpdateScreen({
+    super.key,
+    this.consultant,
+    this.isFirstUpdate = false,
+  });
   final Consultant? consultant;
+  final bool isFirstUpdate;
   @override
   State<ConsultantUpdateScreen> createState() => _ConsultantUpdateScreenState();
 }
@@ -51,8 +56,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
   String? gender = '';
   String city = '';
   String district = '';
-  double? longtitude;
-  double? lattitude;
+  double? longtitude = 0;
+  double? lattitude = 0;
   List<Subject> subjects = [];
   int subjectCount = 1;
   String? checkNullValidation(String? value) {
@@ -138,6 +143,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
     } else {
       weekDaysList.insert(0, createNewDayCheckBoxs(null));
     }
+    
   }
 
   @override
@@ -353,7 +359,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                     child: Builder(
                       builder: (context) {
                         if (widget.consultant != null &&
-                            widget.consultant?.avtPath != defaultAvtPath &&
+                            widget.consultant!.avtPath != null &&
+                            widget.consultant!.avtPath != defaultAvtPath &&
                             !avatarChanged) {
                           return CachedNetworkImage(
                             imageUrl: widget.consultant!.avtPath!,
@@ -606,11 +613,16 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                         );
                       }
                       if (!mounted) return;
-                      context
+                      await context
                           .read<ConsultantSettingsCubit>()
                           .updateConsultantInfo(
                               AuthCubit.currentUserId!, consultant);
-                      context.pop();
+                      if (!mounted) return;
+                      if (widget.isFirstUpdate) {
+                        context.go('/ConsultantHome');
+                      } else {
+                        context.pop();
+                      }
                     },
                     child: const Text('Cập nhật'),
                   ),

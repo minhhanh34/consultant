@@ -17,6 +17,10 @@ class ConsultantProfile extends StatefulWidget {
 }
 
 class _ConsultantProfileState extends State<ConsultantProfile> {
+  void _goToAnalytics() {
+    context.push('/ConsultantAnalytics', extra: widget.consultant);
+  }
+
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -63,10 +67,10 @@ class _ConsultantProfileState extends State<ConsultantProfile> {
                   right: 8,
                   child: IconButton(
                     onPressed: () {
-                      context.push(
-                        '/ConsultantUpdate',
-                        extra: widget.consultant,
-                      );
+                      context.push('/ConsultantUpdate', extra: {
+                        'consultant': widget.consultant,
+                        'isFirstUpdate': false,
+                      });
                     },
                     icon: const Icon(
                       Icons.edit,
@@ -119,6 +123,15 @@ class _ConsultantProfileState extends State<ConsultantProfile> {
                 }
                 return const Icon(Icons.arrow_forward_ios);
               }),
+            ),
+            ListTile(
+              onTap: _goToAnalytics,
+              leading: const Icon(
+                Icons.analytics,
+                color: Colors.indigo,
+              ),
+              title: const Text('Thống kê'),
+              trailing: const Icon(Icons.arrow_forward_ios),
             ),
             ListTile(
               onTap: () async {

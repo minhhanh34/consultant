@@ -118,14 +118,14 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
                       obscureText: isHidePassword,
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: const Text('Quên mật khẩu?'),
-                      ),
-                    ),
-                    // const SizedBox(height: 8),
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: TextButton(
+                    //     onPressed: () {},
+                    //     child: const Text('Quên mật khẩu?'),
+                    //   ),
+                    // ),
+                    const SizedBox(height: 16),
                     BlocBuilder<AuthCubit, AuthState>(
                       builder: (context, state) {
                         if (state is AuthInvalid) {
@@ -225,7 +225,17 @@ class _LogInScreenState extends State<LogInScreen> {
               const SizedBox(
                 height: 20,
               ),
-              TextButton(
+              OutlinedButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                  ),
+                  fixedSize: MaterialStateProperty.all(
+                    Size(MediaQuery.of(context).size.width, 48.0),
+                  ),
+                ),
                 onPressed: () => context.go('/Signup'),
                 child: const Text('Đăng ký'),
               ),

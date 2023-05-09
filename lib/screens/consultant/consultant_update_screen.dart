@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/consultant_settings/consultant_settings_cubit.dart';
-import 'package:consultant/models/address_model.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/models/subject_model.dart';
 import 'package:file_picker/file_picker.dart';
@@ -36,6 +35,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
   final space16 = const SizedBox(height: 16.0);
   late final TextEditingController dateOfBirthTextController;
 
+  late Consultant consultant;
+
   FilePickerResult? filePickerResult;
   bool avatarChanged = false;
   final dropDownMenuItems = const [
@@ -50,16 +51,6 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
   ];
   final subjectAreaFields = <Widget>[];
 
-  String name = '';
-  String tel = '';
-  DateTime? dateOfBirth;
-  String? gender = '';
-  String city = '';
-  String district = '';
-  double? longtitude = 0;
-  double? lattitude = 0;
-  List<Subject> subjects = [];
-  int subjectCount = 1;
   String? checkNullValidation(String? value) {
     if (value == null || value.isEmpty) {
       return 'Không được bỏ trống';
@@ -67,12 +58,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
     return null;
   }
 
-  List<String> timeOnClass = [];
-  List<String> subjectNames = [];
-  List<String> grades = [];
-  List<String> durations = [];
-  List<String> prices = [];
-  List<List<Map>> weekDaysList = [];
+  late List<List<Map>> weekDaysList = [];
 
   List<Map> createNewDayCheckBoxs(Subject? subject) {
     return [
@@ -115,35 +101,28 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
   }
 
   Gender? valueForGender() {
-    if (widget.consultant != null) {
-      if (widget.consultant!.gender.toLowerCase() == 'nam') {
-        return Gender.male;
-      } else {
-        return Gender.female;
-      }
+    if (consultant.gender.toLowerCase() == 'nam') {
+      return Gender.male;
+    } else {
+      return Gender.female;
     }
-    return null;
   }
 
   @override
   void initState() {
     super.initState();
-    if (widget.consultant != null && widget.consultant!.birthDay != null) {
-      dateOfBirthTextController = TextEditingController(
-        text: DateFormat('dd/MM/yyyy').format(widget.consultant!.birthDay!),
-      );
-    } else {
-      dateOfBirthTextController = TextEditingController();
-    }
-    if (widget.consultant != null && widget.consultant!.subjects.isNotEmpty) {
-      subjectCount = widget.consultant!.subjects.length;
-      widget.consultant!.subjects.asMap().forEach((index, subject) {
+    if (widget.consultant != null) {
+      consultant = widget.consultant!.copyWith();
+      consultant.subjects.asMap().forEach((index, subject) {
         weekDaysList.insert(index, createNewDayCheckBoxs(subject));
       });
     } else {
+      consultant = Consultant(uid: AuthCubit.uid!);
       weekDaysList.insert(0, createNewDayCheckBoxs(null));
     }
-    
+    dateOfBirthTextController = TextEditingController(
+      text: DateFormat('dd/MM/yyyy').format(consultant.birthDay ?? DateTime.now()),
+    );
   }
 
   @override
@@ -169,20 +148,21 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
-                  initialValue: widget.consultant?.name,
+                  initialValue: consultant.name,
                   decoration: decorationWithLabel('Họ tên'),
                   validator: (value) {
                     return checkNullValidation(value);
                   },
-                  onSaved: (newValue) => name = newValue ?? name,
+                  onSaved: (newValue) =>
+                      consultant = consultant.copyWith(name: newValue),
                 ),
                 space16,
                 TextFormField(
-                  initialValue: widget.consultant?.phone,
+                  initialValue: consultant.phone,
                   keyboardType: TextInputType.number,
                   decoration: decorationWithLabel('Số điện thoại'),
                   onSaved: (newValue) {
-                    tel = newValue ?? tel;
+                    consultant = consultant.copyWith(phone: newValue);
                   },
                   validator: (value) {
                     final msg = checkNullValidation(value);
@@ -206,7 +186,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                     suffixIcon: InkWell(
                       onTap: () async {
                         FocusManager.instance.primaryFocus?.unfocus();
-                        dateOfBirth = await showDatePicker(
+                        final dateOfBirth = await showDatePicker(
                           context: context,
                           initialDate: DateTime(2000),
                           firstDate: DateTime(1950),
@@ -214,7 +194,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                         );
                         if (dateOfBirth != null) {
                           dateOfBirthTextController.text =
-                              DateFormat('dd/MM/yyyy').format(dateOfBirth!);
+                              DateFormat('dd/MM/yyyy').format(dateOfBirth);
                         }
                       },
                       child: const Icon(Icons.calendar_month),
@@ -234,34 +214,37 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                   },
                   onSaved: (newValue) {
                     if (newValue == Gender.male) {
-                      gender = 'Nam';
+                      consultant = consultant.copyWith(gender: 'Nam');
                     }
                     if (newValue == Gender.female) {
-                      gender = 'Nữ';
+                      consultant = consultant.copyWith(gender: 'Nữ');
                     }
                   },
                   decoration: decorationWithLabel('Giới tính'),
                 ),
                 space16,
                 TextFormField(
-                  initialValue: widget.consultant?.address.city,
+                  initialValue: consultant.address.city,
                   decoration: decorationWithLabel('Thành phố/tỉnh'),
                   onSaved: (newValue) {
-                    city = newValue ?? city;
+                    consultant = consultant.copyWith(
+                        address: consultant.address.copyWith(city: newValue));
                   },
                 ),
                 space16,
                 TextFormField(
-                  initialValue: widget.consultant?.address.district,
+                  initialValue: consultant.address.district,
                   decoration: decorationWithLabel('Quận/huyện'),
                   onSaved: (newValue) {
-                    district = newValue ?? district;
+                    consultant = consultant.copyWith(
+                        address:
+                            consultant.address.copyWith(district: newValue));
                   },
                 ),
                 space16,
                 TextFormField(
                   initialValue:
-                      '${widget.consultant?.address.geoPoint.latitude}, ${widget.consultant?.address.geoPoint.longitude}',
+                      '${consultant.address.geoPoint.latitude}, ${consultant.address.geoPoint.longitude}',
                   decoration:
                       decorationWithLabel('Vị trí trên bản đồ').copyWith(
                     suffixIcon: InkWell(
@@ -269,11 +252,17 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       child: const Icon(Icons.location_on),
                     ),
                   ),
+                  keyboardType: TextInputType.number,
                   onSaved: (newValue) {
                     final lngLat = newValue?.split(',');
                     if (lngLat != null) {
-                      longtitude = double.tryParse(lngLat.first);
-                      lattitude = double.tryParse(lngLat.last);
+                      final latitude = double.tryParse(lngLat.first);
+                      final longitude = double.tryParse(lngLat.last);
+                      if (latitude != null && longitude != null) {
+                        consultant = consultant.copyWith(
+                            address: consultant.address.copyWith(
+                                geoPoint: GeoPoint(latitude, longitude)));
+                      }
                     }
                   },
                 ),
@@ -358,12 +347,11 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                     ),
                     child: Builder(
                       builder: (context) {
-                        if (widget.consultant != null &&
-                            widget.consultant!.avtPath != null &&
-                            widget.consultant!.avtPath != defaultAvtPath &&
+                        if (consultant.avtPath != null &&
+                            consultant.avtPath != defaultAvtPath &&
                             !avatarChanged) {
                           return CachedNetworkImage(
-                            imageUrl: widget.consultant!.avtPath!,
+                            imageUrl: consultant.avtPath!,
                             fit: BoxFit.cover,
                             placeholder: (context, url) {
                               return Container(
@@ -392,7 +380,7 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                   ),
                 ),
                 space16,
-                for (int i = 0; i < subjectCount; i++)
+                for (int i = 0; i < consultant.subjects.length; i++)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -411,10 +399,10 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                             visible: i != 0,
                             child: IconButton(
                               onPressed: () {
-                                if (subjectCount > 1) {
+                                if (consultant.subjects.length > 1) {
                                   setState(() {
-                                    subjectCount--;
                                     weekDaysList.removeAt(i);
+                                    consultant.subjects.removeAt(i);
                                   });
                                 }
                               },
@@ -428,11 +416,12 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       space16,
                       TextFormField(
-                        initialValue: widget.consultant?.subjects[i].name,
+                        initialValue: consultant.subjects[i].name,
                         decoration: decorationWithLabel('Tên môn học'),
                         onSaved: (newValue) {
                           if (newValue != null) {
-                            subjectNames.insert(i, newValue);
+                            consultant.subjects[i] =
+                                consultant.subjects[i].copyWith(name: newValue);
                           }
                         },
                         validator: (value) {
@@ -441,13 +430,16 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       space16,
                       TextFormField(
-                        initialValue:
-                            widget.consultant?.subjects[i].grade.toString(),
+                        initialValue: consultant.subjects[i].grade.toString(),
                         keyboardType: TextInputType.number,
                         decoration: decorationWithLabel('Lớp'),
                         onSaved: (newValue) {
                           if (newValue != null) {
-                            grades.insert(i, newValue);
+                            final grade = int.tryParse(newValue);
+                            if (grade != null) {
+                              consultant.subjects[i] =
+                                  consultant.subjects[i].copyWith(grade: grade);
+                            }
                           }
                         },
                         validator: (value) {
@@ -457,13 +449,17 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       space16,
                       TextFormField(
                         initialValue:
-                            widget.consultant?.subjects[i].duration.toString(),
+                            consultant.subjects[i].duration.toString(),
                         keyboardType: TextInputType.number,
                         decoration:
                             decorationWithLabel('Thời lượng buổi học (phút)'),
                         onSaved: (newValue) {
                           if (newValue != null) {
-                            durations.insert(i, newValue);
+                            final duration = int.tryParse(newValue);
+                            if (duration != null) {
+                              consultant.subjects[i] = consultant.subjects[i]
+                                  .copyWith(duration: duration);
+                            }
                           }
                         },
                         validator: (value) {
@@ -472,27 +468,31 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                       ),
                       space16,
                       TextFormField(
-                        initialValue: widget.consultant?.subjects[i].time,
+                        initialValue: consultant.subjects[i].time,
                         validator: (value) {
                           return checkNullValidation(value);
                         },
                         onSaved: (newValue) {
                           if (newValue != null) {
-                            timeOnClass.insert(i, newValue);
+                            consultant.subjects[i] =
+                                consultant.subjects[i].copyWith(time: newValue);
                           }
                         },
                         decoration: decorationWithLabel('Giờ lên lớp'),
                       ),
                       space16,
                       TextFormField(
-                        initialValue: widget.consultant?.subjects[i].price
-                            .toInt()
-                            .toString(),
+                        initialValue:
+                            consultant.subjects[i].price.toInt().toString(),
                         keyboardType: TextInputType.number,
                         decoration: decorationWithLabel('Giá'),
                         onSaved: (newValue) {
                           if (newValue != null) {
-                            prices.insert(i, newValue);
+                            final price = double.tryParse(newValue);
+                            if (price != null) {
+                              consultant.subjects[i] =
+                                  consultant.subjects[i].copyWith(price: price);
+                            }
                           }
                         },
                         validator: (value) {
@@ -520,6 +520,16 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                                     setState(() {
                                       if (value != null) {
                                         weekDaysList[i][j]['value'] = value;
+                                        List<int> weekDays = [];
+                                        for (var weekDay in weekDaysList[i]) {
+                                          if (weekDay['value'] == true) {
+                                            weekDays.add(weekDay['weekDays']);
+                                          }
+                                        }
+                                        consultant.subjects[i] =
+                                            consultant.subjects[i].copyWith(
+                                          weekDays: weekDays,
+                                        );
                                       }
                                     });
                                   },
@@ -535,9 +545,19 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                   contentPadding: EdgeInsets.zero,
                   onTap: () {
                     setState(() {
-                      subjectCount++;
+                      consultant.subjects.add(
+                        const Subject(
+                          name: '',
+                          grade: 0,
+                          weekDays: [],
+                          duration: 0,
+                          price: 0,
+                          time: '6h',
+                        ),
+                      );
+                      // subjectCount++;
                       weekDaysList.insert(
-                        subjectCount - 1,
+                        consultant.subjects.length - 1,
                         createNewDayCheckBoxs(null),
                       );
                     });
@@ -564,54 +584,33 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                           filePickerResult!.paths,
                         );
                       }
+                      consultant = consultant.copyWith(
+                        avtPath: fileNames?.first.url,
+                      );
 
-                      for (int k = 0; k < subjectCount; k++) {
-                        final subject = Subject(
-                          name: subjectNames[k],
-                          grade: int.parse(grades[k]),
-                          weekDays: weekDaysList[k]
-                              .where((element) {
-                                return element['value'] == true;
-                              })
-                              .map((e) => e['weekDays'] as int)
-                              .toList(),
-                          duration: int.parse(durations[k]),
-                          price: double.parse(prices[k]),
-                          time: timeOnClass[k],
-                        );
-                        subjects.add(subject);
-                      }
-                      Consultant consultant;
-                      if (widget.consultant != null) {
-                        consultant = widget.consultant!.copyWith(
-                          avtPath: getAvtPath(fileNames),
-                          address: Address(
-                            city: city,
-                            district: district,
-                            geoPoint: GeoPoint(lattitude!, longtitude!),
-                          ),
-                          birthDay: dateOfBirth,
-                          gender: gender,
-                          name: name,
-                          phone: tel,
-                          subjects: subjects,
-                        );
-                      } else {
-                        consultant = Consultant(
-                          avtPath: getAvtPath(fileNames),
-                          uid: AuthCubit.uid!,
-                          address: Address(
-                            city: city,
-                            district: district,
-                            geoPoint: GeoPoint(lattitude!, longtitude!),
-                          ),
-                          birthDay: dateOfBirth,
-                          gender: gender!,
-                          name: name,
-                          phone: tel,
-                          subjects: subjects,
-                        );
-                      }
+                      // for (int k = 0; k < weekDaysList.length; k++) {
+                      //   final subject = Subject(
+                      //     name: consultant.subjects[k].name,
+                      //     grade: int.parse(
+                      //         consultant.subjects[k].grade.toString()),
+                      //     weekDays: weekDaysList[k]
+                      //         .where((element) {
+                      //           return element['value'] == true;
+                      //         })
+                      //         .map((e) => e['weekDays'] as int)
+                      //         .toList(),
+                      //     duration: int.parse(
+                      //         consultant.subjects[k].duration.toString()),
+                      //     price: double.parse(
+                      //         consultant.subjects[k].price.toString()),
+                      //     time: consultant.subjects[k].time,
+                      //   );
+                      //   consultant.subjects.add(subject);
+                      // }
+                      // consultant = consultant.copyWith(
+                      //   avtPath: getAvtPath(fileNames),
+                      // );
+
                       if (!mounted) return;
                       await context
                           .read<ConsultantSettingsCubit>()
@@ -648,8 +647,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
     if (fileNames != null) {
       return fileNames.first.url;
     }
-    if (widget.consultant != null && widget.consultant!.avtPath != null) {
-      return widget.consultant!.avtPath!;
+    if (consultant.avtPath != null) {
+      return consultant.avtPath!;
     }
     return defaultAvtPath;
   }

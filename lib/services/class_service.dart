@@ -2,16 +2,14 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:consultant/models/exercise_model.dart';
-import 'package:consultant/models/student_model.dart';
 import 'package:consultant/repositories/repository_interface.dart';
 import 'package:consultant/repositories/repository_with_subcollection.dart';
 import 'package:consultant/services/downloader_service.dart';
 import 'package:consultant/services/firebase_storage_service.dart';
+import 'package:consultant/utils/libs_for_main.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../models/class_model.dart';
 import '../models/lesson.dart';
-import '../models/submission_model.dart';
 
 abstract class ClassService {
   Future<Class> create(Class item);
@@ -47,20 +45,23 @@ abstract class ClassService {
   Future<List<Lesson>> fetchLessons(String classId);
   Future<bool> deleteLesson(String id);
   Future<bool> updateLesson(String id, Lesson newLesson);
+  Future<Comment?> fetchComment(String classId);
 }
 
-class ClassServiceIml extends ClassService{
+class ClassServiceIml extends ClassService {
   final Repository<Class> _repository;
   final RepositoryWithSubCollection<Student> _classStudentRepository;
   final RepositoryWithSubCollection<Exercise> _classExerciseRepository;
   final RepositoryWithSubCollection<Submission> _classSubmissionRepository;
   final Repository<Lesson> _lessonRepository;
+  final CommentRepository _commentRepository;
   ClassServiceIml(
     this._repository,
     this._classStudentRepository,
     this._classExerciseRepository,
     this._classSubmissionRepository,
     this._lessonRepository,
+    this._commentRepository,
   );
   @override
   Future<Class> create(Class item) async {
@@ -292,5 +293,22 @@ class ClassServiceIml extends ClassService{
   @override
   Future<bool> updateLesson(String id, Lesson newLesson) async {
     return _lessonRepository.update(id, newLesson);
+  }
+
+  @override
+  Future<Comment?> fetchComment(String classId) async {
+    final classroom = await _repository.getOne(classId);
+    if (classroom != null) {
+      final parentId = classroom.parentId;
+      final comments = await _commentRepository.list(classroom.consultantId);
+      Comment? comment;
+      for (var com in comments) {
+        if (com.parentId == parentId) {
+          comment = com;
+          return comment;
+        }
+      }
+    }
+    return null;
   }
 }

@@ -7,7 +7,19 @@ abstract class ParentService {
   Future<Parent> getParentByUid(String uid);
   Future<Parent> get(String id);
   Future<bool> updateParent(String id, Parent newParent);
-  Future<void> rateConsultant(String classId, double rate, String? content);
+  Future<Comment> rateConsultant({
+    required String consultantId,
+    required double rate,
+    String? content,
+    required String commentatorName,
+    required String commentatorAvatar,
+    required String parentId,
+  });
+  Future<bool> updateComment(
+    String consultantId,
+    String commentId,
+    Comment comment,
+  );
 }
 
 class ParentServiceIml extends ParentService {
@@ -46,11 +58,33 @@ class ParentServiceIml extends ParentService {
   }
 
   @override
-  Future<void> rateConsultant(
-    String classId,
-    double rate,
+  Future<Comment> rateConsultant({
+    required String consultantId,
+    required double rate,
     String? content,
-  ) async {
-    // _commentRepository.create(consultantId, comment);
+    required String commentatorName,
+    required String commentatorAvatar,
+    required String parentId,
+  }) async {
+    return await _commentRepository.create(
+      consultantId,
+      Comment(
+        parentId: parentId,
+        commentatorName: commentatorName,
+        commentatorAvatar: commentatorAvatar,
+        time: DateTime.now(),
+        rate: rate,
+        content: content ?? '',
+      ),
+    );
+  }
+
+  @override
+  Future<bool> updateComment(
+    String consultantId,
+    String commentId,
+    Comment comment,
+  ) {
+    return _commentRepository.update(consultantId, commentId, comment);
   }
 }

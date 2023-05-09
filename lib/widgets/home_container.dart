@@ -101,15 +101,15 @@ class _HomeContainerState extends State<HomeContainer>
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    actions: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          FontAwesomeIcons.locationDot,
-                          color: Colors.indigo,
-                        ),
-                      ),
-                    ],
+                    // actions: [
+                    //   IconButton(
+                    //     onPressed: () {},
+                    //     icon: const Icon(
+                    //       FontAwesomeIcons.locationDot,
+                    //       color: Colors.indigo,
+                    //     ),
+                    //   ),
+                    // ],
                   ),
                   SliverAppBar(
                     elevation: 0,
@@ -238,8 +238,8 @@ class _HomeContainerState extends State<HomeContainer>
                                 'Môn học',
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
-                              const Spacer(),
-                              const Icon(Icons.arrow_forward_ios_rounded),
+                              // const Spacer(),
+                              // const Icon(Icons.arrow_forward_ios_rounded),
                             ],
                           ),
                         ),

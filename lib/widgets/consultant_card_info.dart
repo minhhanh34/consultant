@@ -118,7 +118,7 @@ class _ConsultantCardInforState extends State<ConsultantCardInfor> {
                   Text(
                     widget.consultant.rate == null
                         ? '--'
-                        : widget.consultant.rate.toString(),
+                        : widget.consultant.rate!.toStringAsFixed(1),
                   ),
                   const SizedBox(width: 8.0),
                 ],

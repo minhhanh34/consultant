@@ -109,7 +109,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
                                               context.pop();
                                               context.push(
                                                 '/ParentClass',
-                                                extra: state.classes[index].id!,
+                                                extra: state.classes[index],
                                               );
                                             },
                                             title:
@@ -128,22 +128,22 @@ class _SettingsContainerState extends State<SettingsContainer> {
                                 trailing:
                                     const Icon(Icons.arrow_forward_ios_rounded),
                               ),
-                              const ListTile(
-                                minVerticalPadding: 24.0,
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.notifications_outlined),
-                                ),
-                                title: Text('Thông báo'),
-                                trailing: Icon(Icons.arrow_forward_ios_rounded),
-                              ),
-                              const ListTile(
-                                minVerticalPadding: 24.0,
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.info_outline),
-                                ),
-                                title: Text('Về chúng tôi'),
-                                trailing: Icon(Icons.arrow_forward_ios_rounded),
-                              ),
+                              // const ListTile(
+                              //   minVerticalPadding: 24.0,
+                              //   leading: CircleAvatar(
+                              //     child: Icon(Icons.notifications_outlined),
+                              //   ),
+                              //   title: Text('Thông báo'),
+                              //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+                              // ),
+                              // const ListTile(
+                              //   minVerticalPadding: 24.0,
+                              //   leading: CircleAvatar(
+                              //     child: Icon(Icons.info_outline),
+                              //   ),
+                              //   title: Text('Về chúng tôi'),
+                              //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+                              // ),
                               ListTile(
                                 onTap: () async {
                                   bool isSignOut = await showDialog(

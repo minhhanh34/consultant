@@ -152,7 +152,7 @@ final dynamic _routes = <RouteBase>[
   GoRoute(
     path: '/ParentClass',
     builder: (context, state) => ParentClassScreen(
-      classId: state.extra as String,
+      classroom: state.extra as Class,
     ),
   ),
   GoRoute(

@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/consultant_settings/consultant_settings_state.dart';
 import 'package:consultant/models/consultant_model.dart';
 import 'package:consultant/services/consultant_service.dart';
@@ -11,6 +12,8 @@ class ConsultantSettingsCubit extends Cubit<ConsultantSettingsState> {
   Future<void> fetchData(String id) async {
     emit(ConsultantSettingsLoading());
     _consultant ??= await _service.get(id);
+    final comments = await _service.getComments(_consultant!.id!);
+    _consultant?.comments.addAll(comments);
     emit(ConsultantSettingsFetched(_consultant!));
   }
 
@@ -18,6 +21,11 @@ class ConsultantSettingsCubit extends Cubit<ConsultantSettingsState> {
     await _service.update(id, consultant);
     _consultant = null;
     fetchData(id);
+  }
+
+  Future<void> onRefresh() async {
+    _consultant = null;
+    fetchData(AuthCubit.currentUserId!);
   }
 
   void dispose() {

@@ -16,6 +16,7 @@ final classService = ClassServiceIml(
   ClassExerciseRepository(),
   ClassSubmissionRepository(),
   LessonRepository(),
+  CommentRepository(),
 );
 
 dynamic _providers = [
@@ -121,7 +122,14 @@ dynamic _providers = [
   BlocProvider(
     create: (_) => ParentClassCubit(
       classService,
-      ParentServiceIml(ParentRepository(), CommentRepository()),
+      ParentServiceIml(
+        ParentRepository(),
+        CommentRepository(),
+      ),
+      ConsultantServiceIml(
+        ConsultantRepository(),
+        CommentRepository(),
+      ),
     ),
   ),
   BlocProvider(

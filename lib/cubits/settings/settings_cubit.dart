@@ -15,6 +15,11 @@ class SettingsCubit extends Cubit<SettingsState> {
   Parent? _parent;
   List<Class>? _classes;
   List<Student>? _children;
+
+
+  Parent? get parent => _parent; 
+
+
   Future<Parent> create(Parent parent) async {
     return await _service.create(parent);
   }

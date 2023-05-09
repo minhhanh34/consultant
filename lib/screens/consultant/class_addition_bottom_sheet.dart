@@ -162,6 +162,7 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                       }
                       return null;
                     },
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
@@ -227,7 +228,7 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                       );
                       setState(() {});
                     },
-                    icon: const Icon(Icons.timer_sharp),
+                    icon: const Icon(Icons.timer_sharp, color: Colors.indigo),
                   ),
                 ),
                 Padding(
@@ -253,6 +254,7 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                           //   }
                           //   return null;
                           // },
+                          keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                           ),
@@ -290,6 +292,7 @@ class _ClassAdditionBottomSheetState extends State<ClassAdditionBottomSheet> {
                           //   }
                           //   return null;
                           // },
+                          keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                           ),

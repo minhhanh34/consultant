@@ -28,9 +28,11 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
   bool commentsFetched = false;
   late ChatCubit chatCubit;
   String calTime(index) {
-    final long = DateTime.now()
-        .subtract(Duration(days: widget.consultant.comments[index].time.day));
-    if (long.day > 0) return '${long.day} ngày trước';
+    final now = DateTime.now().microsecond;
+    final before = widget.consultant.comments[index].time.microsecond;
+    final ago = now - before;
+    final daysBefore = DateTime.fromMicrosecondsSinceEpoch(ago);
+    if (daysBefore.day > 1) return '${daysBefore.day} ngày trước';
     return 'Hôm nay';
   }
 
@@ -255,7 +257,7 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                   return const Text('(Chưa có đánh giá)');
                                 }
                                 return Text(
-                                  '${widget.consultant.rate} (${widget.consultant.raters})',
+                                  '${widget.consultant.rate!.toStringAsFixed(1)} (${widget.consultant.raters})',
                                 );
                               }),
                               const Spacer(),
@@ -304,7 +306,7 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                             child: FlutterLogo(),
                                           ),
                                           title: Text(
-                                            widget.consultant.comments[0]
+                                            widget.consultant.comments[index]
                                                 .commentatorName,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -323,8 +325,8 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                                   Icons.star,
                                                   color: Colors.yellow,
                                                 ),
-                                                Text(widget
-                                                    .consultant.comments[0].rate
+                                                Text(widget.consultant
+                                                    .comments[index].rate
                                                     .toString()),
                                               ],
                                             ),
@@ -334,8 +336,8 @@ class _ConsultantDetailScreenState extends State<ConsultantDetailScreen> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16.0),
                                           child: Text(
-                                            widget
-                                                .consultant.comments[0].content,
+                                            widget.consultant.comments[index]
+                                                .content,
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                           ),

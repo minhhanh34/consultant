@@ -43,7 +43,7 @@ class PostRepository implements Repository<Post> {
 
   @override
   Future<List<Post>> list() async {
-    final querySnaps = await _collection.get();
+    final querySnaps = await _collection.orderBy('time', descending: true).get();
     return querySnaps.docs.map((doc) {
       return Post.fromJson(doc.data()).copyWith(id: doc.id);
     }).toList();

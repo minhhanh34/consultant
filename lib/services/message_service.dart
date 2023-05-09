@@ -11,7 +11,7 @@ abstract class MessageService {
   Future<ChatRoom> checkRoom(BuildContext context, ChatRoom room);
 }
 
-class MessageServiceIml extends MessageService{
+class MessageServiceIml extends MessageService {
   final Repository<ChatRoom> _repository;
   MessageServiceIml(this._repository);
 

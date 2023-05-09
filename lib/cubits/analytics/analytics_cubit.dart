@@ -14,7 +14,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   // services
   final ConsultantService _consultantService;
   final LessonService _lessonService;
-  double? _price;
   // variable cached
   List<Lesson>? _finishedLessons;
   List<Lesson>? _unfinishedLessons;
@@ -24,12 +23,15 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     _finishedLessons = lessons.where((lesson) => lesson.isCompleted).toList();
     _unfinishedLessons =
         lessons.where((lesson) => !lesson.isCompleted).toList();
-    //TODO update price
-    _price = 80000;
     emit(AnalyticsFetched(
       finishedLessons: _finishedLessons!,
       unfinishedLessons: _unfinishedLessons!,
-      price: _price!,
     ));
+  }
+
+  void dispose() {
+    _finishedLessons = null;
+    _unfinishedLessons = null;
+    emit(AnalyticsInitial());
   }
 }

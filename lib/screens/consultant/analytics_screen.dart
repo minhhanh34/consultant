@@ -31,7 +31,6 @@ class ConsultantAnalyticsScreen extends StatelessWidget {
             return AnalyticsContainer(
               finishedLessons: state.finishedLessons,
               unfinishedLessons: state.unfinishedLessons,
-              price: state.price,
             );
           }
           return const SizedBox();
@@ -46,11 +45,26 @@ class AnalyticsContainer extends StatelessWidget {
     super.key,
     required this.finishedLessons,
     required this.unfinishedLessons,
-    required this.price,
   });
-  final double price;
   final List<Lesson> finishedLessons;
   final List<Lesson> unfinishedLessons;
+
+  double calcRealIncome() {
+    double total = 0;
+    for (var lesson in finishedLessons) {
+      total += lesson.price;
+    }
+    return total;
+  }
+
+  double calcExpectedIncome() {
+    final allLessons = [...finishedLessons, ...unfinishedLessons];
+    double total = 0;
+    for (var lesson in allLessons) {
+      total += lesson.price;
+    }
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +76,9 @@ class AnalyticsContainer extends StatelessWidget {
     const realIncomeLabel = 'Thu nhập thực tế';
     final lessonsCount = finishedLessons.length + unfinishedLessons.length;
     final expectedIncome =
-        NumberFormat.simpleCurrency(locale: 'vi').format(lessonsCount * price);
-    final realIncome = NumberFormat.simpleCurrency(locale: 'vi')
-        .format(finishedLessons.length * price);
+        NumberFormat.simpleCurrency(locale: 'vi').format(calcExpectedIncome());
+    final realIncome =
+        NumberFormat.simpleCurrency(locale: 'vi').format(calcRealIncome());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -12,6 +12,7 @@ class Comment extends Equatable {
   final DateTime time;
   final double rate;
   final String content;
+  final String parentId;
   const Comment({
     this.id,
     required this.commentatorName,
@@ -19,6 +20,7 @@ class Comment extends Equatable {
     required this.time,
     required this.rate,
     required this.content,
+    required this.parentId,
   });
 
   @override
@@ -39,6 +41,7 @@ class Comment extends Equatable {
     DateTime? time,
     double? rate,
     String? content,
+    String? parentId,
   }) {
     return Comment(
       id: id ?? this.id,
@@ -47,6 +50,7 @@ class Comment extends Equatable {
       time: time ?? this.time,
       rate: rate ?? this.rate,
       content: content ?? this.content,
+      parentId: parentId ?? this.parentId,
     );
   }
 
@@ -57,11 +61,13 @@ class Comment extends Equatable {
       'time': time,
       'rate': rate,
       'content': content,
+      'parentId': parentId,
     };
   }
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
+      parentId: json['parentId'],
       commentatorName: json['commentatorName'] as String,
       commentatorAvatar: json['commentatorAvatar'] as String,
       time: (json['time'] as Timestamp).toDate(),

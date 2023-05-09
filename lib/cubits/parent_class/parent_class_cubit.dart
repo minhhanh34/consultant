@@ -1,20 +1,20 @@
-import 'package:consultant/models/comment_model.dart';
 import 'package:consultant/models/exercise_model.dart';
-import 'package:consultant/services/class_service.dart';
-import 'package:consultant/services/parent_service.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:consultant/utils/libs_for_main.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/lesson.dart';
-import '../../models/submission_model.dart';
 import '../../services/downloader_service.dart';
 import 'parent_class_state.dart';
 
 class ParentClassCubit extends Cubit<ParentClassState> {
-  ParentClassCubit(this._classService, this._parentService)
-      : super(ParentClassInitial());
+  ParentClassCubit(
+    this._classService,
+    this._parentService,
+    this._consultantService,
+  ) : super(ParentClassInitial());
   final ClassService _classService;
   final ParentService _parentService;
+  final ConsultantService _consultantService;
   List<Lesson>? _lessons;
   List<Exercise>? _exercises;
   List<Submission>? _submissions;
@@ -24,6 +24,7 @@ class ParentClassCubit extends Cubit<ParentClassState> {
     _lessons = await _classService.fetchLessons(classId);
     _exercises = await _classService.fetchExercise(classId);
     _submissions = await _classService.listSubmissions(classId);
+    _comment = await _classService.fetchComment(classId);
     emit(ParentClassFetched(_lessons!, _exercises!, _submissions!, _comment));
   }
 
@@ -68,12 +69,58 @@ class ParentClassCubit extends Cubit<ParentClassState> {
         fileNameTmp;
   }
 
-  Future<void> rateConsultant(
-    String classId,
+  Future<Comment> rateConsultant(
+    String commentatorName,
+    String commentatorAvatar,
+    String consultantId,
     double rate,
     String content,
+    String parentId,
   ) async {
-    _parentService.rateConsultant(classId, rate, content);
+    _comment = await _parentService.rateConsultant(
+      commentatorAvatar: commentatorAvatar,
+      commentatorName: commentatorName,
+      consultantId: consultantId,
+      rate: rate,
+      content: content,
+      parentId: parentId,
+    );
+    final consultant = await _consultantService.get(consultantId);
+    int raters = 1;
+    if (consultant.rate != null && consultant.raters != null) {
+      rate = (consultant.rate! * consultant.raters! + rate) /
+          (consultant.raters! + 1);
+      raters += consultant.raters! + 1;
+    }
+    _consultantService.update(
+      consultantId,
+      consultant.copyWith(
+        rate: rate,
+        raters: raters,
+      ),
+    );
+    emit(ParentClassFetched(_lessons!, _exercises!, _submissions!, _comment));
+    return _comment!;
+  }
+
+  Future<bool> updateComment(
+    String consultantId,
+    String commentId,
+    double oldRate,
+    Comment comment,
+  ) async {
+    final result =
+        await _parentService.updateComment(consultantId, commentId, comment);
+    final consultant = await _consultantService.get(consultantId);
+    _consultantService.update(
+      consultantId,
+      consultant.copyWith(
+        rate: (consultant.rate! * consultant.raters! - oldRate + comment.rate) /
+            consultant.raters!,
+      ),
+    );
+    emit(ParentClassFetched(_lessons!, _exercises!, _submissions!, comment));
+    return result;
   }
 
   void dispose() {

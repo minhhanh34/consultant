@@ -72,6 +72,7 @@ class StudentUpdateInformationState extends State<StudentUpdateInformation> {
     bool? isValid = form?.validate();
     if (isValid == null || !isValid) return;
     form?.save();
+
     Student newStudent = widget.student.copyWith(
       name: name,
       address: Address(
@@ -84,8 +85,23 @@ class StudentUpdateInformationState extends State<StudentUpdateInformation> {
       grade: grade,
     );
     if (await confirmDialog()) {
+      if(!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text('Đang cập nhật'),
+            content: SizedBox(
+              width: 40,
+              height: 40,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        },
+      );
       await cubit.updateStudent(widget.student.id!, newStudent);
       if (!mounted) return;
+      context.pop();
       if (widget.isFirstUpdate) {
         context.go('/Student');
       } else {

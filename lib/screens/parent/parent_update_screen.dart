@@ -258,7 +258,19 @@ class _ParentUpdateScreenState extends State<ParentUpdateScreen> {
                       bool valid = _key.currentState?.validate() ?? false;
                       if (!valid) return;
                       _key.currentState?.save();
-
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const AlertDialog(
+                            title: Text('Đang cập nhật'),
+                            content: SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: Center(child: CircularProgressIndicator()),
+                            ),
+                          );
+                        },
+                      );
                       List<FileName>? fileNames;
                       if (filePickerResult != null &&
                           filePickerResult!.files.isNotEmpty) {
@@ -290,6 +302,7 @@ class _ParentUpdateScreenState extends State<ParentUpdateScreen> {
                             parent,
                           );
                       if (!mounted) return;
+                      context.pop();
                       if (widget.isFirstUpdate) {
                         context.go('/');
                       } else {

@@ -13,15 +13,17 @@ class RatingConsultant extends StatefulWidget {
 
 class _RatingConsultantState extends State<RatingConsultant> {
   late double rating;
+  late double previousStateRate;
   late TextEditingController _controller;
   bool isChanging = false;
   late Comment? comment;
   @override
   void initState() {
     super.initState();
-    comment = widget.comment;
+    comment = widget.comment?.copyWith();
     _controller = TextEditingController(text: comment?.content);
     rating = comment?.rate ?? 3;
+    previousStateRate = rating;
   }
 
   @override
@@ -41,7 +43,7 @@ class _RatingConsultantState extends State<RatingConsultant> {
               children: [
                 const SizedBox(height: 16),
                 RatingBar.builder(
-                  initialRating: 3,
+                  initialRating: rating,
                   minRating: 1,
                   direction: Axis.horizontal,
                   allowHalfRating: true,
@@ -52,8 +54,19 @@ class _RatingConsultantState extends State<RatingConsultant> {
                     color: Colors.amber,
                   ),
                   onRatingUpdate: (rating) {
+                    previousStateRate = this.rating;
                     this.rating = rating;
                   },
+                ),
+                RatingBarIndicator(
+                  rating: rating,
+                  itemBuilder: (context, index) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  itemCount: 5,
+                  itemSize: 50.0,
+                  direction: Axis.vertical,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -96,7 +109,6 @@ class _RatingConsultantState extends State<RatingConsultant> {
               ],
             );
           }
-
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -114,9 +126,8 @@ class _RatingConsultantState extends State<RatingConsultant> {
                   color: Colors.amber,
                 ),
                 onRatingUpdate: (rating) {
+                  previousStateRate = this.rating;
                   this.rating = rating;
-                  //TODO fixing ... 
-                  // comment = comment?.copyWith(rate: rating);
                 },
               ),
               Padding(
@@ -147,10 +158,11 @@ class _RatingConsultantState extends State<RatingConsultant> {
                         visible: isChanging,
                         child: OutlinedButton(
                           onPressed: () {
+                            rating = widget.comment!.rate;
                             setState(() {
                               _controller.text = widget.comment?.content ?? '';
-                              rating = widget.comment?.rate ?? 3;
                               isChanging = false;
+                              rating = previousStateRate;
                             });
                           },
                           child: const Text('Hủy'),

@@ -1,5 +1,5 @@
-import 'package:camera/camera.dart';
 import 'package:consultant/models/class_model.dart';
+import 'package:consultant/utils/select_files_bottom_sheet.dart';
 import 'package:consultant/widgets/center_circular_indicator.dart';
 import 'package:consultant/widgets/file_attach_chip.dart';
 import 'package:file_picker/file_picker.dart';
@@ -108,10 +108,14 @@ class _ExerciseAdditionBottomSheetState
                                 children: [
                                   InkWell(
                                     onTap: () async {
-                                      List<CameraDescription> cameras =
-                                          await availableCameras();
+                                      filePickerResult =
+                                          await SelectFilesBottomSheet.select(
+                                        context: context,
+                                        withDialog: false,
+                                      );
                                       if (!mounted) return;
-                                      context.push('/Camera', extra: cameras);
+                                      context.pop();
+                                      setState(() {});
                                     },
                                     child: Column(
                                       mainAxisAlignment:

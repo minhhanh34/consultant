@@ -110,7 +110,7 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Bài nộp đã tải lên1',
+                      'Bài nộp đã tải lên!',
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
@@ -187,7 +187,7 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                       child: TextButton(
                         onPressed: () async {
                           filePickerResult =
-                              await SelectFilesBottomSheet.select(context);
+                              await SelectFilesBottomSheet.select(context: context);
                           setState(() {});
                         },
                         child: const Text('Chọn lại'),
@@ -230,7 +230,7 @@ class _StudentExerciseTileState extends State<StudentExerciseTile> {
                           return;
                         }
                         filePickerResult =
-                            await SelectFilesBottomSheet.select(context);
+                            await SelectFilesBottomSheet.select(context: context);
                         setState(() {});
                       },
                       child: Row(

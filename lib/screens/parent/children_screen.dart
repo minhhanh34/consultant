@@ -11,7 +11,7 @@ class ChildrensScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Con của tôi'),
+        title: const Text('Học sinh'),
         elevation: 0,
       ),
       body: ListView.builder(

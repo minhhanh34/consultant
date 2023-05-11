@@ -1,3 +1,4 @@
+import 'package:consultant/cubits/auth/auth_cubit.dart';
 import 'package:consultant/cubits/consultant_class/class_cubit.dart';
 import 'package:consultant/cubits/consultant_class/class_state.dart';
 import 'package:consultant/models/class_model.dart';
@@ -27,7 +28,10 @@ class InformationTab extends StatelessWidget {
             buildClassAvatar(),
             buildClassId(context),
             buildConsultantInfo(),
-            buildMembersTile(context),
+            Visibility(
+              visible: AuthCubit.userType?.toLowerCase() == 'consultant',
+              child: buildMembersTile(context),
+            ),
             buildSubjectInfo(context),
           ],
         ),
@@ -167,4 +171,3 @@ class InformationTab extends StatelessWidget {
     );
   }
 }
-

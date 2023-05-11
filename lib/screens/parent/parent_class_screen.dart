@@ -119,21 +119,47 @@ class _ParentClassScreenState extends State<ParentClassScreen> {
                                 onRefresh: () => context
                                     .read<ParentClassCubit>()
                                     .fetchClass(widget.classroom.id!),
-                                child: ListView.builder(
+                                child: ListView.separated(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 16),
                                   itemCount: state.excercises.length,
                                   itemBuilder: (context, index) {
                                     return ExerciseTile(
-                                      parentMode: true,
                                       classId: widget.classroom.id!,
                                       exercise: state.excercises[index],
-                                      submissions: state.submissions,
+                                      submissions: state.submissions
+                                          .where((submission) =>
+                                              submission.exerciseId ==
+                                              state.excercises[index].id!)
+                                          .toList(),
                                     );
                                   },
                                 ),
+                                // ListView.separated(
+                                //   separatorBuilder: (context, index) =>
+                                //       const SizedBox(height: 16),
+                                //   itemCount: state.excercises.length,
+                                //   itemBuilder: (context, index) {
+                                //     return ExerciseTile(
+                                //       parentMode: true,
+                                //       classId: widget.classroom.id!,
+                                //       exercise: state.excercises[index],
+                                //       submissions: state.submissions
+                                //           .where((submission) =>
+                                //               submission.exerciseId ==
+                                //               state.submissions[index]
+                                //                   .exerciseId)
+                                //           .toList(),
+                                //     );
+                                //   },
+                                // ),
                               );
                             }
-                            if(labels.elementAt(thirth)['value'] == true) {
-                              return InformationTab(classRoom: widget.classroom);
+                            if (labels.elementAt(thirth)['value'] == true) {
+                              return InformationTab(
+                                  classRoom: widget.classroom);
                             }
                             return RatingConsultant(
                               classroom: widget.classroom,

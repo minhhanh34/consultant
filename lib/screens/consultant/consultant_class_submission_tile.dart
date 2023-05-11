@@ -1,9 +1,9 @@
 import 'package:consultant/cubits/auth/auth_cubit.dart';
+import 'package:consultant/services/downloader_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../constants/consts.dart';
 import '../../cubits/consultant_class/class_cubit.dart';
@@ -34,6 +34,7 @@ class _ConsultantClassSubmissionTileState
   String? comment;
   bool visible = false;
   bool commentEditing = false;
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     final userType = AuthCubit.userType?.toLowerCase();
@@ -64,11 +65,38 @@ class _ConsultantClassSubmissionTileState
                     children: widget.tileSubmission.first.fileNames.map((file) {
                       return InkWell(
                         onTap: () async {
-                          final dir = await getExternalStorageDirectory();
-                          OpenFilex.open('${dir!.path}/${file.name}');
+                          setState(() {
+                            isLoading = true;
+                          });
+                          DownloaderService downloader =
+                              DownloaderServiceIml.instance;
+                          final result = await downloader.download(file);
+                          setState(() {
+                            isLoading = false;
+                          });
+                          OpenFilex.open(result?.path);
                         },
-                        child: Chip(
-                          label: Text(file.name),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Chip(
+                                label: Text(
+                                  file.name,
+                                  textAlign: TextAlign.start,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: isLoading,
+                              child: const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     }).toList(),

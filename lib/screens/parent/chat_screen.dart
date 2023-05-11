@@ -103,16 +103,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 MessageBar(
                   onSend: (value) => sendMessage(value),
-                  actions: [
-                    IconButton(
-                      splashRadius: 32,
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.camera_alt,
-                        color: Colors.black,
-                      ),
-                    )
-                  ],
+                  // actions: [
+                  //   IconButton(
+                  //     splashRadius: 32,
+                  //     onPressed: () {},
+                  //     icon: const Icon(
+                  //       Icons.camera_alt,
+                  //       color: Colors.black,
+                  //     ),
+                  //   )
+                  // ],
                 ),
                 // MessageField(partner: partner),
               ],

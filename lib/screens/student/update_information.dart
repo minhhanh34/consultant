@@ -85,7 +85,7 @@ class StudentUpdateInformationState extends State<StudentUpdateInformation> {
       grade: grade,
     );
     if (await confirmDialog()) {
-      if(!mounted) return;
+      if (!mounted) return;
       showDialog(
         context: context,
         builder: (context) {
@@ -193,7 +193,16 @@ class StudentUpdateInformationState extends State<StudentUpdateInformation> {
                   TextFormField(
                     keyboardType: TextInputType.number,
                     initialValue: grade.toString(),
-                    validator: _checkNullValiate,
+                    validator: (value) {
+                      final result = _checkNullValiate(value);
+                      if (result != null) {
+                        return result;
+                      }
+                      if (int.tryParse(value!) == null) {
+                        return 'không hợp lệ';
+                      }
+                      return null;
+                    },
                     decoration: _decorateWithLabel(gradeLabel),
                     onSaved: (value) => grade = int.parse(value!),
                   ),
@@ -236,12 +245,23 @@ class StudentUpdateInformationState extends State<StudentUpdateInformation> {
                   heightBox16,
                   TextFormField(
                     keyboardType: TextInputType.number,
-                    initialValue: '$longitude, $latitude',
-                    validator: _checkNullValiate,
+                    initialValue: '$latitude, $longitude',
+                    validator: (value) {
+                      final result = _checkNullValiate(value);
+                      if (result != null) {
+                        return result;
+                      }
+                      final latitude = double.tryParse(value!.split(',').first);
+                      final longitude = double.tryParse(value.split(',').last);
+                      if(latitude == null || longitude == null) {
+                        return 'Không hợp lệ';
+                      }
+                      return null;
+                    },
                     decoration: _decorateWithLabel(locationLabel),
                     onSaved: (value) {
-                      longitude = double.parse(value!.split(',').first);
-                      latitude = double.parse(value.split(',').last);
+                      latitude = double.parse(value!.split(',').first);
+                      longitude = double.parse(value.split(',').last);
                     },
                   ),
                   heightBox16,

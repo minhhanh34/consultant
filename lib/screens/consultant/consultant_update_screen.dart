@@ -121,7 +121,8 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
       weekDaysList.insert(0, createNewDayCheckBoxs(null));
     }
     dateOfBirthTextController = TextEditingController(
-      text: DateFormat('dd/MM/yyyy').format(consultant.birthDay ?? DateTime.now()),
+      text: DateFormat('dd/MM/yyyy')
+          .format(consultant.birthDay ?? DateTime.now()),
     );
   }
 
@@ -443,7 +444,14 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                           }
                         },
                         validator: (value) {
-                          return checkNullValidation(value);
+                          final result = checkNullValidation(value);
+                          if (result != null) {
+                            return result;
+                          }
+                          if (int.tryParse(value!) == null) {
+                            return 'không hợp lệ';
+                          }
+                          return null;
                         },
                       ),
                       space16,
@@ -463,7 +471,14 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                           }
                         },
                         validator: (value) {
-                          return checkNullValidation(value);
+                          final result = checkNullValidation(value);
+                          if (result != null) {
+                            return result;
+                          }
+                          if (int.tryParse(value!) == null) {
+                            return 'không hợp lệ';
+                          }
+                          return null;
                         },
                       ),
                       space16,
@@ -496,7 +511,14 @@ class _ConsultantUpdateScreenState extends State<ConsultantUpdateScreen> {
                           }
                         },
                         validator: (value) {
-                          return checkNullValidation(value);
+                          final result = checkNullValidation(value);
+                          if (result != null) {
+                            return result;
+                          }
+                          if (double.tryParse(value!) == null) {
+                            return 'không hợp lệ';
+                          }
+                          return null;
                         },
                       ),
                       space16,
